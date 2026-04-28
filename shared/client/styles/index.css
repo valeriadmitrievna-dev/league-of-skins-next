@@ -1,0 +1,70 @@
+@import "tailwindcss";
+/* @import "tw-animate-css"; */
+@import "shadcn/tailwind.css";
+
+@import "./theme.css";
+@import "./classes.css";
+
+@tailwind utilities;
+
+:root {
+  font-family: "Rubik", system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-optical-sizing: auto;
+  font-size: 16px;
+  line-height: 1.2;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+input {
+  -webkit-text-fill-color: var(--color-foreground);
+}
+
+input::placeholder {
+  color: var(--color-muted-foreground);
+  -webkit-text-fill-color: var(--color-muted-foreground);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+@custom-variant data-state-on (&[data-state="on"]);
+@custom-variant data-state-off (&[data-state="off"]);
+
+/* opera video utils */
+#detach-button-host {
+  display: none !important;
+}
+
+html {
+  &::-webkit-scrollbar {
+    @apply size-2.5;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply border-l border-r border-border/80 bg-card;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply bg-border cursor-pointer;
+  }
+}

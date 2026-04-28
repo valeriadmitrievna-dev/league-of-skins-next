@@ -1,0 +1,18 @@
+{
+  "code": {
+    "ERR_0000": "Internal server error",
+    "ERR_0001": "Authorization error",
+    "ERR_0002": "Authorization token error",
+    "ERR_0003": "Data retrieval error",
+    "ERR_0004": "User not found",
+    "ERR_0005": "Please fill in required fields:",
+    "ERR_0006": "User with this email already exists",
+    "ERR_0007": "User with this email does not exist",
+    "ERR_0008": "Invalid password",
+    "ERR_0010": "Error viewing private wishlist",
+    "ERR_0011": "You can create up to three wishlists",
+    "ERR_0014": "Wishlist not found",
+    "ERR_0024": "Champion not found",
+    "ERR_0034": "Image not found"
+  }
+}
