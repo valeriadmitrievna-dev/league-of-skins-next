@@ -1,3 +1,4 @@
+// _fulldata.riot.ts
 import { getVersions } from "../riot/versions.riot";
 import { getSkinlines } from "../riot/skinlines.riot";
 import { getChampions } from "../riot/champions.riot";
@@ -7,7 +8,6 @@ import { getLangAppData } from "@/shared/api/utils/getLangAppData";
 import { config } from "@/lib/config";
 import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
 import { getCDragonPath } from "@/shared/api/utils/getCDragonPath";
-import { progressLog, setCategoryStatus, setLangStatus } from "@/lib/riotProgress";
 
 export const getFullDataRiot = async (lang: string) => {
   setCategoryStatus(lang, "versions", "loading");

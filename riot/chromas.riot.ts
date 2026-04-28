@@ -1,4 +1,3 @@
-import { progressLog, setCategoryStatus } from "@/lib/riotProgress";
 import { getLangAppData } from "@/shared/api/utils/getLangAppData";
 import { isEqual, uniqWith } from "lodash";
 
@@ -33,8 +32,7 @@ export const getChromas = async (lang: string = "en_US") => {
       return uniqWith(chromas, (a, b) => a.name === b.name && isEqual(a.colors, b.colors)) as any[];
     }
   } catch (error) {
-    progressLog("[ERROR][getChromas]", (error as any).message);
-    setCategoryStatus(lang, "chromas", "error");
+    console.error("[ERROR][getChromas]", (error as any).message);
   }
 };
 
@@ -65,7 +63,6 @@ export const getAllChromas = async (lang: string = "en_US") => {
       return chromas;
     }
   } catch (error) {
-    progressLog("[ERROR][getChromas]", (error as any).message);
-     setCategoryStatus(lang, 'chromas', 'error');
+    console.error("[ERROR][getChromas]", (error as any).message);
   }
 };

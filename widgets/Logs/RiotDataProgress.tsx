@@ -1,14 +1,15 @@
 "use client";
-import { FC, Fragment, useEffect, useRef, useState } from "react";
+import { FC, Fragment, useRef, useState } from "react";
 
 import RiotIcon from "@/shared/client/assets/riot-games.svg";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/shared/client/utils/cn";
-import type { RiotProgress, LangProgress, CategoryStatus, LangStatus } from "@/lib/riotProgress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RiotDataProgressLangCard from "./RiotDataProgressLangCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { prepareRiotClient } from "@/shared/client/riot/_prepare.riot";
+import { LangProgress, LogType, RiotProgress } from "./types";
 
 const globalBadge = (status: RiotProgress["status"]) =>
   cn(
@@ -20,24 +21,45 @@ const globalBadge = (status: RiotProgress["status"]) =>
   );
 
 const RiotDataProgress: FC = () => {
-  const [progress, setProgress] = useState<RiotProgress | null>(null);
+  const [logs, setLogs] = useState<{ type: LogType; message: string }[]>([]);
+  const [status, setStatus] = useState<"idle" | "running" | "done" | "error">("idle");
+  const [languages, setLanguages] = useState<Record<string, LangProgress>>({});
+
   const logsRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    let es: EventSource;
+  const updateHandler = async () => {
+    setLogs([]);
+    setStatus("running");
+    setLanguages({});
 
-    const connect = () => {
-      es = new EventSource("/api/riot-progress");
-      es.onmessage = (e) => setProgress(JSON.parse(e.data));
-      es.onerror = () => {
-        es.close();
-        setTimeout(connect, 2000);
-      };
+    const log = (message: string, type: LogType = "default") => {
+      setLogs((prev) => [
+        ...prev,
+        {
+          type,
+          message: `[${new Date().toLocaleTimeString()}] ${message}`,
+        },
+      ]);
     };
 
-    connect();
-    return () => es?.close();
-  }, []);
+    await prepareRiotClient(["en_US"], log, (lang, update) => {
+      setLanguages((prev) => {
+        const prevLang = prev[lang] ?? {};
+        return {
+          ...prev,
+          [lang]: {
+            ...prevLang,
+            ...update,
+            categories: {
+              ...prevLang.categories,
+              ...update.categories,
+            },
+          } as LangProgress,
+        };
+      });
+    });
+    setStatus("done");
+  };
 
   return (
     <Sheet open>
@@ -48,29 +70,32 @@ const RiotDataProgress: FC = () => {
       </SheetTrigger>
       <SheetContent side="left" showCloseButton={false} className="w-150 max-w-full! flex flex-col gap-0 p-0">
         <SheetHeader className="border-b border-border">
-          <SheetTitle className="flex items-center justify-between">
+          <SheetTitle className="flex items-center justify-between gap-x-4">
             <span>Riot Data</span>
-            {progress && <span className={globalBadge(progress.status)}>{progress.status}</span>}
+            <Button size="xs" onClick={updateHandler} className="mr-auto" disabled={status === "running"}>
+              Update
+            </Button>
+            <span className={globalBadge(status)}>{status}</span>
           </SheetTitle>
-          {progress?.startedAt && (
+          {/* {progress?.startedAt && (
             <p className="text-xs text-muted-foreground">
               Started {new Date(progress.startedAt).toLocaleTimeString()}
               {progress.finishedAt && ` · Finished ${new Date(progress.finishedAt).toLocaleTimeString()}`}
             </p>
-          )}
+          )} */}
         </SheetHeader>
 
         <Tabs defaultValue="logs" className="h-full overflow-hidden gap-y-0">
           <TabsList variant="line" className="w-full border-b">
             <TabsTrigger value="status">Status</TabsTrigger>
-            <TabsTrigger value="logs">Logs{progress?.logs.length ? ` (${progress.logs.length})` : ""}</TabsTrigger>
+            <TabsTrigger value="logs">Logs{logs.length ? ` (${logs.length})` : ""}</TabsTrigger>
           </TabsList>
           <TabsContent value="status" asChild>
             <ScrollArea className="p-4">
-              {!progress || Object.keys(progress.languages).length === 0 ? (
+              {Object.keys(languages).length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-8">No data loading in progress</p>
               ) : (
-                Object.entries(progress.languages).map(([lang, langProgress]) => (
+                Object.entries(languages).map(([lang, langProgress]) => (
                   <RiotDataProgressLangCard key={lang} lang={lang} progress={langProgress} className="not-last:mb-4" />
                 ))
               )}
@@ -78,10 +103,10 @@ const RiotDataProgress: FC = () => {
           </TabsContent>
           <TabsContent value="logs" asChild>
             <ScrollArea ref={logsRef} className="p-4 font-mono text-xs flex flex-col gap-1 h-full overflow-y-auto">
-              {!progress?.logs.length ? (
+              {!logs.length ? (
                 <p className="text-muted-foreground text-center py-8">No logs yet</p>
               ) : (
-                progress.logs.map((log, i) => (
+                logs.map((log, i) => (
                   <div
                     key={i}
                     className={cn("py-0.5", {
@@ -97,7 +122,7 @@ const RiotDataProgress: FC = () => {
                           {!!index && " "}
                           {part.startsWith("http") ? (
                             <a href={part} target="_blank" className="underline">
-                              {part.endsWith('.json') ? part.split('/')[part.split('/').length - 1] : 'link'}
+                              {part.endsWith(".json") ? part.split("/")[part.split("/").length - 1] : "link"}
                             </a>
                           ) : (
                             part

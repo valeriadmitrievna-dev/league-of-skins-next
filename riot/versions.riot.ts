@@ -1,13 +1,12 @@
-import { fetchRiot } from "@/lib/fetchRiot";
-import { progressLog } from "@/lib/riotProgress";
 import { dDragonUrl } from "@/shared/constants/riot";
 
 export const getVersions = async (lang: string) => {
   try {
     const url = `${dDragonUrl}/api/versions.json`;
-    const data = await fetchRiot(url);
+    const res = await fetch(url);
+    const data = await res.json();
     return data;
   } catch (error) {
-    progressLog.error("[ERROR][getVersions]", (error as any).message);
+    console.error("[ERROR][getVersions]", (error as any).message);
   }
 };

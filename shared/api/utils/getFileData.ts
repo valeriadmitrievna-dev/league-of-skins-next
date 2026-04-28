@@ -1,4 +1,3 @@
-import { progressLog } from '@/lib/riotProgress';
 import { mkdirSync, writeFileSync } from 'fs';
 import { readdir, readFile } from 'fs/promises';
 import { dirname } from 'path';
@@ -16,7 +15,7 @@ export const readDirectory = async (dirpath: string): Promise<Record<string, str
 
     return result;
   } catch (error) {
-    progressLog('[ERROR] DIRECTORY READ FAILED ->', (error as any).message);
+    console.error('[ERROR] DIRECTORY READ FAILED ->', (error as any).message);
     return {};
   }
 };
@@ -25,7 +24,7 @@ export const readFileText = async (filepath: string): Promise<string> => {
   try {
     return await readFile(filepath, 'utf-8');
   } catch (error) {
-    progressLog('[ERROR] FILE READ FAILED ->', (error as any).message);
+    console.error('[ERROR] FILE READ FAILED ->', (error as any).message);
     throw error;
   }
 };
@@ -44,6 +43,6 @@ export const saveToJson = async <T>(path: string, data: T) => {
     mkdirSync(dirname(path), { recursive: true });
     writeFileSync(path, JSON.stringify(data), 'utf-8');
   } catch (error) {
-    progressLog('[ERROR]', '[saveToJson]', (error as any).message);
+    console.error('[ERROR]', '[saveToJson]', (error as any).message);
   }
 };

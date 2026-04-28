@@ -1,4 +1,3 @@
-import { progressLog, setCategoryStatus } from '@/lib/riotProgress';
 import { getLangAppData } from '@/shared/api/utils/getLangAppData';
 
 export const getRarities = async () => {
@@ -10,6 +9,6 @@ export const getRarities = async () => {
       return rarities;
     }
   } catch (error) {
-    progressLog('[ERROR][getRarities]', (error as any).message);
+    console.error('[ERROR][getRarities]', (error as any).message);
   }
 };

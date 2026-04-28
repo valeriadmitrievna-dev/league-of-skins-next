@@ -2,11 +2,20 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   /* config options here */
+  serverExternalPackages: [],
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "10mb",
+    },
+  },
+  httpAgentOptions: {
+    keepAlive: true,
+  },
   turbopack: {
     rules: {
-      '*.svg': {
-        as: '*.js',
-        loaders: ['@svgr/webpack'],
+      "*.svg": {
+        as: "*.js",
+        loaders: ["@svgr/webpack"],
       },
     },
   },

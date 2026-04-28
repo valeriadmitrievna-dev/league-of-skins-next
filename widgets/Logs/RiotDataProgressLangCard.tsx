@@ -1,8 +1,8 @@
 import { FC } from "react";
 
-import { CategoryStatus, LangProgress, LangStatus } from "@/lib/riotProgress";
 import { cn } from "@/shared/client/utils/cn";
 import { Spinner } from '@/components/ui/spinner';
+import { CategoryStatus, LangProgress, LangStatus } from './types';
 
 const CATEGORY_LABELS: Record<string, string> = {
   versions: "Versions",
@@ -40,7 +40,7 @@ const RiotDataProgressLangCard: FC<{ lang: string; progress: LangProgress, class
 
     <div className="grid grid-cols-2 gap-1.5">
       {Object.entries(progress.categories).map(([key, status]) => (
-        <div key={key} className="flex items-center gap-2">
+        <div key={key} id={key} className="flex items-center gap-2">
           {status === 'loading' ? <Spinner className='size-2 text-yellow-400' /> : <div className={categoryDot(status)} />}
           <span className="text-xs text-muted-foreground">{CATEGORY_LABELS[key]}</span>
         </div>

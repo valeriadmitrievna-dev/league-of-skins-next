@@ -1,3 +1,4 @@
+// _prepare.riot.ts
 import { differenceInDays } from "date-fns";
 import { clearAppDataCache, getLangAppData } from "@/shared/api/utils/getLangAppData";
 import { config } from "@/lib/config";

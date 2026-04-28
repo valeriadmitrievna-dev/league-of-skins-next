@@ -1,5 +1,3 @@
-import { fetchRiot } from '@/lib/fetchRiot';
-import { progressLog } from '@/lib/riotProgress';
 import { cDragonUrl } from '@/shared/constants/riot';
 
 export const getChampion = async (championKey: string, lang: string = 'default', server: 'latest' | 'pbe' = 'latest') => {
@@ -8,10 +6,11 @@ export const getChampion = async (championKey: string, lang: string = 'default',
   const url = `${cDragonUrl}/${server}/plugins/rcp-be-lol-game-data/global/${language}/v1/champions/${championKey}.json`;
 
   try {
-    const data = await fetchRiot(url);
+    const res = await fetch(url);
+    const data = await res.json();
     return data;
   } catch (error) {
-    progressLog.error(`[ERROR][getChampion][${server}]`, url);
-    progressLog.error(`[ERROR][getChampion][${server}]`, (error as any).message);
+    console.error(`[ERROR][getChampion][${server}]`, url);
+    console.error(`[ERROR][getChampion][${server}]`, (error as any).message);
   }
 };
