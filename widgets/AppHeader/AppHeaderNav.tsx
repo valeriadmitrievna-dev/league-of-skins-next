@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import AppHeaderLink from "./AppHeaderLink";
 import { cn } from '@/shared/client/utils/cn';
 import Link from 'next/link';
-import RiotDataProgress from '../Logs/RiotDataProgress';
 
 interface AppHeaderNavProps {
   className?: string;
@@ -80,7 +79,6 @@ const AppHeaderNav: FC<AppHeaderNavProps> = ({ className }) => {
           </>
         )}
       </div>
-      <RiotDataProgress />
     </nav>
   );
 };

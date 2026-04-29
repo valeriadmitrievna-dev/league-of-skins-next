@@ -1,10 +1,19 @@
 import { uniqBy } from "lodash";
 import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
 import { getCDragonPath } from "@/shared/api/utils/getCDragonPath";
-import { LangProgress } from "@/lib/riotProgress";
+import { LangProgress } from "@/widgets/Logs/types";
+import { getVersions } from "@/riot/versions.riot";
+import { getSkinlines } from "@/riot/skinlines.riot";
+import { getChampions } from "@/riot/champions.riot";
+import { config } from "@/lib/config";
+import { getChampion } from "@/riot/champion.riot";
 
 const fetchRiot = async (url: string) => {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: {
+      "Alt-Used": "",
+    },
+  });
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${url}`);
   return res.json();
 };
@@ -28,35 +37,47 @@ export const prepareRiotClient = async (
       onProgress(`[${lang}] Start loading`);
 
       // versions
-      onProgress(`[${lang}] Get versions`);
+      onProgress(`[${lang}] Get versions...`);
       onLangUpdate(lang, { categories: { versions: "loading" } });
-      const versions: string[] = await fetchRiot(`${dDragonUrl}/api/versions.json`);
-      onProgress(`[${lang}] Versions: [${versions.slice(0, 3).join(", ")}...]`);
+      const versions = await getVersions();
+
+      if (!versions?.length) {
+        onProgress(`[${lang}] Versions: ERROR`, "error");
+        onLangUpdate(lang, { categories: { versions: "error" } });
+        continue;
+      }
+
+      onProgress(`[${lang}] Versions: [${versions.slice(0, 3).join(", ")}...]`, "success");
       onLangUpdate(lang, { categories: { versions: "done" } });
 
-      const langLower = lang.toLowerCase();
-      const langCDragon = langLower === "en_us" ? "default" : langLower;
-
       // skinlines
-      onProgress(`[${lang}] Get skinlines`);
+      onProgress(`[${lang}] Get skinlines...`);
       onLangUpdate(lang, { categories: { skinlines: "loading" } });
-      const skinlines_latest = await fetchRiot(
-        `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${langCDragon}/v1/skinlines.json`,
-      );
-      const skinlines_pbe = await fetchRiot(
-        `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${langCDragon}/v1/skinlines.json`,
-      ).catch(() => []);
-      const skinlines = uniqBy([...skinlines_latest, ...skinlines_pbe], "id");
+      const skinlines_latest = await getSkinlines(lang, "latest");
+      const skinlines_pbe = await getSkinlines(lang, "pbe");
+      const skinlines = uniqBy([...(skinlines_latest ?? []), ...(skinlines_pbe ?? [])], "id");
+
+      if (!skinlines?.length) {
+        onProgress(`[${lang}] Skinlines: ERROR`, "error");
+        onLangUpdate(lang, { categories: { skinlines: "error" } });
+        continue;
+      }
+
       onProgress(`[${lang}] Skinlines: ${skinlines.length}`, "success");
       onLangUpdate(lang, { categories: { skinlines: "done" } });
 
       // champions
-      onProgress(`[${lang}] Get champions`);
+      onProgress(`[${lang}] Get champions...`);
       onLangUpdate(lang, { categories: { champions: "loading" } });
-      const { data: championsRaw } = await fetchRiot(`${dDragonUrl}/cdn/${versions[0]}/data/${lang}/champion.json`);
-      const riot_champions: any[] = Object.values(championsRaw);
+      const riot_champions = await getChampions(versions[0] ?? config.riotVersion, lang);
+
+      if (!riot_champions?.length) {
+        onProgress(`[${lang}] Champions: ERROR`, "error");
+        onLangUpdate(lang, { categories: { champions: "error" } });
+        continue;
+      }
+
       onProgress(`[${lang}] Champions: ${riot_champions.length}`, "success");
-      onProgress(`[${lang}] Get champions`);
       onLangUpdate(lang, { categories: { champions: "done" } });
 
       const champions = riot_champions.map((c) => ({
@@ -74,74 +95,75 @@ export const prepareRiotClient = async (
       const chromas: any[] = [];
 
       // champion skins
-      //   for (const champion of champions) {
-      //     onProgress(`[${lang}] Champion: ${champion.name}`)
+      for (const champion of champions) {
+        const champion_data = await getChampion(champion.key, lang, "latest");
+        const champion_data_pbe = await getChampion(champion.key, lang, "pbe");
 
-      //     const champion_data = await fetchRiot(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${langCDragon}/v1/champions/${champion.key}.json`).catch(() => null)
-      //     const champion_data_pbe = await fetchRiot(`${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${langCDragon}/v1/champions/${champion.key}.json`).catch(() => null)
+        if (!champion_data) {
+          onProgress(`[${lang}] ${champion.name}`, "error");
+          onLangUpdate(lang, { categories: { champions: "error" } });
+          break;
+        }
 
-      //     if (!champion_data) continue
+        const champion_skins_live = champion_data.skins.filter((s: any) => !s.isBase).map((s: any) => s.contentId);
 
-      //     const champion_skins_live = champion_data.skins.filter((s: any) => !s.isBase).map((s: any) => s.contentId)
+        const source_skins = champion_data_pbe
+          ? champion_data_pbe.skins.filter((s: any) => !s.isBase)
+          : champion_data.skins.filter((s: any) => !s.isBase);
 
-      //     const source_skins = champion_data_pbe
-      //       ? champion_data_pbe.skins.filter((s: any) => !s.isBase)
-      //       : champion_data.skins.filter((s: any) => !s.isBase)
+        for (const skin of source_skins) {
+          const pbe = champion_data_pbe ? !champion_skins_live.includes(skin.contentId) : false;
 
-      //     for (const skin of source_skins) {
-      //       const pbe = champion_data_pbe ? !champion_skins_live.includes(skin.contentId) : false
+          const skinChromas = (skin.chromas ?? []).map((chroma: any) => {
+            const regex = /.*\(([^)]+)\)/;
+            const match = chroma.name.match(regex);
+            const chromaRuName = chroma.name.split("'")[chroma.name.split("'").length - 3];
+            const chromaName = lang === "ru_RU" ? chromaRuName : (match?.[1] ?? chroma.name);
 
-      //       const skinChromas = (skin.chromas ?? []).map((chroma: any) => {
-      //         const regex = /.*\(([^)]+)\)/
-      //         const match = chroma.name.match(regex)
-      //         const chromaRuName = chroma.name.split("'")[chroma.name.split("'").length - 3]
-      //         const chromaName = lang === 'ru_RU' ? chromaRuName : (match?.[1] ?? chroma.name)
+            return {
+              id: String(chroma.id),
+              name: chromaName,
+              fullName: chroma.name,
+              contentId: chroma.contentId,
+              skinName: skin.name,
+              skinContentId: skin.contentId,
+              championId: champion_data.alias,
+              path: getCDragonPath(chroma.chromaPath, pbe ? "pbe" : "latest"),
+              colors: [...new Set(chroma.colors)],
+              pbe,
+            };
+          });
 
-      //         return {
-      //           id: String(chroma.id),
-      //           name: chromaName,
-      //           fullName: chroma.name,
-      //           contentId: chroma.contentId,
-      //           skinName: skin.name,
-      //           skinContentId: skin.contentId,
-      //           championId: champion_data.alias,
-      //           path: getCDragonPath(chroma.chromaPath, pbe ? 'pbe' : 'latest'),
-      //           colors: [...new Set(chroma.colors)],
-      //           pbe,
-      //         }
-      //       })
+          chromas.push(...skinChromas);
 
-      //       chromas.push(...skinChromas)
-
-      //       skins.push({
-      //         id: String(skin.id),
-      //         isLegacy: !!skin.isLegacy,
-      //         contentId: skin.contentId,
-      //         championId: champion.id,
-      //         championKey: champion.key,
-      //         championName: champion.name,
-      //         name: skin.name,
-      //         description: skin.description,
-      //         pbe,
-      //         image: {
-      //           centered: getCDragonPath(skin.splashPath, pbe ? 'pbe' : 'latest'),
-      //           uncentered: getCDragonPath(skin.uncenteredSplashPath, pbe ? 'pbe' : 'latest'),
-      //           loading: getCDragonPath(skin.loadScreenPath, pbe ? 'pbe' : 'latest'),
-      //         },
-      //         rarity: skin.rarity,
-      //         chromaPath: getCDragonPath(skin.chromaPath, pbe ? 'pbe' : 'latest'),
-      //         chromas: skinChromas,
-      //         skinlines: (skin.skinLines ?? [])
-      //           .map((sl: any) => {
-      //             const found = skinlines.find((s: any) => s.id === sl.id)
-      //             return found ? { id: String(sl.id), name: found.name } : null
-      //           })
-      //           .filter(Boolean),
-      //       })
-      //     }
-      //   }
-
-      onProgress(`[${lang}] Skins: ${skins.length}, Chromas: ${chromas.length}`, "success");
+          skins.push({
+            id: String(skin.id),
+            isLegacy: !!skin.isLegacy,
+            contentId: skin.contentId,
+            championId: champion.id,
+            championKey: champion.key,
+            championName: champion.name,
+            name: skin.name,
+            description: skin.description,
+            pbe,
+            image: {
+              centered: getCDragonPath(skin.splashPath, pbe ? "pbe" : "latest"),
+              uncentered: getCDragonPath(skin.uncenteredSplashPath, pbe ? "pbe" : "latest"),
+              loading: getCDragonPath(skin.loadScreenPath, pbe ? "pbe" : "latest"),
+            },
+            rarity: skin.rarity,
+            chromaPath: getCDragonPath(skin.chromaPath, pbe ? "pbe" : "latest"),
+            chromas: skinChromas,
+            skinlines: (skin.skinLines ?? [])
+              .map((sl: any) => {
+                const found = skinlines.find((s: any) => s.id === sl.id);
+                return found ? { id: String(sl.id), name: found.name } : null;
+              })
+              .filter(Boolean),
+          });
+        }
+        onProgress(`[${lang}] ${champion.name}`, 'success');
+      }
 
       // отправляем на сервер
       onProgress(`[${lang}] Saving...`);
@@ -158,6 +180,7 @@ export const prepareRiotClient = async (
       onLangUpdate(lang, { status: "done" });
     } catch (error) {
       onProgress(`[${lang}] ERROR: ${(error as Error).message}`, "error");
+      onLangUpdate(lang, { status: "error" });
     }
   }
 

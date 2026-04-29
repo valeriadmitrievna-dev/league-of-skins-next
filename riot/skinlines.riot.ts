@@ -7,7 +7,7 @@ export const getSkinlines = async (lang: string = 'default', server: 'latest' | 
 
   try {
     const res = await fetch(url)
-    const data = await res.json();
+    const data: any[] = await res.json();
     return data;
   } catch (error) {
     console.error(`[ERROR][getSkinlines][${server}]`, (error as any).message)
