@@ -60,6 +60,7 @@ const ChromaCard: FC<ChromaCardProps> = ({
         className={cn(
           "block relative group aspect-90/101 rounded-md overflow-hidden p-0",
           "transition-colors duration-700 group-data-state-on:bg-primary/10",
+          "group-data-state-on:border-primary/50!"
         )}
       >
         <ImageWrapperComponent href={`/skins/${data.skinContentId}`}>

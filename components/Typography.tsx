@@ -1,7 +1,5 @@
- 
+import { cn } from "@/shared/cn";
 import type { ComponentProps, FC } from "react";
-
-import { cn } from "@/shared/utils/cn";
 
 const TypographyH1: FC<ComponentProps<"h1">> = ({ children, className, ...props }) => {
   return (

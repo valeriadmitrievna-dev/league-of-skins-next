@@ -3,7 +3,7 @@ import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { FC, useEffect } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
-import SkinCard from "../SkinCard";
+import SkinCard from "../Skin/SkinCard";
 import { SearchParams } from "@/shared/types";
 import { useLocale } from "@/shared/providers/DictionaryProvider";
 import { useQueryParams } from '@/hooks/useQueryParams';

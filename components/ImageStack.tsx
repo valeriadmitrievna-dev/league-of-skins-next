@@ -1,6 +1,6 @@
 import { type FC } from "react";
 
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/shared/cn";
 
 import Image from "./Image";
 

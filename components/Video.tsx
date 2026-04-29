@@ -1,11 +1,11 @@
 import { VideoOffIcon } from "lucide-react";
 import { useEffect, useState, type ComponentProps, type FC } from "react";
 
-import { cn } from "@/shared/utils/cn";
-
 import Skeleton from "./Skeleton";
+import { cn } from "@/shared/cn";
 
 interface VideoProps extends ComponentProps<"video"> {
+  src?: string;
   showError?: boolean;
 }
 
@@ -13,8 +13,13 @@ const Video: FC<VideoProps> = ({ src, className, showError = true, ...props }) =
   const [state, setState] = useState<"loading" | "loaded" | "error">("loading");
 
   const loadVideo = async () => {
+    if (!src) {
+      setState("error");
+      return;
+    }
+
     try {
-      await fetch(src!);
+      await fetch(src);
       setState("loaded");
     } catch (error) {
       setState("error");
