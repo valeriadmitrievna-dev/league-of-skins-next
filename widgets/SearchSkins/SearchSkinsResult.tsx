@@ -3,24 +3,19 @@ import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { FC } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
-import { useQueryParams } from "@/hooks/useQueryParams";
+import SkinCard from "../SkinCard";
+import { SearchParams } from "@/shared/types";
 
-const SearchSkinsResult: FC = () => {
-  const { get } = useQueryParams();
+interface SearchSkinsResultProps {
+  params: SearchParams;
+}
 
-  const search = get("search");
-  const championId = get("championId");
-  const rarity = get("rarity");
-  const skinlineId = get("skinlineId");
-  const chromaId = get("chromaId");
-  const legacy = get("legacy");
-  const owned = get("owned");
-  const server = get("server");
+const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
+  const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;
 
   const { data, isLoading, loaderRef } = useInfiniteLoad({
     url: "/api/skins",
     params: {
-      lang: "ru",
       ...(search ? { search } : {}),
       ...(championId ? { championId } : {}),
       ...(skinlineId ? { skinlineId } : {}),
@@ -30,11 +25,12 @@ const SearchSkinsResult: FC = () => {
       owned: owned || "all",
       server: server || "all",
     },
+    headers: { Language: "ru" },
   });
 
   const renderItem = (item: unknown, _index: number) => {
     const skin = item as any;
-    return <div className="w-full h-90 bg-card">{skin.name}</div>;
+    return <SkinCard key={skin.id} data={skin} />;
   };
 
   return (

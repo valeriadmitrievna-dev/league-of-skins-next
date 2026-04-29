@@ -4,7 +4,7 @@ import { useState, type ChangeEvent, type ComponentProps, type FC } from "react"
 import { useDebounce } from "react-use";
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 type SearchSize = "default" | "sm" | "lg";
 

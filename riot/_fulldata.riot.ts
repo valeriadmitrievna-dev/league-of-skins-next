@@ -4,10 +4,10 @@ import { getSkinlines } from "../riot/skinlines.riot";
 import { getChampions } from "../riot/champions.riot";
 import { getChampion } from "../riot/champion.riot";
 import { uniqBy } from "lodash";
-import { getLangAppData } from "@/shared/api/utils/getLangAppData";
+import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { config } from "@/lib/config";
 import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
-import { getCDragonPath } from "@/shared/api/utils/getCDragonPath";
+import { getCDragonPath } from "@/shared/utils/getCDragonPath";
 
 export const getFullDataRiot = async (lang: string) => {
   setCategoryStatus(lang, "versions", "loading");

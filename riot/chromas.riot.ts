@@ -1,4 +1,4 @@
-import { getLangAppData } from "@/shared/api/utils/getLangAppData";
+import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { isEqual, uniqWith } from "lodash";
 
 export const getChromas = async (lang: string = "en_US") => {

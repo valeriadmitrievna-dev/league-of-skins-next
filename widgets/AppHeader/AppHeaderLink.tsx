@@ -1,7 +1,7 @@
 import type { FC } from "react";
 
 import Link from "next/link";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 interface AppHeaderLinkProps {
   className?: string;

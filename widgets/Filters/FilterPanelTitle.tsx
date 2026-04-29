@@ -2,7 +2,7 @@
 import type { FC } from "react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 interface FilterPanelTitleProps {
   title?: string;

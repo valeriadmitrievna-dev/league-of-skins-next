@@ -1,7 +1,7 @@
 import { uniqueId } from 'lodash';
 import type { ComponentProps, FC } from "react";
 
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 interface SkeletonProps extends ComponentProps<"div"> {
   rounded?: boolean;

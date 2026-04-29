@@ -4,7 +4,7 @@ import { useWindowSize } from "react-use";
 
 import Skeleton from "@/components/Skeleton";
 import { BREAKPOINTS } from "@/shared/constants/styles";
-import { cn } from '@/shared/client/utils/cn';
+import { cn } from '@/shared/cn';
 
 interface VirtualizedGridProps {
   items: unknown[];

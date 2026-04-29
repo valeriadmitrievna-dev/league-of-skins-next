@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 // import { UserSettings } from "../UserSettings";
 // import AppHeaderItem from './AppHeaderItem';
 import AppHeaderLink from "./AppHeaderLink";
-import { cn } from '@/shared/client/utils/cn';
+import { cn } from '@/shared/cn';
 import Link from 'next/link';
 
 interface AppHeaderNavProps {

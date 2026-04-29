@@ -5,7 +5,7 @@ import { Dialog as DialogPrimitive } from "radix-ui";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 function Dialog({ ...props }: React.ComponentProps<typeof DialogPrimitive.Root>) {
   return <DialogPrimitive.Root data-slot="dialog" {...props} />;

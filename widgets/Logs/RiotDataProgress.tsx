@@ -1,14 +1,14 @@
 "use client";
 import { FC, Fragment, useRef, useState } from "react";
 
-import RiotIcon from "@/shared/client/assets/riot-games.svg";
+import RiotIcon from "@/assets/riot-games.svg";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RiotDataProgressLangCard from "./RiotDataProgressLangCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { prepareRiotClient } from "@/shared/client/riot/_prepare.riot";
+import { prepareRiotClient } from "@/shared/riot/_prepare.riot";
 import { LangProgress, LogType, RiotProgress } from "./types";
 
 const globalBadge = (status: RiotProgress["status"]) =>
@@ -42,7 +42,7 @@ const RiotDataProgress: FC = () => {
       ]);
     };
 
-    await prepareRiotClient(["en_US"], log, (lang, update) => {
+    await prepareRiotClient(["en_US", "ru_RU"], log, (lang, update) => {
       setLanguages((prev) => {
         const prevLang = prev[lang] ?? {};
         return {

@@ -1,6 +1,6 @@
 import { FC } from "react";
 
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 import { Spinner } from '@/components/ui/spinner';
 import { CategoryStatus, LangProgress, LangStatus } from './types';
 

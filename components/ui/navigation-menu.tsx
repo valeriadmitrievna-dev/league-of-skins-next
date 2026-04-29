@@ -3,7 +3,7 @@ import { ChevronDownIcon } from "lucide-react"
 import { NavigationMenu as NavigationMenuPrimitive } from "radix-ui"
 import * as React from "react"
 
-import { cn } from '@/shared/client/utils/cn'
+import { cn } from '@/shared/cn'
 
 function NavigationMenu({
   className,

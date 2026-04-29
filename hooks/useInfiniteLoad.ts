@@ -4,11 +4,12 @@ import { useIntersection } from "react-use";
 interface InfiniteLoad {
   url: string;
   params?: Record<string, string | undefined>;
+  headers?: HeadersInit;
   size?: number;
   skip?: boolean;
 }
 
-const useInfiniteLoad = <T extends Record<string, unknown>>({ url, params = {}, size = 20, skip }: InfiniteLoad) => {
+const useInfiniteLoad = <T extends Record<string, unknown>>({ url, params = {}, headers = {}, size = 30, skip }: InfiniteLoad) => {
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -35,7 +36,7 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({ url, params = {}, 
       size: String(size),
     });
 
-    const res = await fetch(`${url}?${query}`);
+    const res = await fetch(`${url}?${query}`, { headers });
     const result = await res.json();
 
     if (count !== result.count) setCount(result.count);
@@ -55,7 +56,7 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({ url, params = {}, 
     setData([]);
     setPage(1);
     setHasMore(true);
-  }, [JSON.stringify(params)]);
+  }, [JSON.stringify({ ...params, ...headers })]);
 
   useEffect(() => {
     if (intersection?.isIntersecting) {

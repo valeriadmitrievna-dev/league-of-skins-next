@@ -1,9 +1,8 @@
 // _prepare.riot.ts
 import { differenceInDays } from "date-fns";
-import { clearAppDataCache, getLangAppData } from "@/shared/api/utils/getLangAppData";
+import { clearAppDataCache, getLangAppData } from "@/shared/utils/getLangAppData";
 import { config } from "@/lib/config";
-import { baseFolder } from "@/shared/api/constants";
-import { saveToJson } from "@/shared/api/utils/getFileData";
+import { saveToJson } from "@/shared/utils/getFileData";
 import { getFullDataRiot } from "./_fulldata.riot";
 import { setGlobalStatus, setLangStatus, progressLog, initLang, resetProgress } from "@/lib/riotProgress";
 import { getLanguages } from "./languages.riot";

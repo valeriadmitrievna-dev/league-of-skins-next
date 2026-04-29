@@ -1,6 +1,6 @@
 import type { ComponentProps, FC } from "react";
 
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 interface AppHeaderLinkProps extends ComponentProps<"span"> {
   className?: string;

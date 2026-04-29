@@ -14,19 +14,22 @@ import {
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { RARITIES } from "@/shared/constants/rarities";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 
 import { useQueryParams } from "@/hooks/useQueryParams";
 import Skeleton from "@/components/Skeleton";
-import FilterPanelTitle from '../Filters/FilterPanelTitle';
-import FilterToggleGroup from '../Filters/FilterToggleGroup';
+import FilterPanelTitle from "../Filters/FilterPanelTitle";
+import FilterToggleGroup from "../Filters/FilterToggleGroup";
 
 interface SearchFiltersProps {
+  champions: any[];
+  skinlines: any[];
+  rarities: string[];
+  chromas: any[];
   className?: string;
 }
 
-const SearchSkinsFilters: FC<SearchFiltersProps> = ({ className }) => {
-  // const { t, i18n } = useTranslation();
+const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rarities, chromas, className }) => {
   const t = (key: string) => key;
   const isAuth = false;
 
@@ -39,24 +42,6 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ className }) => {
     "chromaId",
     "server",
   ]);
-
-  // const { data: rarities = [], isLoading: isRaritiesLoading } = useGetRaritiesQuery();
-  // const { data: championsData, isLoading: isChampionsLoading } = useGetChampionsQuery({ lang: i18n.language });
-  // const { data: skinlinesData, isLoading: isSkinlinesLoading } = useGetSkinlinesQuery({ lang: i18n.language });
-  // const { data: chromasData, isLoading: isChromasLoading } = useGetChromasQuery({ lang: i18n.language });
-
-  // const { data: champions } = getODataWithDefault(championsData);
-  // const { data: skinlines } = getODataWithDefault(skinlinesData);
-  // const { data: chromas } = getODataWithDefault(chromasData);
-  const isRaritiesLoading = false;
-  const isChampionsLoading = false;
-  const isSkinlinesLoading = false;
-  const isChromasLoading = false;
-
-  const rarities: any[] = [];
-  const champions: any[] = [];
-  const skinlines: any[] = [];
-  const chromas: any[] = [];
 
   const legacyOptions = [
     { value: "all", label: t("filters.all") },
@@ -105,105 +90,89 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ className }) => {
         />
         <Field className="gap-2">
           <Label className="text-primary/80">{t("filters.champion")}</Label>
-          {isChampionsLoading ? (
-            <Skeleton className="h-9" />
-          ) : (
-            <Combobox
-              items={orderBy(champions, "name")}
-              value={get("championId")}
-              itemToStringLabel={(value: string) => champions.find((c) => c.id === value)?.name ?? value}
-              onValueChange={(value) => update("championId", value)}
-            >
-              <ComboboxInput placeholder={t("shared.search")} showClear />
-              <ComboboxContent className="p-1 py-2">
-                <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
-                <ComboboxList className="scrollbar p-0 px-1">
-                  {(item) => (
-                    <ComboboxItem key={item.id} value={item.id.toString()}>
-                      {item.name}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          )}
+          <Combobox
+            items={orderBy(champions, "name")}
+            value={get("championId")}
+            itemToStringLabel={(value: string) => champions.find((c) => c.id === value)?.name ?? value}
+            onValueChange={(value) => update("championId", value)}
+          >
+            <ComboboxInput placeholder={t("shared.search")} showClear />
+            <ComboboxContent className="p-1 py-2">
+              <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
+              <ComboboxList className="scrollbar p-0 px-1">
+                {(item) => (
+                  <ComboboxItem key={item.id} value={item.id.toString()}>
+                    {item.name}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </Field>
         <Field className="gap-2">
           <Label className="text-primary/80">{t("filters.rarity")}</Label>
-          {isRaritiesLoading ? (
-            <Skeleton className="h-9" />
-          ) : (
-            <Combobox
-              items={rarities}
-              value={get("rarity")}
-              itemToStringLabel={(value: string) => t(`rarity.${rarities.find((c) => c === value)}`)}
-              onValueChange={(value) => update("rarity", value)}
-            >
-              <ComboboxInput placeholder={t("shared.search")} showClear />
-              <ComboboxContent className="p-1 py-2 w-(--radix-popover-trigger-width)">
-                <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
-                <ComboboxList className="scrollbar p-0 px-1">
-                  {(item) => (
-                    <ComboboxItem key={item} value={item}>
-                      <span className="block rounded-sm size-3" style={{ background: RARITIES[item]?.color }} />
-                      {t(`rarity.${item}`)}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          )}
+          <Combobox
+            items={rarities}
+            value={get("rarity")}
+            itemToStringLabel={(value: string) => t(`rarity.${rarities.find((c) => c === value)}`)}
+            onValueChange={(value) => update("rarity", value)}
+          >
+            <ComboboxInput placeholder={t("shared.search")} showClear />
+            <ComboboxContent className="p-1 py-2 w-(--radix-popover-trigger-width)">
+              <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
+              <ComboboxList className="scrollbar p-0 px-1">
+                {(item) => (
+                  <ComboboxItem key={item} value={item}>
+                    <span className="block rounded-sm size-3" style={{ background: RARITIES[item]?.color }} />
+                    {t(`rarity.${item}`)}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </Field>
         <Field className="gap-2">
           <Label className="text-primary/80">{t("filters.skinline")}</Label>
-          {isSkinlinesLoading ? (
-            <Skeleton className="h-9" />
-          ) : (
-            <Combobox
-              items={orderBy(skinlines, "name")}
-              value={get("skinlineId")}
-              itemToStringLabel={(value: string) => skinlines.find((c) => c.id.toString() === value)?.name ?? value}
-              onValueChange={(value) => update("skinlineId", value)}
-            >
-              <ComboboxInput placeholder={t("shared.search")} showClear />
-              <ComboboxContent className="p-1 py-2">
-                <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
-                <ComboboxList className="scrollbar p-0 px-1">
-                  {(item) => (
-                    <ComboboxItem key={item.id} value={item.id.toString()}>
-                      {item.name}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          )}
+          <Combobox
+            items={orderBy(skinlines, "name")}
+            value={get("skinlineId")}
+            itemToStringLabel={(value: string) => skinlines.find((c) => c.id.toString() === value)?.name ?? value}
+            onValueChange={(value) => update("skinlineId", value)}
+          >
+            <ComboboxInput placeholder={t("shared.search")} showClear />
+            <ComboboxContent className="p-1 py-2">
+              <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
+              <ComboboxList className="scrollbar p-0 px-1">
+                {(item) => (
+                  <ComboboxItem key={item.id} value={item.id.toString()}>
+                    {item.name}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </Field>
         <Field className="gap-2">
           <Label className="text-primary/80">{t("filters.chroma")}</Label>
-          {isChromasLoading ? (
-            <Skeleton className="h-9" />
-          ) : (
-            <Combobox
-              items={orderBy(chromas, "name")}
-              value={get("chromaId")}
-              itemToStringLabel={(value: string) => chromas.find((c) => c.id.toString() === value)?.name ?? value}
-              onValueChange={(value) => update("chromaId", value)}
-            >
-              <ComboboxInput placeholder={t("shared.search")} showClear />
-              <ComboboxContent className="p-1 py-2">
-                <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
-                <ComboboxList className="scrollbar p-0 px-1">
-                  {(item) => (
-                    <ComboboxItem key={item.id} value={item.id.toString()}>
-                      <ChromaColor colors={item.colors} className="size-5 rounded-sm border-none" />
-                      {item.name}
-                    </ComboboxItem>
-                  )}
-                </ComboboxList>
-              </ComboboxContent>
-            </Combobox>
-          )}
+          <Combobox
+            items={orderBy(chromas, "name")}
+            value={get("chromaId")}
+            itemToStringLabel={(value: string) => chromas.find((c) => c.id.toString() === value)?.name ?? value}
+            onValueChange={(value) => update("chromaId", value)}
+          >
+            <ComboboxInput placeholder={t("shared.search")} showClear />
+            <ComboboxContent className="p-1 py-2">
+              <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
+              <ComboboxList className="scrollbar p-0 px-1">
+                {(item) => (
+                  <ComboboxItem key={item.id} value={item.id.toString()}>
+                    <ChromaColor colors={item.colors} className="size-5 rounded-sm border-none" />
+                    {item.name}
+                  </ComboboxItem>
+                )}
+              </ComboboxList>
+            </ComboboxContent>
+          </Combobox>
         </Field>
         {/* <p className="block text-sm text-muted-foreground">
           {t("filters.found_count", { count: skinsFound })} <span className="font-medium">{skinsFound}</span>{" "}

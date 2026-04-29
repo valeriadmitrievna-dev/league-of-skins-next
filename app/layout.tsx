@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
-import "@/shared/client/styles/index.css";
+import "@/styles/index.css";
 import { FC, PropsWithChildren } from "react";
 import Background from '@/components/Background';
 

@@ -3,7 +3,7 @@ import { Fragment, type FC } from "react";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { cn } from "@/shared/client/utils/cn";
+import { cn } from "@/shared/cn";
 import { OptionItem } from "@/shared/types";
 
 interface FilterToggleGroupProps {

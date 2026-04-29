@@ -1,4 +1,4 @@
-import { getLangAppData } from '@/shared/api/utils/getLangAppData';
+import { getLangAppData } from '@/shared/utils/getLangAppData';
 
 export const getRarities = async () => {
   try {
