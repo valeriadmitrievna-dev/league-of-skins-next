@@ -11,7 +11,9 @@ const SearchChromas: FC<{ searchParams: SearchParams }> = async ({ searchParams 
   const appData = await getLangAppData("ru_RU");
   const champions = appData?.champions ?? [];
   const skins =
-    !appData || !params.championId ? [] : (appData.skins ?? []).filter((skin: any) => skin.championId === params.championId);
+    !appData || !params.championId
+      ? []
+      : (appData.skins ?? []).filter((skin: any) => skin.championId === params.championId && skin.chromas.length);
 
   return (
     <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">

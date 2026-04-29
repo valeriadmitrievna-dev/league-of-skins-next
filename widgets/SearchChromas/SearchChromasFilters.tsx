@@ -31,7 +31,13 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, classN
   const t = (key: string) => key;
   const isAuth = false;
 
-  const { get, update, reset, hasActive } = useQueryParams(["owned", "skin", "championId", "skinContentId", "server"]);
+  const { get, update, updateMany, reset, hasActive } = useQueryParams([
+    "owned",
+    "skin",
+    "championId",
+    "skinContentId",
+    "server",
+  ]);
 
   const ownedOptions = [
     { value: "all", label: t("filters.all") },
@@ -52,8 +58,7 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, classN
   ];
 
   const changeChampionIdHandler = (value: string | null) => {
-    update("skinContentId");
-    return update("championId", value);
+    updateMany({ skinContentId: null, championId: value });
   };
 
   return (

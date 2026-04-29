@@ -1,75 +1,89 @@
-import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { useIntersection } from "react-use";
+import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
+import { useIntersection } from 'react-use'
 
 interface InfiniteLoad {
-  url: string;
-  params?: Record<string, string | undefined>;
-  headers?: HeadersInit;
-  size?: number;
-  skip?: boolean;
+  url: string
+  params?: Record<string, string | undefined>
+  headers?: HeadersInit
+  size?: number
+  skip?: boolean
 }
 
-const useInfiniteLoad = <T extends Record<string, unknown>>({ url, params = {}, headers = {}, size = 30, skip }: InfiniteLoad) => {
-  const [page, setPage] = useState(1);
-  const [isLoading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+const useInfiniteLoad = <T extends Record<string, unknown>>({
+  url,
+  params = {},
+  headers = {},
+  size = 30,
+  skip,
+}: InfiniteLoad) => {
+  const [page, setPage] = useState(1)
+  const [isLoading, setLoading] = useState(false)
+  const [hasMore, setHasMore] = useState(true)
+  const [count, setCount] = useState(0)
+  const [data, setData] = useState<T[]>([])
 
-  const [count, setCount] = useState(1);
-  const [data, setData] = useState<T[]>([]);
+  const ref = useRef<HTMLDivElement | null>(null)
+  const abortRef = useRef<AbortController | null>(null)
 
-  const ref = useRef<HTMLDivElement | null>(null);
+  const paramsKey = JSON.stringify({ ...params, ...headers })
 
   const intersection = useIntersection(ref as RefObject<HTMLDivElement>, {
     root: null,
-    rootMargin: "200px",
+    rootMargin: '200px',
     threshold: 0,
-  });
+  })
 
-  const loadData = useCallback(async (overridePage?: number) => {
-    if (isLoading || skip || data.length >= count) return;
+  const loadData = useCallback(async (currentPage: number) => {
+    if (skip) return
 
-    setLoading(true);
-    const currentPage = overridePage ?? page;
-    const query = new URLSearchParams({
-      ...params,
-      page: String(currentPage),
-      size: String(size),
-    });
+    abortRef.current?.abort()
+    const controller = new AbortController()
+    abortRef.current = controller
 
-    const res = await fetch(`${url}?${query}`, { headers });
-    const result = await res.json();
+    setLoading(true)
 
-    if (count !== result.count) setCount(result.count);
-    setData((prev) => [...prev, ...result.data]);
+    try {
+      const query = new URLSearchParams({
+        ...params,
+        page: String(currentPage),
+        size: String(size),
+      })
 
-    const nextHasMore = page * size < result.count;
-    setHasMore(nextHasMore);
+      const res = await fetch(`${url}?${query}`, {
+        headers,
+        signal: controller.signal,
+      })
 
-    if (nextHasMore) {
-      setPage((p) => p + 1);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+
+      const result = await res.json()
+
+      setCount(result.count)
+      setData(prev => currentPage === 1 ? result.data : [...prev, ...result.data])
+      setHasMore(currentPage * size < result.count)
+      setPage(currentPage + 1)
+    } catch (e: any) {
+      if (e.name !== 'AbortError') console.error(e)
+    } finally {
+      setLoading(false)
     }
-
-    setLoading(false);
-  }, [url, page, size, params, count, skip]);
+  }, [url, paramsKey, size, skip])
 
   useEffect(() => {
-    setData([]);
-    setPage(1);
-    setHasMore(true);
-  }, [JSON.stringify({ ...params, ...headers })]);
+    setData([])
+    setPage(1)
+    setHasMore(true)
+    setCount(0)
+    loadData(1)
+  }, [paramsKey, url])
 
   useEffect(() => {
-    if (intersection?.isIntersecting) {
-      loadData();
+    if (intersection?.isIntersecting && hasMore && !isLoading) {
+      loadData(page)
     }
-  }, [intersection?.isIntersecting, loadData]);
+  }, [intersection?.isIntersecting])
 
-  return {
-    data,
-    isLoading,
-    loaderRef: ref,
-    hasMore,
-  };
-};
+  return { data, isLoading, loaderRef: ref, hasMore, count }
+}
 
-export default useInfiniteLoad;
+export default useInfiniteLoad
