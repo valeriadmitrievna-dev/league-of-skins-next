@@ -20,7 +20,8 @@ import { useQueryParams } from "@/hooks/useQueryParams";
 import Skeleton from "@/components/Skeleton";
 import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
-import { useDictionary } from '@/shared/providers/DictionaryProvider';
+import { useDictionary } from "@/shared/providers/DictionaryProvider";
+import { plural } from "@/shared/utils/plural";
 
 interface SearchFiltersProps {
   champions: any[];
@@ -34,6 +35,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
   const t = useDictionary();
   const isAuth = false;
 
+  const { get: getCount } = useQueryParams();
   const { get, update, reset, hasActive } = useQueryParams([
     "owned",
     "legacy",
@@ -44,22 +46,24 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
     "server",
   ]);
 
+  const count = Number(getCount("count") ?? 0);
+
   const legacyOptions = [
     { value: "all", label: t.filters.all },
-    { value: "on", label: t.filters['legacy-on'] },
-    { value: "off", label: t.filters['legacy-off'] },
+    { value: "on", label: t.filters["legacy-on"] },
+    { value: "off", label: t.filters["legacy-off"] },
   ];
 
   const ownedOptions = [
     { value: "all", label: t.filters.all },
-    { value: "on", label: t.filters['owned-on'] },
-    { value: "off", label: t.filters['owned-off'] },
+    { value: "on", label: t.filters["owned-on"] },
+    { value: "off", label: t.filters["owned-off"] },
   ];
 
   const serverOptions = [
     { value: "all", label: t.filters.all },
-    { value: "latest", label: t.filters['server-latest'] },
-    { value: "pbe", label: t.filters['server-pbe'] },
+    { value: "latest", label: t.filters["server-latest"] },
+    { value: "pbe", label: t.filters["server-pbe"] },
   ];
 
   return (
@@ -87,7 +91,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
           onChange={(value) => update("server", value)}
           options={serverOptions}
           className="grid grid-cols-[20%_1fr_1fr]"
-          label={t.filters['server-label']}
+          label={t.filters["server-label"]}
         />
         <Field className="gap-2">
           <Label className="text-primary/80">{t.filters.champion}</Label>
@@ -99,7 +103,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
           >
             <ComboboxInput placeholder={t.shared.search} showClear />
             <ComboboxContent className="p-1 py-2">
-              <ComboboxEmpty>{t.shared['no-items-found']}</ComboboxEmpty>
+              <ComboboxEmpty>{t.shared["no-items-found"]}</ComboboxEmpty>
               <ComboboxList className="scrollbar p-0 px-1">
                 {(item) => (
                   <ComboboxItem key={item.id} value={item.id.toString()}>
@@ -120,7 +124,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
           >
             <ComboboxInput placeholder={t.shared.search} showClear />
             <ComboboxContent className="p-1 py-2 w-(--radix-popover-trigger-width)">
-              <ComboboxEmpty>{t.shared['no-items-found']}</ComboboxEmpty>
+              <ComboboxEmpty>{t.shared["no-items-found"]}</ComboboxEmpty>
               <ComboboxList className="scrollbar p-0 px-1">
                 {(item) => (
                   <ComboboxItem key={item} value={item}>
@@ -142,7 +146,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
           >
             <ComboboxInput placeholder={t.shared.search} showClear />
             <ComboboxContent className="p-1 py-2">
-              <ComboboxEmpty>{t.shared['no-items-found']}</ComboboxEmpty>
+              <ComboboxEmpty>{t.shared["no-items-found"]}</ComboboxEmpty>
               <ComboboxList className="scrollbar p-0 px-1">
                 {(item) => (
                   <ComboboxItem key={item.id} value={item.id.toString()}>
@@ -163,7 +167,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
           >
             <ComboboxInput placeholder={t.shared.search} showClear />
             <ComboboxContent className="p-1 py-2">
-              <ComboboxEmpty>{t.shared['no-items-found']}</ComboboxEmpty>
+              <ComboboxEmpty>{t.shared["no-items-found"]}</ComboboxEmpty>
               <ComboboxList className="scrollbar p-0 px-1">
                 {(item) => (
                   <ComboboxItem key={item.id} value={item.id.toString()}>
@@ -175,10 +179,21 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
             </ComboboxContent>
           </Combobox>
         </Field>
-        {/* <p className="block text-sm text-muted-foreground">
-          {t("filters.found_count", { count: skinsFound })} <span className="font-medium">{skinsFound}</span>{" "}
-          {t("shared.skin", { count: skinsFound })}
-        </p> */}
+        <p className="block text-sm text-muted-foreground">
+          {plural(count, {
+            _one: t.filters.found_count_one,
+            _few: t.filters.found_count_few,
+            _many: t.filters.found_count_many,
+            _other: t.filters.found_count_other,
+          })}
+          <span className="font-medium"> {count} </span>
+          {plural(count, {
+            _one: t.shared.skin_one,
+            _few: t.shared.skin_few,
+            _many: t.shared.skin_many,
+            _other: t.shared.skin_other,
+          })}
+        </p>
       </div>
     </div>
   );

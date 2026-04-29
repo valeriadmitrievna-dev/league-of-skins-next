@@ -1,11 +1,12 @@
 "use client";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import SkinCard from "../SkinCard";
 import { SearchParams } from "@/shared/types";
-import { useLocale } from '@/shared/providers/DictionaryProvider';
+import { useLocale } from "@/shared/providers/DictionaryProvider";
+import { useQueryParams } from '@/hooks/useQueryParams';
 
 interface SearchSkinsResultProps {
   params: SearchParams;
@@ -13,9 +14,10 @@ interface SearchSkinsResultProps {
 
 const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
   const locale = useLocale();
+  const { update } = useQueryParams();
   const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;
 
-  const { data, isLoading, loaderRef } = useInfiniteLoad({
+  const { data, isLoading, loaderRef, count } = useInfiniteLoad({
     url: "/api/skins",
     params: {
       ...(search ? { search } : {}),
@@ -34,6 +36,10 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
     const skin = item as any;
     return <SkinCard key={skin.id} data={skin} />;
   };
+
+  useEffect(() => {
+    update("count", count ? String(count) : null);
+  }, [count]);
 
   return (
     <>

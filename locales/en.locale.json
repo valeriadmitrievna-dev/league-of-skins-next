@@ -79,6 +79,10 @@
     "searchBy_skinline": "Search by skinline",
     "searchBy_chroma": "Search by chroma",
     "found_count": "Found",
+    "found_count_one": "Found",
+    "found_count_few": "Found",
+    "found_count_many": "Found",
+    "found_count_other": "Found",
     "server-label": "Game server",
     "server-latest": "Main",
     "server-pbe": "PBE"
