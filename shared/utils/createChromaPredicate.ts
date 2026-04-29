@@ -1,9 +1,8 @@
-import { IUser } from '../schemas/user.schema';
-import { SearchChromasRequest } from '../types';
 import { checkSearch } from './checkSearch';
-import { LocalChroma } from '../models/chroma.model';
 
-export const createChromaPredicate = (query: SearchChromasRequest, user: IUser | null) => {
+type LocalChroma = any;
+
+export const createChromaPredicate = (query: any, user: any | null) => {
   query.owned ??= 'all';
   query.skin ??= 'all';
 
