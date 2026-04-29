@@ -20,6 +20,7 @@ import { useQueryParams } from "@/hooks/useQueryParams";
 import Skeleton from "@/components/Skeleton";
 import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
+import { useDictionary } from "@/shared/providers/DictionaryProvider";
 
 interface SearchFiltersProps {
   champions: any[];
@@ -28,7 +29,7 @@ interface SearchFiltersProps {
 }
 
 const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, className }) => {
-  const t = (key: string) => key;
+  const t = useDictionary();
   const isAuth = false;
 
   const { get, update, updateMany, reset, hasActive } = useQueryParams([
@@ -40,21 +41,21 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, classN
   ]);
 
   const ownedOptions = [
-    { value: "all", label: t("filters.all") },
-    { value: "on", label: t("filters.owned-on") },
-    { value: "off", label: t("filters.owned-off") },
+    { value: "all", label: t.filters.all },
+    { value: "on", label: t.filters["owned-on"] },
+    { value: "off", label: t.filters["owned-off"] },
   ];
 
   const skinsOptions = [
-    { value: "all", label: t("filters.all") },
-    { value: "on", label: t("filters.skin-on") },
-    { value: "off", label: t("filters.skin-off") },
+    { value: "all", label: t.filters.all },
+    { value: "on", label: t.filters["skin-on"] },
+    { value: "off", label: t.filters["skin-off"] },
   ];
 
   const serverOptions = [
-    { value: "all", label: t("filters.all") },
-    { value: "latest", label: t("filters.server-latest") },
-    { value: "pbe", label: t("filters.server-pbe") },
+    { value: "all", label: t.filters.all },
+    { value: "latest", label: t.filters["server-latest"] },
+    { value: "pbe", label: t.filters["server-pbe"] },
   ];
 
   const changeChampionIdHandler = (value: string | null) => {
@@ -86,19 +87,19 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, classN
           onChange={(value) => update("server", value)}
           options={serverOptions}
           className="grid grid-cols-[20%_1fr_1fr]"
-          label={t("filters.server-label")}
+          label={t.filters["server-label"]}
         />
         <Field className="gap-2">
-          <Label className="text-primary/80">{t("filters.champion")}</Label>
+          <Label className="text-primary/80">{t.filters.champion}</Label>
           <Combobox
             items={orderBy(champions, "name")}
             value={get("championId")}
             itemToStringLabel={(value: string) => champions.find((c) => c.id === value)?.name ?? value}
             onValueChange={changeChampionIdHandler}
           >
-            <ComboboxInput placeholder={t("shared.search")} showClear />
+            <ComboboxInput placeholder={t.shared.search} showClear />
             <ComboboxContent className="p-1 py-2">
-              <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
+              <ComboboxEmpty>{t.shared["no-items-found"]}</ComboboxEmpty>
               <ComboboxList className="scrollbar p-0 px-1">
                 {(item) => (
                   <ComboboxItem key={item.id} value={item.id}>
@@ -111,16 +112,16 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, classN
         </Field>
         {!!get("championId") && (
           <Field className="gap-2">
-            <Label className="text-primary/80">{t("filters.skin")}</Label>
+            <Label className="text-primary/80">{t.filters.skin}</Label>
             <Combobox
               items={orderBy(skins, "name")}
               value={get("skinContentId")}
               itemToStringLabel={(value: string) => skins.find((c) => c.contentId === value)?.name ?? value}
               onValueChange={(value) => update("skinContentId", value)}
             >
-              <ComboboxInput placeholder={t("shared.search")} showClear />
+              <ComboboxInput placeholder={t.shared.search} showClear />
               <ComboboxContent className="p-1 py-2">
-                <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
+                <ComboboxEmpty>{t.shared["no-items-found"]}</ComboboxEmpty>
                 <ComboboxList className="scrollbar p-0 px-1">
                   {(item) => (
                     <ComboboxItem key={item.contentId} value={item.contentId}>

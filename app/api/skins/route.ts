@@ -12,6 +12,7 @@ export async function GET(req: NextRequest) {
 
     const originAppData = await getLangAppData();
     const appData = await getLangAppData(lang);
+    if (!appData) return Response.json({ count: 0, data: [] })
     
     const predicate = await createSkinPredicate(params, null, lang);
     const filteredSkins = appData.skins.filter(predicate);

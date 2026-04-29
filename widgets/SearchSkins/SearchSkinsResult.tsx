@@ -5,12 +5,14 @@ import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import SkinCard from "../SkinCard";
 import { SearchParams } from "@/shared/types";
+import { useLocale } from '@/shared/providers/DictionaryProvider';
 
 interface SearchSkinsResultProps {
   params: SearchParams;
 }
 
 const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
+  const locale = useLocale();
   const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;
 
   const { data, isLoading, loaderRef } = useInfiniteLoad({
@@ -25,7 +27,7 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
       owned: owned || "all",
       server: server || "all",
     },
-    headers: { Language: "ru" },
+    headers: { Language: locale },
   });
 
   const renderItem = (item: unknown, _index: number) => {

@@ -1,13 +1,13 @@
-import { BookmarkIcon, HeartIcon } from "lucide-react";
+"use client";
 import { type FC } from "react";
 
 import ChromaColor from "@/components/ChromaColor";
 import { Badge } from "@/components/ui/badge";
-import { Spinner } from "@/components/ui/spinner";
 import { RARITIES } from "@/shared/constants/rarities";
 import { cn } from "@/shared/cn";
 import Link from "next/link";
-import Image from '@/components/Image';
+import Image from "@/components/Image";
+import { useDictionary } from "@/shared/providers/DictionaryProvider";
 
 interface SkinCardProps {
   className?: string;
@@ -19,7 +19,7 @@ interface SkinCardProps {
 }
 
 const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButton, toggleOwnedButton, wishlistId }) => {
-  const t = (key: string) => key;
+  const t = useDictionary();
 
   //   const toggleOwnedHandler = async () => {
   //     if (owned) {
@@ -74,7 +74,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
             className="absolute z-2 top-1.5 left-1.5 text-neutral-800"
             style={{ background: RARITIES[data.rarity]?.color }}
           >
-            {t(`rarity.${data.rarity}`)}
+            {t.rarity[data.rarity as keyof typeof t.rarity]}
           </Badge>
         )}
 
@@ -88,7 +88,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
 
         {!!data.chromas.length && (
           <div className="flex items-center flex-wrap absolute left-1.5 bottom-1.5 z-2 gap-x-1">
-            {data.chromas.slice(0, 3).map((chroma) => (
+            {data.chromas.slice(0, 3).map((chroma: any) => (
               <ChromaColor key={chroma.id} colors={chroma.colors} className="size-5 rounded-sm border-none" />
             ))}
             {data.chromas.length > 3 && (

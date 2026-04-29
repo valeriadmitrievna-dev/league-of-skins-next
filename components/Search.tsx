@@ -5,6 +5,7 @@ import { useDebounce } from "react-use";
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { cn } from "@/shared/cn";
+import { useDictionary } from '@/shared/providers/DictionaryProvider';
 
 type SearchSize = "default" | "sm" | "lg";
 
@@ -15,7 +16,7 @@ interface SearchProps extends Omit<ComponentProps<"input">, "size"> {
 }
 
 const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ...inputProps }) => {
-  const t = (key: string) => key;
+  const t = useDictionary();
 
   const [searchInput, setSearchInput] = useState(String(value) ?? "");
 
@@ -47,7 +48,7 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ..
   return (
     <InputGroup className={cn(getGroupClassName(size), "group border-foreground/15", className)}>
       <InputGroupInput
-        placeholder={t("shared.search")}
+        placeholder={t.shared.search}
         className="focus:placeholder:text-primary/50!"
         {...inputProps}
         value={searchInput}

@@ -3,15 +3,16 @@ import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { FC } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
-import SkinCard from "../SkinCard";
 import { SearchParams } from "@/shared/types";
 import ChromaCard from '../ChromaCard';
+import { useLocale } from '@/shared/providers/DictionaryProvider';
 
 interface SearchChromasResultProps {
   params: SearchParams;
 }
 
 const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
+  const locale = useLocale();
   const { search, championId, skinContentId, skin, owned, server } = params;
 
   const { data, isLoading, loaderRef } = useInfiniteLoad({
@@ -24,7 +25,7 @@ const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
       owned: owned || "all",
       server: server || "all",
     },
-    headers: { Language: "ru" },
+    headers: { Language: locale },
   });
 
   const renderItem = (item: unknown, _index: number) => {

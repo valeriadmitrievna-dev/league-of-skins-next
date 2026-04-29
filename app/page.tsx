@@ -1,7 +1,3 @@
-import RiotDataProgress from "@/widgets/Logs/RiotDataProgress";
-
-const Home = () => {
-  return <RiotDataProgress />;
-};
-
+import { redirect } from "next/navigation";
+const Home = () => redirect("/search/skins");
 export default Home;

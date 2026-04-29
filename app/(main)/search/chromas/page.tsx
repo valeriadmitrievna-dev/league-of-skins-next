@@ -1,5 +1,7 @@
+import { getLocale } from "@/lib/i18n";
 import { SearchParams } from "@/shared/types";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import SearchChromasFilters from "@/widgets/SearchChromas/SearchChromasFilters";
 import SearchChromasInput from "@/widgets/SearchChromas/SearchChromasInput";
 import SearchChromasResult from "@/widgets/SearchChromas/SearchChromasResult";
@@ -7,8 +9,9 @@ import { FC } from "react";
 
 const SearchChromas: FC<{ searchParams: SearchParams }> = async ({ searchParams }) => {
   const params = await searchParams;
+  const locale = await getLocale();
 
-  const appData = await getLangAppData("ru_RU");
+  const appData = await getLangAppData(getLanguageCode(locale));
   const champions = appData?.champions ?? [];
   const skins =
     !appData || !params.championId

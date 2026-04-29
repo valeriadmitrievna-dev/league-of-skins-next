@@ -7,8 +7,6 @@ interface Config {
   jwtAccessSecret: string;
   jwtRefreshSecret: string;
   bcryptRounds: number;
-
-  mongoUri: string;
   adminKey: string;
 }
 
@@ -19,7 +17,5 @@ export const config: Config = {
   jwtAccessSecret: process.env.JWT_SECRET!,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET!,
   bcryptRounds: parseInt(process.env.BCRYPT_ROUNDS ?? '11'),
-  
-  mongoUri: process.env.MONGODB_URI ?? '',
   adminKey: process.env.ADMIN_KEY!,
 };
