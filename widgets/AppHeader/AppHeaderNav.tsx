@@ -1,31 +1,21 @@
 import { type FC } from "react";
-
-// import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { Button } from "@/components/ui/button";
-// import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
-// import { Separator } from "@/components/ui/separator";
-
-// import { UserSettings } from "../UserSettings";
-// import AppHeaderItem from './AppHeaderItem';
 import AppHeaderLink from "./AppHeaderLink";
 import { cn } from "@/shared/cn";
 import Link from "next/link";
 import { getDictionary } from "@/lib/i18n";
 import LanguageSwitcher from '../LanguageSwitcher';
+import { getServerUser } from '@/lib/auth';
+import LogoutButton from '@/components/LogoutButton';
 
 interface AppHeaderNavProps {
   className?: string;
 }
 
 const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
-  // const { t } = useTranslation();
-
-  // const { pathname } = useLocation();
-
-  // const isAuth = useSelector(appAuthSelector);
-
   const t = await getDictionary();
-  const isAuth = false;
+  const user = await getServerUser();
+  const isAuth = !!user;
 
   const authLink = (type: "signin" | "signup") => {
     // return `/auth/${type}${pathname === "/" ? "" : "?redirect=" + pathname}`;
@@ -72,6 +62,7 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
             </Button>
           </>
         )}
+        {isAuth && <LogoutButton />}
       </div>
     </nav>
   );

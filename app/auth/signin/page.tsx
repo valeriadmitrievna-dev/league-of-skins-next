@@ -6,7 +6,7 @@ import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api, useApi } from "@/hooks/useApi";
 
 interface SignInFormInput {
@@ -18,6 +18,7 @@ const SignInPage = () => {
   const t = useDictionary();
   const searchParams = useSearchParams();
   const query = searchParams.toString();
+  const router = useRouter();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -36,6 +37,11 @@ const SignInPage = () => {
 
   const submitHandler: SubmitHandler<SignInFormInput> = async (body) => {
     const { data, error } = await execute(body);
+
+    if (!error) {
+      const redirect = searchParams.get("redirect") ?? "/";
+      router.push(redirect);
+    }
   };
 
   const togglePasswordVisibilityHandler = (event: MouseEvent<SVGElement>) => {

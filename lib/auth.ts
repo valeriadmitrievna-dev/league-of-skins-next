@@ -1,8 +1,9 @@
 import jwt from "jsonwebtoken";
 import { config } from "./config";
+import { createClient } from "./supabase/server";
 
 export const signAccessToken = (userId: string) => {
-  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: "15m" });
+  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: "5m" });
 };
 
 export const signRefreshToken = (userId: string) => {
@@ -15,4 +16,28 @@ export const verifyRefreshToken = (token: string) => {
   } catch {
     return null;
   }
+};
+
+export const verifyAccessToken = (token: string) => {
+  try {
+    return jwt.verify(token, config.jwtAccessSecret) as { userId: string };
+  } catch {
+    return null;
+  }
+};
+
+export const getServerUser = async () => {
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+
+  if (!token) return null;
+
+  const payload = verifyAccessToken(token);
+  if (!payload) return null;
+
+  const supabase = await createClient();
+  const { data: user } = await supabase.from("users").select("*").eq("id", payload.userId).single();
+
+  return user ?? null;
 };

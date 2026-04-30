@@ -4,30 +4,28 @@ import { signAccessToken, signRefreshToken } from "@/lib/auth";
 import { setAuthCookies } from "@/lib/cookies";
 import { RequestError } from "@/errors";
 import { endpoint } from "@/lib/endpoint";
-import { generateId } from '@/shared/utils/generateId';
 
-export const POST = endpoint(async (req) => {
-  const body: { email: string; password: string; name: string } = await req.json();
+export const POST = endpoint(async ({ body }) => {
+  const { email, password, name } = await body<{ email: string; password: string; name: string }>();
   const supabase = await createClient();
 
-  const emptyFields = Object.entries(body)
+  const emptyFields = Object.entries({ email, password, name })
     .filter(([, v]) => !v?.trim().length)
     .map(([k]) => k);
 
   if (emptyFields.length) throw new RequestError({ code: "ERR_0005", status: 400 });
 
-  const { data: existingUser } = await supabase.from("users").select("*").eq("email", body.email).single();
+  const { data: existingUser } = await supabase.from("users").select("*").eq("email", email).single();
   if (existingUser) throw new RequestError({ code: "ERR_0006", status: 400 });
 
-  const hashed = await hash(body.password, 10);
+  const hashed = await hash(password, 10);
 
   const { data: user, error } = await supabase
     .from("users")
     .insert({
-      id: generateId(),
-      email: body.email,
+      email: email,
       password: hashed,
-      name: body.name,
+      name: name,
       updated_at: new Date(),
     })
     .select()
@@ -43,7 +41,7 @@ export const POST = endpoint(async (req) => {
     user_id: user.id,
   });
 
-  setAuthCookies(access, refresh);
+  await setAuthCookies(access, refresh);
 
   return { ok: true };
 });

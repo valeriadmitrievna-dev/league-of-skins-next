@@ -1,23 +1,47 @@
 import { errorHandler } from "@/errors";
+import { RequestError } from "@/errors";
+import { getServerUser } from "./auth";
 
-type Context = {
+export type DbUser = Record<string, unknown>;
+
+export type EndpointContext = {
   language: string;
-  user: any;
+  user: DbUser | null;
+  body: <T = unknown>() => Promise<T>;
+  query: <T extends Record<string, string | undefined> = Record<string, string | undefined>>() => T;
 };
 
-export function endpoint<T>(fn: (req: Request, ctx: Context) => Promise<T>) {
+export type ProtectedContext = EndpointContext & { user: DbUser };
+
+const buildContext = async (req: Request): Promise<EndpointContext> => {
+  const language = req.headers.get("Language") ?? "en_US";
+  const user = await getServerUser();
+
+  return {
+    language,
+    user,
+    body: () => req.json(),
+    query: () => Object.fromEntries(new URL(req.url).searchParams.entries()) as any,
+  };
+};
+
+export const endpoint = (fn: (ctx: EndpointContext) => Promise<unknown>) => {
   return async (req: Request): Promise<Response> => {
     try {
-      const language = req.headers.get("Language") ?? "en_US";
-
-      // сюда позже подключишь auth
-      const user = null;
-
-      const result = await fn(req, { language, user });
-
+      const ctx = await buildContext(req);
+      const result = await fn(ctx);
       return Response.json(result);
     } catch (err) {
       return errorHandler(err);
     }
   };
-}
+};
+
+export const protectedEndpoint = (fn: (ctx: ProtectedContext) => Promise<unknown>) => {
+  return endpoint(async (ctx) => {
+    if (!ctx.user) {
+      throw new RequestError({ code: "ERR_0401", status: 401, message: "Unauthorized" });
+    }
+    return fn(ctx as ProtectedContext);
+  });
+};

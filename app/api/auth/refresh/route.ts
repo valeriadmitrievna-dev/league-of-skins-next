@@ -1,40 +1,34 @@
-import { cookies } from "next/headers";
+import { RequestError } from "@/errors";
+import { signAccessToken, verifyRefreshToken } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { verifyRefreshToken, signAccessToken } from "@/lib/auth";
 
-export const POST = async () => {
+export const POST = async (req: Request) => {
   try {
-    const cookieStore = await cookies();
-    const token = cookieStore.get("refreshToken")?.value;
+    const cookieHeader = req.headers.get("cookie") ?? "";
 
-    if (!token) {
-      return Response.json({ error: "No token" }, { status: 401 });
-    }
+    const token = cookieHeader
+      .split(";")
+      .find((c) => c.trim().startsWith("refreshToken="))
+      ?.split("=")[1]
+      ?.trim();
 
-    const supabase = await createClient();
+    if (!token) throw new RequestError({ code: "ERR_0001", status: 401 });
 
     const payload = verifyRefreshToken(token);
 
-    const { data: storedToken } = await supabase
-      .from("refresh_tokens")
-      .select("*")
-      .eq("token", token)
-      .single();
+    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
 
-    if (!storedToken) {
-      return Response.json({ error: "Invalid token" }, { status: 401 });
-    }
+    const supabase = await createClient();
+    const { data: storedToken, error } = await supabase.from("refresh_tokens").select("*").eq("token", token).single();
+
+    if (!storedToken) throw new RequestError({ code: "ERR_0001", status: 401 });
 
     const newAccess = signAccessToken(payload.userId);
 
-    cookieStore.set("accessToken", newAccess, {
-      httpOnly: true,
-      secure: true,
-      path: "/",
-      maxAge: 60 * 15,
-    });
+    const response = Response.json({ ok: true });
+    response.headers.append("Set-Cookie", `accessToken=${newAccess}; HttpOnly; Secure; Path=/; Max-Age=${60 * 15}`);
 
-    return Response.json({ ok: true });
+    return response;
   } catch {
     return Response.json({ error: "Invalid token" }, { status: 401 });
   }
