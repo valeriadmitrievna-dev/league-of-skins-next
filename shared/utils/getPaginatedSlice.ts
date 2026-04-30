@@ -4,6 +4,7 @@ export const getPaginatedSlice = <T>(array: T[], page?: number | string | null, 
   page = parseInt(page.toString()) || 1;
   size = parseInt(size.toString()) || 10;
 
-  const startIndex = (Math.max(1, page) - 1) * Math.max(1, size);
-  return array.slice(startIndex, startIndex + Math.max(1, size));
+  const currentSize = Math.max(1, size);
+  const startIndex = (Math.max(1, page) - 1) * currentSize;
+  return array.slice(startIndex, startIndex + currentSize);
 };

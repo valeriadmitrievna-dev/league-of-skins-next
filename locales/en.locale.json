@@ -139,7 +139,7 @@
     "name": "Name",
     "name_placeholder": "Enter name",
     "field_required": "Field is required",
-    "field_minlength": "Min length is {{length}} symbols",
+    "field_minlength": "Min length symbols is ",
     "email": "Email",
     "email_placeholder": "Enter email",
     "email_invalid": "Enter valid email",

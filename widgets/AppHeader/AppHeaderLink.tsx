@@ -21,7 +21,7 @@ const AppHeaderLink: FC<AppHeaderLinkProps> = ({ className, to, text, disabled, 
       href={to}
       onClick={onClick}
       className={cn(
-        "group relative font-medium text-center text-muted-foreground aria-[current=page]:text-primary",
+        "group relative font-medium text-center text-muted-foreground",
         disabled && "pointer-events-none opacity-50",
         { "text-primary": pathname.startsWith(to) },
         className,

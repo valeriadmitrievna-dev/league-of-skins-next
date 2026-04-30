@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from 'fs';
+import { mkdir, writeFile } from 'fs/promises';
 import { readdir, readFile } from 'fs/promises';
 import { dirname } from 'path';
 
@@ -40,8 +40,8 @@ export const readJsonFile = async <T>(filepath: string, defaultValue?: T): Promi
 
 export const saveToJson = async <T>(path: string, data: T) => {
   try {
-    mkdirSync(dirname(path), { recursive: true });
-    writeFileSync(path, JSON.stringify(data), 'utf-8');
+    await mkdir(dirname(path), { recursive: true });
+    await writeFile(path, JSON.stringify(data), 'utf-8');
   } catch (error) {
     console.error('[ERROR]', '[saveToJson]', (error as any).message);
   }

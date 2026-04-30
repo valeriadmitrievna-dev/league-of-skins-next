@@ -1,6 +1,6 @@
 "use client";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
-import { FC } from "react";
+import { FC, useCallback } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import { SearchParams } from "@/shared/types";
@@ -28,10 +28,10 @@ const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
     headers: { Language: locale },
   });
 
-  const renderItem = (item: unknown, _index: number) => {
+  const renderItem = useCallback((item: unknown, _index: number) => {
     const chroma = item as any;
     return <ChromaCard key={chroma.id} data={chroma} />;
-  };
+  }, []);
 
   return (
     <>

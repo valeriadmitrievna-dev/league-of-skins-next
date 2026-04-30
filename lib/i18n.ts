@@ -16,7 +16,7 @@ export const getLocale = async () => {
   const acceptLanguage = headerStore.get("accept-language") ?? "";
   const preferred = acceptLanguage.split(",")[0]?.split("-")[0]?.toLowerCase();
 
-  return preferred;
+  return preferred ?? "en";
 };
 
 export const getDictionary = async (): Promise<Dictionary> => {

@@ -141,7 +141,7 @@
     "name": "Имя",
     "name_placeholder": "Введите имя",
     "field_required": "Поле обязательно",
-    "field_minlength": "Минимальное количество символов — {{length}}",
+    "field_minlength": "Минимальное количество символов — ",
     "email": "Почта",
     "email_placeholder": "Введите почту",
     "email_invalid": "Введите корректную почту",

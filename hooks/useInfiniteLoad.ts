@@ -1,12 +1,12 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from 'react'
-import { useIntersection } from 'react-use'
+import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useIntersection } from "react-use";
 
 interface InfiniteLoad {
-  url: string
-  params?: Record<string, string | undefined>
-  headers?: HeadersInit
-  size?: number
-  skip?: boolean
+  url: string;
+  params?: Record<string, string | undefined>;
+  headers?: HeadersInit;
+  size?: number;
+  skip?: boolean;
 }
 
 const useInfiniteLoad = <T extends Record<string, unknown>>({
@@ -16,74 +16,77 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
   size = 30,
   skip,
 }: InfiniteLoad) => {
-  const [page, setPage] = useState(1)
-  const [isLoading, setLoading] = useState(false)
-  const [hasMore, setHasMore] = useState(true)
-  const [count, setCount] = useState(0)
-  const [data, setData] = useState<T[]>([])
+  const [page, setPage] = useState(1);
+  const [isLoading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [count, setCount] = useState(0);
+  const [data, setData] = useState<T[]>([]);
 
-  const ref = useRef<HTMLDivElement | null>(null)
-  const abortRef = useRef<AbortController | null>(null)
+  const ref = useRef<HTMLDivElement | null>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
-  const paramsKey = JSON.stringify({ ...params, ...headers })
+  const paramsKey = JSON.stringify({ ...params, ...headers });
 
   const intersection = useIntersection(ref as RefObject<HTMLDivElement>, {
     root: null,
-    rootMargin: '200px',
+    rootMargin: "200px",
     threshold: 0,
-  })
+  });
 
-  const loadData = useCallback(async (currentPage: number) => {
-    if (skip) return
+  const loadData = useCallback(
+    async (currentPage: number) => {
+      if (skip) return;
 
-    abortRef.current?.abort()
-    const controller = new AbortController()
-    abortRef.current = controller
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
 
-    setLoading(true)
+      setLoading(true);
 
-    try {
-      const query = new URLSearchParams({
-        ...params,
-        page: String(currentPage),
-        size: String(size),
-      })
+      try {
+        const query = new URLSearchParams({
+          ...params,
+          page: String(currentPage),
+          size: String(size),
+        });
 
-      const res = await fetch(`${url}?${query}`, {
-        headers,
-        signal: controller.signal,
-      })
+        const res = await fetch(`${url}?${query}`, {
+          headers,
+          signal: controller.signal,
+        });
 
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const result = await res.json()
+        const result = await res.json();
 
-      setCount(result.count)
-      setData(prev => currentPage === 1 ? result.data : [...prev, ...result.data])
-      setHasMore(currentPage * size < result.count)
-      setPage(currentPage + 1)
-    } catch (e: any) {
-      if (e.name !== 'AbortError') console.error(e)
-    } finally {
-      setLoading(false)
-    }
-  }, [url, paramsKey, size, skip])
+        setCount(result.count);
+        setData((prev) => (currentPage === 1 ? result.data : [...prev, ...result.data]));
+        setHasMore(currentPage * size < result.count);
+        setPage(currentPage + 1);
+      } catch (e: any) {
+        if (e.name !== "AbortError") console.error(e);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [url, paramsKey, size, skip],
+  );
 
   useEffect(() => {
-    setData([])
-    setPage(1)
-    setHasMore(true)
-    setCount(0)
-    loadData(1)
-  }, [paramsKey, url])
+    setData([]);
+    setPage(1);
+    setHasMore(true);
+    setCount(0);
+    loadData(1);
+  }, [paramsKey, url]);
 
   useEffect(() => {
     if (intersection?.isIntersecting && hasMore && !isLoading) {
-      loadData(page)
+      loadData(page);
     }
-  }, [intersection?.isIntersecting])
+  }, [intersection?.isIntersecting]);
 
-  return { data, isLoading, loaderRef: ref, hasMore, count }
-}
+  return { data, isLoading, loaderRef: ref, hasMore, count };
+};
 
-export default useInfiniteLoad
+export default useInfiniteLoad;

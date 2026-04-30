@@ -13,7 +13,7 @@ const LanguageSwitcher: FC = () => {
 
   const changeLanguageHandler = async (lang: string | null) => {
     if (lang) {
-      setLanguage(lang);
+      await setLanguage(lang);
     }
   };
 

@@ -6,7 +6,7 @@ import { baseFolder } from '@/shared/constants/riot'
 export const POST = async (req: NextRequest) => {
   try {
     const { lang, data } = await req.json()
-    saveToJson(`${baseFolder}/${lang}.json`, { lang, updated: new Date(), ...data })
+    await saveToJson(`${baseFolder}/${lang}.json`, { lang, updated: new Date(), ...data })
     clearAppDataCache()
     return Response.json({ ok: true })
   } catch (error) {

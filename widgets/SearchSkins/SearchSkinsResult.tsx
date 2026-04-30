@@ -1,6 +1,6 @@
 "use client";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
-import { FC, useEffect } from "react";
+import { FC, useCallback, useEffect } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import SkinCard from "../Skin/SkinCard";
@@ -32,10 +32,10 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
     headers: { Language: locale },
   });
 
-  const renderItem = (item: unknown, _index: number) => {
+  const renderItem = useCallback((item: unknown, _index: number) => {
     const skin = item as any;
     return <SkinCard key={skin.id} data={skin} />;
-  };
+  }, []);
 
   useEffect(() => {
     update("count", count ? String(count) : null);

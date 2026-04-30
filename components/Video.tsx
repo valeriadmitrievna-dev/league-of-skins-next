@@ -1,5 +1,5 @@
 import { VideoOffIcon } from "lucide-react";
-import { useEffect, useState, type ComponentProps, type FC } from "react";
+import { useRef, useState, type ComponentProps, type FC } from "react";
 
 import Skeleton from "./Skeleton";
 import { cn } from "@/shared/cn";
@@ -10,35 +10,30 @@ interface VideoProps extends ComponentProps<"video"> {
 }
 
 const Video: FC<VideoProps> = ({ src, className, showError = true, ...props }) => {
-  const [state, setState] = useState<"loading" | "loaded" | "error">("loading");
+  const [state, setState] = useState<"loading" | "loaded" | "error">(src ? "loading" : "error");
+  const prevSrcRef = useRef(src);
 
-  const loadVideo = async () => {
-    if (!src) {
-      setState("error");
-      return;
-    }
-
-    try {
-      await fetch(src);
-      setState("loaded");
-    } catch (error) {
-      setState("error");
-    }
-  };
-
-  useEffect(() => {
-    if (!src) {
-      setState("error");
-      return;
-    }
-    loadVideo();
-  }, [src]);
-
-  if (state === "loading") {
-    return <Skeleton className={cn("h-auto", className)} />;
+  if (src !== prevSrcRef.current) {
+    prevSrcRef.current = src;
+    setState(src ? "loading" : "error");
   }
 
-  if (state === "error" && showError) {
+  if (state === "loading") {
+    return (
+      <Skeleton className={cn("h-auto", className)}>
+        <video
+          src={src}
+          className="hidden"
+          onLoadedData={() => setState("loaded")}
+          onError={() => setState("error")}
+          preload="metadata"
+        />
+      </Skeleton>
+    );
+  }
+
+  if (state === "error") {
+    if (!showError) return null;
     return (
       <div className={cn("bg-card flex items-center justify-center", className)}>
         <VideoOffIcon className="text-card-foreground" />

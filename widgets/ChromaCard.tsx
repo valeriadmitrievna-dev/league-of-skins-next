@@ -1,11 +1,10 @@
 import type { ComponentProps, FC } from "react";
 
 import Image from "@/components/Image";
-import { Badge } from '@/components/ui/badge';
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import Link from 'next/link';
-import { cn } from '@/shared/cn';
-
+import Link from "next/link";
+import { cn } from "@/shared/cn";
 
 interface ChromaCardProps extends ComponentProps<"div"> {
   className?: string;
@@ -42,8 +41,14 @@ const ChromaCard: FC<ChromaCardProps> = ({
   //   }
   // };
 
-  const ImageWrapperComponent = plain ? "div" : Link;
-  const NameWrapperComponent = plain ? "p" : Link;
+  const ImageContent = (
+    <Image
+      src={data.path ?? ""}
+      className={cn("object-cover size-full", {
+        "transition-all group-hover:scale-[1.1]": !plain,
+      })}
+    />
+  );
 
   return (
     <div
@@ -60,18 +65,10 @@ const ChromaCard: FC<ChromaCardProps> = ({
         className={cn(
           "block relative group aspect-90/101 rounded-md overflow-hidden p-0",
           "transition-colors duration-700 group-data-state-on:bg-primary/10",
-          "group-data-state-on:border-primary/50!"
+          "group-data-state-on:border-primary/50!",
         )}
       >
-        <ImageWrapperComponent href={`/skins/${data.skinContentId}`}>
-          <Image
-            src={data.path ?? ""}
-            className={cn("object-cover size-full", {
-              "transition-all group-hover:scale-[1.1]": !plain,
-            })}
-          />
-        </ImageWrapperComponent>
-
+        {plain ? <div>{ImageContent}</div> : <Link href={`/skins/${data.skinContentId}`}>{ImageContent}</Link>}
         {data.pbe && <Badge className="absolute z-2 top-1.5 right-1.5">PBE</Badge>}
       </Card>
       <div className="flex items-center justify-between">
@@ -113,12 +110,13 @@ const ChromaCard: FC<ChromaCardProps> = ({
             />
           ))} */}
       </div>
-      <NameWrapperComponent
-        href={`/skins/${data.skinContentId}`}
-        className="mb-2 font-medium line-clamp-2 hover:underline w-fit"
-      >
-        {data.name}
-      </NameWrapperComponent>
+      {plain ? (
+        <p className="mb-2 font-medium line-clamp-2">{data.name}</p>
+      ) : (
+        <Link href={`/skins/${data.skinContentId}`} className="mb-2 font-medium line-clamp-2 hover:underline w-fit">
+          {data.name}
+        </Link>
+      )}
     </div>
   );
 };

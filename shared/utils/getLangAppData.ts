@@ -1,19 +1,31 @@
-import { RequestError } from '@/errors';
-import { readJsonFile } from './getFileData';
-import { baseFolder } from '../constants/riot';
+import { RequestError } from "@/errors";
+import { readJsonFile } from "./getFileData";
+import { baseFolder } from "../constants/riot";
 
-const cache = new Map<string, any>();
+// В Next.js dev-режиме модуль может переинициализироваться при HMR,
+// но в prod воркеры не шарят память между собой.
+// Кэш здесь — только per-process оптимизация (убирает повторные readFile
+// в рамках одного запроса / одного воркера).
+// Не полагайся на него как на source of truth между запросами.
+const cache = new Map<string, unknown>();
 
-export const getLangAppData = async (lang: string = 'en_US') => {
-  if (cache.has(lang)) return cache.get(lang)!;
-  
-  try {
-    const data = await readJsonFile<any>(`${baseFolder}/${lang}.json`);
-    cache.set(lang, data);
-    return data;
-  } catch {
-    throw new RequestError({ code: 'ERR_0003' });
+export const getLangAppData = async <T = unknown>(lang: string = "en_US"): Promise<T> => {
+  if (cache.has(lang)) return cache.get(lang) as T;
+
+  const data = await readJsonFile<T>(`${baseFolder}/${lang}.json`);
+
+  if (!data) {
+    throw new RequestError({ code: "ERR_0003", status: 404 });
   }
+
+  cache.set(lang, data);
+  return data;
 };
 
-export const clearAppDataCache = () => cache.clear();
+export const clearAppDataCache = (lang?: string) => {
+  if (lang) {
+    cache.delete(lang);
+  } else {
+    cache.clear();
+  }
+};
