@@ -3,7 +3,6 @@
 import { cn } from "@/shared/cn";
 import { FC } from "react";
 import SkinInfoLine from "./SkinInfoLine";
-import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { RARITIES } from "@/shared/constants/rarities";
@@ -13,6 +12,7 @@ import RPIcon from "@/assets/riot-points-icon.svg";
 import ChromaColor from "@/components/ChromaColor";
 import { Button } from "@/components/ui/button";
 import { PlayIcon } from "lucide-react";
+import { useT } from "next-i18next/client";
 
 interface SkinInfoProps {
   data: any;
@@ -20,7 +20,7 @@ interface SkinInfoProps {
 }
 
 const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
-  const t = useDictionary();
+  const { t } = useT();
   const rarityData = data.rarity ? RARITIES[data.rarity] : undefined;
 
   const chromaScrollHandler = (chromaId: string) => {
@@ -50,7 +50,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
           </Badge>
         )} */}
         <SkinInfoLine
-          title={t.filters.champion}
+          title={t("filters.champion")}
           info={
             <Badge className="border-none gap-x-1.5" asChild>
               <Link href={"/search/skins?championId=" + data.championId}>{data.championName}</Link>
@@ -58,22 +58,22 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
           }
         />
         <SkinInfoLine
-          title={t.filters.rarity}
+          title={t("filters.rarity")}
           info={
             <Badge className="gap-x-1.5 border-none" asChild>
               <Link href={"/search/skins?rarity=" + data.rarity}>
                 {RARITIES?.icon && <Image src={rarityData?.icon} className="size-4" />}
-                {t.rarity[data.rarity as keyof typeof t.rarity]}
+                {t(`rarity.${data.rarity}`)}
               </Link>
             </Badge>
           }
         />
         {!!data?.release && (
-          <SkinInfoLine title={t.skin.release} info={format(new Date(data.release * 1000), "dd.MM.yyyy")} />
+          <SkinInfoLine title={t("skin.release")} info={format(new Date(data.release * 1000), "dd.MM.yyyy")} />
         )}
         {!!data?.price && (
           <SkinInfoLine
-            title={t.skin.price}
+            title={t("skin.price")}
             info={
               <div className="font-medium flex items-center gap-1">
                 <span className="leading-none">{data.price}</span>
@@ -83,13 +83,13 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
           />
         )}
         <SkinInfoLine
-          title={t.rarity.legacy}
-          info={<span className="pr-2 font-medium">{t.shared[data.isLegacy ? "yes" : "no"]}</span>}
+          title={t("rarity.legacy")}
+          info={<span className="pr-2 font-medium">{t(`shared.${data.isLegacy ? "yes" : "no"}`)}</span>}
         />
       </div>
       {!!data.chromas?.length && (
         <div className="my-card px-4! text-xs h-fit">
-          <p className="mb-2">{t.skin.chromas}</p>
+          <p className="mb-2">{t("skin.chromas")}</p>
           <div className="flex flex-wrap gap-2">
             {data.chromas.map((chroma: any) => (
               <ChromaColor key={chroma.contentId} colors={chroma.colors} onClick={() => chromaScrollHandler(chroma.id)} />
@@ -100,7 +100,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
       {data.chromaPath && (
         <div className="mt-3 my-card py-3 pt-7! px-4! md:aspect-square text-xs h-fit relative bg-muted flex justify-center">
           <Badge variant="outline" className="bg-background absolute -top-2.5 left-1/2 transform -translate-x-1/2">
-            {t.skin.baseChroma}
+            {t("skin.baseChroma")}
           </Badge>
           <Image src={data.chromaPath} className="max-w-[85%] h-fit aspect-90/101" />
         </div>
@@ -122,7 +122,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
           target="_blank"
         >
           <PlayIcon />
-          {t.skin.spotlight}
+          {t("skin.spotlight")}
         </Link>
       </Button>
     </aside>

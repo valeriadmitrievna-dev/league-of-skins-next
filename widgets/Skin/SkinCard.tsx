@@ -8,10 +8,10 @@ import { RARITIES } from "@/shared/constants/rarities";
 import { cn } from "@/shared/cn";
 import Link from "next/link";
 import Image from "@/components/Image";
-import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import { Spinner } from "@/components/ui/spinner";
 import { BookmarkIcon, HeartIcon } from "lucide-react";
 import WishlistDialog from "../Wishlist/WishlistDialog";
+import { useT } from "next-i18next/client";
 
 interface SkinCardProps {
   className?: string;
@@ -23,7 +23,7 @@ interface SkinCardProps {
 }
 
 const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButton, toggleOwnedButton, wishlistId }) => {
-  const t = useDictionary();
+  const { t } = useT();
 
   const toggleOwnedHandler = async () => {
     if (owned) {
@@ -76,7 +76,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
             className="absolute z-2 top-1.5 left-1.5 text-neutral-800"
             style={{ background: RARITIES[data.rarity]?.color }}
           >
-            {t.rarity[data.rarity as keyof typeof t.rarity]}
+            {t(`rarity.${data.rarity}`)}
           </Badge>
         )}
 

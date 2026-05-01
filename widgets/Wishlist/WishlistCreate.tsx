@@ -6,7 +6,7 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/shared/cn";
-import { useDictionary } from '@/shared/providers/DictionaryProvider';
+import { useT } from "next-i18next/client";
 
 interface WishlistCreateProps {
   buttonClassName?: string;
@@ -21,7 +21,7 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
   chromaContentIds = [],
   children,
 }) => {
-  const t = useDictionary();
+  const { t } = useT();
 
   const [wishlistName, setWishlistName] = useState("");
   const [isModalOpen, setModalOpen] = useState(false);
@@ -48,18 +48,18 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
         {children ?? (
           <Button className={cn("", buttonClassName)}>
             <PlusIcon />
-            {t.wishlist.create}
+            {t("wishlist.create")}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="w-full max-w-sm! overflow-hidden pt-4.5">
         <form className="flex flex-col justify-center">
-          <DialogTitle>{t.wishlist.create_title}</DialogTitle>
+          <DialogTitle>{t("wishlist.create_title")}</DialogTitle>
           <InputGroup className="mt-3">
             <InputGroupInput
               value={wishlistName}
               onChange={changeNameHandler}
-              placeholder={t.wishlist.create_placeholder}
+              placeholder={t("wishlist.create_placeholder")}
             />
             <InputGroupAddon align="inline-end">{wishlistName.trim().length}/100</InputGroupAddon>
           </InputGroup>
@@ -71,7 +71,7 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
           >
             {isWishlistCreating && <Spinner />}
 
-            {t.shared.save}
+            {t("shared.save")}
           </Button>
         </form>
       </DialogContent>
