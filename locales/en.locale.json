@@ -120,6 +120,8 @@
     "edit_name_title": "Wishlist's name",
     "edit_name_placeholder": "Enter wishlist's name",
     "edit_public_title": "Public wishlist",
+    "create_title": "Create wishlist",
+    "create_placeholder": "Wishlist's name",
     "show_owned_skins": "Show owned",
     "complete": "Complete",
     "price_total": "Full Price",

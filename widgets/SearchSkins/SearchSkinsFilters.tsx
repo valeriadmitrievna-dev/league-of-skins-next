@@ -17,12 +17,11 @@ import { RARITIES } from "@/shared/constants/rarities";
 import { cn } from "@/shared/cn";
 
 import { useQueryParams } from "@/hooks/useQueryParams";
-import Skeleton from "@/components/Skeleton";
 import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
 import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import { plural } from "@/shared/utils/plural";
-import useAuth from '@/hooks/useAuth';
+import { useUser } from '@/shared/providers/UserProvider';
 
 interface SearchFiltersProps {
   champions: any[];
@@ -34,7 +33,7 @@ interface SearchFiltersProps {
 
 const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rarities, chromas, className }) => {
   const t = useDictionary();
-  const isAuth = useAuth();
+  const { isAuth } = useUser();
 
   const { get: getCount } = useQueryParams();
   const { get, update, reset, hasActive } = useQueryParams([

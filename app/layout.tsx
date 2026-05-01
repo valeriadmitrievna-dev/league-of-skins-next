@@ -5,6 +5,8 @@ import { FC, PropsWithChildren } from "react";
 import Background from "@/components/Background";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { DictionaryProvider } from "@/shared/providers/DictionaryProvider";
+import { UserProvider } from "@/shared/providers/UserProvider";
+import ToastsProvider from "@/shared/providers/ToastsProvider";
 
 const font = Rubik({
   variable: "--font-geist-sans",
@@ -25,7 +27,10 @@ const RootLayout: FC<PropsWithChildren> = async ({ children }) => {
       <body className="min-h-full flex flex-col">
         <Background />
         <DictionaryProvider dictionary={dictionary} locale={locale}>
-          <div className="z-1">{children}</div>
+          <UserProvider>
+            <ToastsProvider />
+            <div className="z-1">{children}</div>
+          </UserProvider>
         </DictionaryProvider>
       </body>
     </html>

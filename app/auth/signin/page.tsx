@@ -8,6 +8,7 @@ import Link from "next/link";
 import { MouseEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { api, useApi } from "@/hooks/useApi";
+import { useUser } from '@/shared/providers/UserProvider';
 
 interface SignInFormInput {
   email: string;
@@ -19,6 +20,7 @@ const SignInPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
+  const { refetch: refetchUser } = useUser();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -40,6 +42,7 @@ const SignInPage = () => {
 
     if (!error) {
       const redirect = searchParams.get("redirect") ?? "/";
+      await refetchUser();
       router.push(redirect);
     }
   };

@@ -7,6 +7,7 @@ import SkinCard from "../Skin/SkinCard";
 import { SearchParams } from "@/shared/types";
 import { useLocale } from "@/shared/providers/DictionaryProvider";
 import { useQueryParams } from "@/hooks/useQueryParams";
+import { useUser } from "@/shared/providers/UserProvider";
 
 interface SearchSkinsResultProps {
   params: SearchParams;
@@ -15,6 +16,7 @@ interface SearchSkinsResultProps {
 const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
   const locale = useLocale();
   const { update } = useQueryParams();
+  const { user } = useUser();
   const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;
 
   const { data, isLoading, loaderRef, count } = useInfiniteLoad({
@@ -32,10 +34,22 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
     headers: { Language: locale },
   });
 
-  const renderItem = useCallback((item: unknown, _index: number) => {
-    const skin = item as any;
-    return <SkinCard key={skin.id} data={skin} />;
-  }, []);
+  const renderItem = useCallback(
+    (item: unknown, _index: number) => {
+      const skin = item as any;
+      const ownedSkins = user?.ownedSkins as string[] | undefined;
+      return (
+        <SkinCard
+          key={skin.id}
+          data={skin}
+          owned={ownedSkins?.includes(skin.contentId)}
+          toggleOwnedButton
+          addToWishlistButton
+        />
+      );
+    },
+    [user],
+  );
 
   useEffect(() => {
     update("count", count ? String(count) : null);

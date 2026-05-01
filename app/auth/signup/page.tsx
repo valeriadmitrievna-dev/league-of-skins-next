@@ -6,8 +6,9 @@ import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { api, useApi } from "@/hooks/useApi";
+import { useUser } from "@/shared/providers/UserProvider";
 
 interface SignUpFormInput {
   name: string;
@@ -19,6 +20,8 @@ const SignUpPage = () => {
   const t = useDictionary();
   const searchParams = useSearchParams();
   const query = searchParams.toString();
+  const router = useRouter();
+  const { refetch: refetchUser } = useUser();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -37,6 +40,12 @@ const SignUpPage = () => {
 
   const submitHandler: SubmitHandler<SignUpFormInput> = async (body) => {
     const { data, error } = await execute(body);
+
+    if (!error) {
+      const redirect = searchParams.get("redirect") ?? "/";
+      await refetchUser();
+      router.push(redirect);
+    }
   };
 
   const togglePasswordVisibilityHandler = (event: MouseEvent<SVGElement>) => {

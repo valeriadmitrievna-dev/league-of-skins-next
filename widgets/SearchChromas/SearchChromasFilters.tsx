@@ -2,7 +2,6 @@
 import { orderBy } from "lodash";
 import { type FC } from "react";
 
-import ChromaColor from "@/components/ChromaColor";
 import {
   Combobox,
   ComboboxContent,
@@ -13,15 +12,13 @@ import {
 } from "@/components/ui/combobox";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
-import { RARITIES } from "@/shared/constants/rarities";
 import { cn } from "@/shared/cn";
 
 import { useQueryParams } from "@/hooks/useQueryParams";
-import Skeleton from "@/components/Skeleton";
 import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
 import { useDictionary } from "@/shared/providers/DictionaryProvider";
-import useAuth from '@/hooks/useAuth';
+import { useUser } from "@/shared/providers/UserProvider";
 
 interface SearchFiltersProps {
   champions: any[];
@@ -31,7 +28,7 @@ interface SearchFiltersProps {
 
 const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, className }) => {
   const t = useDictionary();
-  const isAuth = useAuth();
+  const { isAuth } = useUser();
 
   const { get, update, updateMany, reset, hasActive } = useQueryParams([
     "owned",

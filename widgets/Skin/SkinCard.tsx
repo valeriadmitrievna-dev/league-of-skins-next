@@ -1,5 +1,6 @@
 "use client";
 import { type FC } from "react";
+import { toast } from "sonner";
 
 import ChromaColor from "@/components/ChromaColor";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +9,9 @@ import { cn } from "@/shared/cn";
 import Link from "next/link";
 import Image from "@/components/Image";
 import { useDictionary } from "@/shared/providers/DictionaryProvider";
+import { Spinner } from "@/components/ui/spinner";
+import { BookmarkIcon, HeartIcon } from "lucide-react";
+import WishlistDialog from "../Wishlist/WishlistDialog";
 
 interface SkinCardProps {
   className?: string;
@@ -21,15 +25,13 @@ interface SkinCardProps {
 const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButton, toggleOwnedButton, wishlistId }) => {
   const t = useDictionary();
 
-  //   const toggleOwnedHandler = async () => {
-  //     if (owned) {
-  //       await updateOwnedSkins({ removeIds: [data.contentId] });
-  //       toast.success("Образ удален из купленных");
-  //     } else {
-  //       await updateOwnedSkins({ addIds: [data.contentId] });
-  //       toast.success("Образ отмечен как купленный");
-  //     }
-  //   };
+  const toggleOwnedHandler = async () => {
+    if (owned) {
+      toast.success("Образ удален из купленных");
+    } else {
+      toast.success("Образ отмечен как купленный");
+    }
+  };
 
   //   const removeFromWishlistHandler = async () => {
   //     try {
@@ -101,27 +103,27 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
       </Link>
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground font-medium mr-auto">{data.championName}</span>
-        {/* {toggleOwnedButton &&
+        {toggleOwnedButton &&
           !data.pbe &&
-          (isOwningUpdating ? (
-            <Spinner className="size-5 my-1 mr-0.5 text-primary shrink-0" />
+          (false ? (
+            <Spinner className="size-5 my-1 mr-0.5 text-primary shrink-0 select-none" />
           ) : (
             <BookmarkIcon
               onClick={toggleOwnedHandler}
-              className={cn("size-7 p-1 pr-0 cursor-pointer text-primary shrink-0", {
+              className={cn("size-7 p-1 pr-0 cursor-pointer text-primary shrink-0 select-none", {
                 "hover:fill-primary/50": !owned,
                 "fill-primary": owned,
               })}
             />
           ))}
         {addToWishlistButton && (
-          <AddToWishlist
+          <WishlistDialog
             skinName={data.name}
             skinContentIds={[data.contentId]}
             trigger={({ onOpen, isSkinInWishlist }) => (
               <HeartIcon
                 onClick={onOpen}
-                className={cn("size-7 p-1 pr-0 text-destructive cursor-pointer shrink-0", {
+                className={cn("size-7 p-1 pr-0 text-destructive cursor-pointer shrink-0 select-none", {
                   "fill-destructive": isSkinInWishlist,
                   "hover:fill-destructive/50": !isSkinInWishlist,
                 })}
@@ -130,7 +132,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
           />
         )}
 
-        {wishlistId &&
+        {/* {wishlistId &&
           (isWishlistUpdating ? (
             <Spinner className="size-5 my-1 text-primary shrink-0" />
           ) : (
