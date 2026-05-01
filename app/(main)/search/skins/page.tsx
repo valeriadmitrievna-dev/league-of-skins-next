@@ -12,7 +12,7 @@ const SearchSkins: FC<{ searchParams: SearchParams }> = async ({ searchParams })
   const params = await searchParams;
   const { i18n } = await getT();
 
-  const appData = await getLangAppData(getLanguageCode(i18n.language));
+  const appData: any = await getLangAppData(getLanguageCode(i18n.language));
   const champions = appData?.champions ?? [];
   const skinlines = appData?.skinlines.filter((skinline: any) => skinline.name) ?? [];
   const rarities = [...new Set((appData?.skins ?? []).map((skin: any) => skin.rarity))] as string[];

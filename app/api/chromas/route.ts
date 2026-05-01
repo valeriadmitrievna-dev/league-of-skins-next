@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     const { page, size, ...params } = Object.fromEntries(req.nextUrl.searchParams);
 
-    const appData = await getLangAppData(lang);
+    const appData: any = await getLangAppData(lang);
     const predicate = await createChromaPredicate(params, null);
     const filteredChromas = appData.chromas.filter(predicate);
 

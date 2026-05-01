@@ -2,10 +2,10 @@ import { getLangAppData } from '@/shared/utils/getLangAppData';
 
 export const getRarities = async () => {
   try {
-    const data = await getLangAppData();
+    const data: any = await getLangAppData();
 
     if (data) {
-      const rarities = [...new Set(data.skins.map((skin) => skin.rarity))];
+      const rarities = [...new Set(data.skins.map((skin: any) => skin.rarity))];
       return rarities;
     }
   } catch (error) {
