@@ -17,7 +17,7 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
   skip,
 }: InfiniteLoad) => {
   const [page, setPage] = useState(1);
-  const [isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
   const [count, setCount] = useState(0);
   const [data, setData] = useState<T[]>([]);

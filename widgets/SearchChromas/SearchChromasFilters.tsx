@@ -21,6 +21,7 @@ import Skeleton from "@/components/Skeleton";
 import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
 import { useDictionary } from "@/shared/providers/DictionaryProvider";
+import useAuth from '@/hooks/useAuth';
 
 interface SearchFiltersProps {
   champions: any[];
@@ -30,7 +31,7 @@ interface SearchFiltersProps {
 
 const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, className }) => {
   const t = useDictionary();
-  const isAuth = false;
+  const isAuth = useAuth();
 
   const { get, update, updateMany, reset, hasActive } = useQueryParams([
     "owned",

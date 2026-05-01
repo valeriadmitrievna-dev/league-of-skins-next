@@ -4,8 +4,8 @@ import { FC, useCallback } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import { SearchParams } from "@/shared/types";
-import ChromaCard from '../ChromaCard';
-import { useLocale } from '@/shared/providers/DictionaryProvider';
+import ChromaCard from "../ChromaCard";
+import { useLocale } from "@/shared/providers/DictionaryProvider";
 
 interface SearchChromasResultProps {
   params: SearchParams;
@@ -36,16 +36,14 @@ const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
   return (
     <>
       {!isLoading && !data.length && "No items"}
-      {!!data.length && (
-        <VirtualizedGrid
-          items={data}
-          loading={!data.length && isLoading}
-          overscan={4}
-          render={renderItem}
-          columnGap={16}
-          rowGap={24}
-        />
-      )}
+      <VirtualizedGrid
+        items={data}
+        loading={!data.length && isLoading}
+        overscan={4}
+        render={renderItem}
+        columnGap={16}
+        rowGap={24}
+      />
       {!!data.length && isLoading && <Spinner className="mx-auto mt-4 size-8" />}
       <div ref={loaderRef} />
     </>

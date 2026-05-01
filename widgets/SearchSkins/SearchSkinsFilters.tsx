@@ -22,6 +22,7 @@ import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
 import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import { plural } from "@/shared/utils/plural";
+import useAuth from '@/hooks/useAuth';
 
 interface SearchFiltersProps {
   champions: any[];
@@ -33,7 +34,7 @@ interface SearchFiltersProps {
 
 const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rarities, chromas, className }) => {
   const t = useDictionary();
-  const isAuth = false;
+  const isAuth = useAuth();
 
   const { get: getCount } = useQueryParams();
   const { get, update, reset, hasActive } = useQueryParams([

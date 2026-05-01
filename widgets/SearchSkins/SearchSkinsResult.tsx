@@ -6,7 +6,7 @@ import { Spinner } from "@/components/ui/spinner";
 import SkinCard from "../Skin/SkinCard";
 import { SearchParams } from "@/shared/types";
 import { useLocale } from "@/shared/providers/DictionaryProvider";
-import { useQueryParams } from '@/hooks/useQueryParams';
+import { useQueryParams } from "@/hooks/useQueryParams";
 
 interface SearchSkinsResultProps {
   params: SearchParams;
@@ -44,16 +44,14 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
   return (
     <>
       {!isLoading && !data.length && "No items"}
-      {!!data.length && (
-        <VirtualizedGrid
-          items={data}
-          loading={!data.length && isLoading}
-          overscan={4}
-          render={renderItem}
-          columnGap={16}
-          rowGap={24}
-        />
-      )}
+      <VirtualizedGrid
+        items={data}
+        loading={!data.length && isLoading}
+        overscan={4}
+        render={renderItem}
+        columnGap={16}
+        rowGap={24}
+      />
       {!!data.length && isLoading && <Spinner className="mx-auto mt-4 size-8" />}
       <div ref={loaderRef} />
     </>
