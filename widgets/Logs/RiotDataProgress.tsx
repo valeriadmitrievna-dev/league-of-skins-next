@@ -8,7 +8,7 @@ import { cn } from "@/shared/cn";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import RiotDataProgressLangCard from "./RiotDataProgressLangCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { prepareRiotClient } from "@/shared/riot/_prepare.riot";
+import { prepareRiotClient } from "@/shared/riot/prepare";
 import { LangProgress, LogType, RiotProgress } from "./types";
 
 const globalBadge = (status: RiotProgress["status"]) =>
@@ -32,17 +32,7 @@ const RiotDataProgress: FC = () => {
     setStatus("running");
     setLanguages({});
 
-    const log = (message: string, type: LogType = "default") => {
-      setLogs((prev) => [
-        ...prev,
-        {
-          type,
-          message: `[${new Date().toLocaleTimeString()}] ${message}`,
-        },
-      ]);
-    };
-
-    await prepareRiotClient(["en_US", "ru_RU"], log, (lang, update) => {
+    await prepareRiotClient(["en_US", "ru_RU"], (lang, update) => {
       setLanguages((prev) => {
         const prevLang = prev[lang] ?? {};
         return {

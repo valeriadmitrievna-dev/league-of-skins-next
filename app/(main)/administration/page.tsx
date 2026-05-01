@@ -1,10 +1,10 @@
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AdminAppData from "@/widgets/Admin/AdminAppData";
 import AdminLogs from "@/widgets/Admin/AdminLogs";
 
 const AppData = () => {
-  return <>appData</>
-}
+  return <>appData</>;
+};
 
 const AdministrationPage = () => {
   const tabCN = "grow-0! shrink! h-fit text-base px-3 py-1.5 justify-between";
@@ -28,7 +28,7 @@ const AdministrationPage = () => {
         <AdminLogs />
       </TabsContent>
       <TabsContent className={tabContentCN} value="appdata">
-        <ScrollArea className="size-full">AppData</ScrollArea>
+        <AdminAppData />
       </TabsContent>
     </Tabs>
   );

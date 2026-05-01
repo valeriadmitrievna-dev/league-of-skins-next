@@ -7,26 +7,16 @@ import { getSkinlines } from "@/riot/skinlines.riot";
 import { getChampions } from "@/riot/champions.riot";
 import { config } from "@/lib/config";
 import { getChampion } from "@/riot/champion.riot";
-
-const fetchRiot = async (url: string) => {
-  const res = await fetch(url, {
-    headers: {
-      "Alt-Used": "",
-    },
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}: ${url}`);
-  return res.json();
-};
+import { logger } from '@/lib/logger';
 
 export type ProgressCallback = (message: string, type?: "default" | "success" | "error") => void;
 export type LangProgressCallback = (lang: string, update: Partial<LangProgress>) => void;
 
 export const prepareRiotClient = async (
   languages: string[],
-  onProgress: ProgressCallback,
   onLangUpdate: LangProgressCallback,
 ) => {
-  onProgress("PREPARE START");
+  logger.log("PREPARE START");
 
   for (const lang of languages) {
     onLangUpdate(lang, {
@@ -34,50 +24,50 @@ export const prepareRiotClient = async (
       categories: { versions: "idle", skinlines: "idle", champions: "idle", skins: "idle", chromas: "idle" },
     });
     try {
-      onProgress(`[${lang}] Start loading`);
+      logger.log(`[${lang}] Start loading`);
 
       // versions
-      onProgress(`[${lang}] Get versions...`);
+      logger.log(`[${lang}] Get versions...`);
       onLangUpdate(lang, { categories: { versions: "loading" } });
       const versions = await getVersions();
 
       if (!versions?.length) {
-        onProgress(`[${lang}] Versions: ERROR`, "error");
+        logger.error(`[${lang}] Versions: ERROR`);
         onLangUpdate(lang, { categories: { versions: "error" } });
         continue;
       }
 
-      onProgress(`[${lang}] Versions: [${versions.slice(0, 3).join(", ")}...]`, "success");
+      logger.success(`[${lang}] Versions: [${versions.slice(0, 3).join(", ")}...]`);
       onLangUpdate(lang, { categories: { versions: "done" } });
 
       // skinlines
-      onProgress(`[${lang}] Get skinlines...`);
+      logger.log(`[${lang}] Get skinlines...`);
       onLangUpdate(lang, { categories: { skinlines: "loading" } });
       const skinlines_latest = await getSkinlines(lang, "latest");
       const skinlines_pbe = await getSkinlines(lang, "pbe");
       const skinlines = uniqBy([...(skinlines_latest ?? []), ...(skinlines_pbe ?? [])], "id");
 
       if (!skinlines?.length) {
-        onProgress(`[${lang}] Skinlines: ERROR`, "error");
+        logger.error(`[${lang}] Skinlines: ERROR`);
         onLangUpdate(lang, { categories: { skinlines: "error" } });
         continue;
       }
 
-      onProgress(`[${lang}] Skinlines: ${skinlines.length}`, "success");
+      logger.success(`[${lang}] Skinlines: ${skinlines.length}`);
       onLangUpdate(lang, { categories: { skinlines: "done" } });
 
       // champions
-      onProgress(`[${lang}] Get champions...`);
+      logger.log(`[${lang}] Get champions...`);
       onLangUpdate(lang, { categories: { champions: "loading" } });
       const riot_champions = await getChampions(versions[0] ?? config.riotVersion, lang);
 
       if (!riot_champions?.length) {
-        onProgress(`[${lang}] Champions: ERROR`, "error");
+        logger.error(`[${lang}] Champions: ERROR`);
         onLangUpdate(lang, { categories: { champions: "error" } });
         continue;
       }
 
-      onProgress(`[${lang}] Champions: ${riot_champions.length}`, "success");
+      logger.success(`[${lang}] Champions: ${riot_champions.length}`);
       onLangUpdate(lang, { categories: { champions: "done" } });
 
       const champions = riot_champions.map((c) => ({
@@ -100,7 +90,7 @@ export const prepareRiotClient = async (
         const champion_data_pbe = await getChampion(champion.key, lang, "pbe");
 
         if (!champion_data) {
-          onProgress(`[${lang}] ${champion.name}`, "error");
+          logger.error(`[${lang}] ${champion.name}`);
           onLangUpdate(lang, { categories: { champions: "error" } });
           break;
         }
@@ -165,11 +155,11 @@ export const prepareRiotClient = async (
         }
 
         onLangUpdate(lang, { categories: { skins: "done", chromas: "done" } });
-        onProgress(`[${lang}] ${champion.name}`, "success");
+        logger.success(`[${lang}] ${champion.name}`);
       }
 
       // отправляем на сервер
-      onProgress(`[${lang}] Saving...`);
+      logger.log(`[${lang}] Saving...`);
       await fetch("/api/riot-save", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -179,13 +169,13 @@ export const prepareRiotClient = async (
         }),
       });
 
-      onProgress(`[${lang}] Done`, "success");
+      logger.success(`[${lang}] Done`);
       onLangUpdate(lang, { status: "done" });
     } catch (error) {
-      onProgress(`[${lang}] ERROR: ${(error as Error).message}`, "error");
+      logger.error(`[${lang}] ERROR: ${(error as Error).message}`);
       onLangUpdate(lang, { status: "error" });
     }
   }
 
-  onProgress("PREPARE END", "success");
+  logger.log("PREPARE END");
 };
