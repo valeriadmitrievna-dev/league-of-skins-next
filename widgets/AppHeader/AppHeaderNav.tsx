@@ -8,13 +8,17 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import { getServerUser } from "@/lib/auth";
 import LogoutButton from "@/components/LogoutButton";
 import { getT } from "next-i18next/server";
+import { cookies } from "next/headers";
 
 interface AppHeaderNavProps {
   className?: string;
 }
 
 const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
-  const { t } = await getT();
+  const cookieStore = await cookies();
+  const lng = cookieStore.get("i18next")?.value ?? "en";
+  const { t } = await getT("common", { lng });
+
   const user = await getServerUser();
   const isAuth = !!user;
 
