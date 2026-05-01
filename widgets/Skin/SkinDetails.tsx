@@ -8,8 +8,8 @@ import Video from "@/components/Video";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 import Link from "next/link";
 import { cn } from "@/shared/cn";
-import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import ChromaCard from "../ChromaCard";
+import { useT } from "next-i18next/client";
 
 interface SkinDetailsProps {
   data: any;
@@ -17,7 +17,7 @@ interface SkinDetailsProps {
 }
 
 const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
-  const t = useDictionary();
+  const { t } = useT();
 
   const renderChroma = useCallback(
     (item: unknown, _index: number) => {
@@ -65,14 +65,14 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
 
       {!!data.chromas?.length && (
         <div className="mt-6">
-          <Typography.H4 className="mb-4">{t.skin.chromas}</Typography.H4>
+          <Typography.H4 className="mb-4">{t("skin.chromas")}</Typography.H4>
           <VirtualizedGrid items={data.chromas} overscan={4} render={renderChroma} columnGap={16} rowGap={24} />
         </div>
       )}
 
       {!!data.questSkinInfo && (
         <div className="mt-6">
-          <Typography.H4 className="mb-4">{t.skin.quest}</Typography.H4>
+          <Typography.H4 className="mb-4">{t("skin.quest")}</Typography.H4>
           <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
             {data.questSkinInfo.tiers.map((tier: any) => (
               <div key={tier.name} className="group relative">
@@ -99,7 +99,7 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
 
       {!!data.features?.length && (
         <div className="mt-6">
-          <Typography.H4 className="mb-4">{t.skin.features}</Typography.H4>
+          <Typography.H4 className="mb-4">{t("skin.features")}</Typography.H4>
           <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
             {data.features.map((feature: any) => (
               <div key={feature.description} className="relative overflow-hidden rounded-md aspect-1056/720">

@@ -5,16 +5,19 @@ import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import SkinCard from "../Skin/SkinCard";
 import { SearchParams } from "@/shared/types";
-import { useLocale } from "@/shared/providers/DictionaryProvider";
+
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useUser } from "@/shared/providers/UserProvider";
+import { useT } from "next-i18next/client";
 
 interface SearchSkinsResultProps {
   params: SearchParams;
 }
 
 const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
-  const locale = useLocale();
+  const { i18n } = useT();
+  const locale = i18n.language;
+
   const { update } = useQueryParams();
   const { user } = useUser();
   const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;

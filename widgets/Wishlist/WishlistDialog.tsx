@@ -5,13 +5,13 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { cn } from "@/shared/cn";
-import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import { useUser } from "@/shared/providers/UserProvider";
 import { useRouter } from "next/navigation";
 import WishlistCreate from "./WishlistCreate";
 import WishlistLine from "./WishlistLine";
 import { setPendingWishlist } from "@/lib/pendindWishlist";
 import usePendingWishlist from "@/hooks/usePendindWishlist";
+import { useT } from "next-i18next/client";
 
 interface WishlistDialogProps {
   trigger: (options: {
@@ -35,7 +35,7 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
   chromaName,
   chromaContentIds = [],
 }) => {
-  const t = useDictionary();
+  const { t } = useT();
   const router = useRouter();
 
   const { isAuth } = useUser();
@@ -75,26 +75,26 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
       </DialogTrigger>
       <DialogContent preventDefault showCloseButton className="gap-y-2">
         <DialogHeader className="px-2.5 pt-2">
-          <DialogTitle>{t.skin.add}</DialogTitle>
+          <DialogTitle>{t("skin.add")}</DialogTitle>
           <DialogDescription>
             {!!skinContentIds.length &&
               (skinContentIds.length === 1 && skinName ? (
                 <>
-                  {t.skin.addHelper} <span className="font-medium">{skinName}</span>
+                  {t("skin.addHelper")} <span className="font-medium">{skinName}</span>
                 </>
               ) : (
                 <>
-                  {t.skin.addHelperMany} ({skinContentIds.length})
+                  {t("skin.addHelperMany")} ({skinContentIds.length})
                 </>
               ))}
             {!!chromaContentIds.length &&
               (chromaContentIds.length === 1 && chromaName ? (
                 <>
-                  {t.chroma.addHelper} <span className="font-medium">{chromaName}</span>
+                  {t("chroma.addHelper")} <span className="font-medium">{chromaName}</span>
                 </>
               ) : (
                 <>
-                  {t.chroma.addHelperMany} ({chromaContentIds.length})
+                  {t("chroma.addHelperMany")} ({chromaContentIds.length})
                 </>
               ))}
           </DialogDescription>
@@ -115,7 +115,7 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
             <WishlistCreate skinContentIds={skinContentIds} chromaContentIds={chromaContentIds}>
               <Button variant="ghost" size="sm" className="justify-start">
                 <PlusIcon />
-                {t.wishlist.createAndAdd}
+                {t("wishlist.createAndAdd")}
               </Button>
             </WishlistCreate>
           )}

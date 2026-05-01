@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import { CircleMinusIcon, CirclePlusIcon } from "lucide-react";
 import Link from "next/link";
 import { FC, MouseEvent } from "react";
@@ -13,8 +12,6 @@ interface WishlistLineProps {
 }
 
 const WishlistLine: FC<WishlistLineProps> = ({ wishlist, skinContentIds = [], chromaContentIds = [] }) => {
-  const t = useDictionary();
-
   const addToExistingWishlist = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
