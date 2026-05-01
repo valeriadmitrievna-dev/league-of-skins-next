@@ -16,6 +16,17 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
   size = 30,
   skip,
 }: InfiniteLoad) => {
+  const paramsKey = JSON.stringify({ ...params, ...headers });
+  const initializedRef = useRef(false);
+  const prevParamsKeyRef = useRef(paramsKey);
+
+  if (prevParamsKeyRef.current !== paramsKey) {
+    prevParamsKeyRef.current = paramsKey;
+    initializedRef.current = false;
+  }
+
+  const initialized = initializedRef.current;
+
   const [page, setPage] = useState(1);
   const [isLoading, setLoading] = useState(true);
   const [hasMore, setHasMore] = useState(true);
@@ -24,8 +35,6 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
 
   const ref = useRef<HTMLDivElement | null>(null);
   const abortRef = useRef<AbortController | null>(null);
-
-  const paramsKey = JSON.stringify({ ...params, ...headers });
 
   const intersection = useIntersection(ref as RefObject<HTMLDivElement>, {
     root: null,
@@ -86,7 +95,7 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
     }
   }, [intersection?.isIntersecting]);
 
-  return { data, isLoading, loaderRef: ref, hasMore, count };
+  return { data, isLoading, loaderRef: ref, hasMore, count, initialized };
 };
 
 export default useInfiniteLoad;

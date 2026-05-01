@@ -19,7 +19,7 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
   const { user } = useUser();
   const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;
 
-  const { data, isLoading, loaderRef, count } = useInfiniteLoad({
+  const { data, isLoading, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/skins",
     params: {
       ...(search ? { search } : {}),
@@ -57,7 +57,7 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
 
   return (
     <>
-      {!isLoading && !data.length && "No items"}
+      {initialized && !isLoading && !data.length && "No items"}
       <VirtualizedGrid
         items={data}
         loading={!data.length && isLoading}

@@ -20,6 +20,12 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+code,
+pre,
+.font-mono {
+  font-family: var(--font-mono);
+}
+
 * {
   box-sizing: border-box;
   outline: none;

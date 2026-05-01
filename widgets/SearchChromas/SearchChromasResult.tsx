@@ -15,7 +15,7 @@ const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
   const locale = useLocale();
   const { search, championId, skinContentId, skin, owned, server } = params;
 
-  const { data, isLoading, loaderRef } = useInfiniteLoad({
+  const { data, isLoading, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/chromas",
     params: {
       ...(search ? { search } : {}),
@@ -35,7 +35,7 @@ const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
 
   return (
     <>
-      {!isLoading && !data.length && "No items"}
+      {initialized && !isLoading && !data.length && "No items"}
       <VirtualizedGrid
         items={data}
         loading={!data.length && isLoading}

@@ -7,10 +7,21 @@ import { getDictionary, getLocale } from "@/lib/i18n";
 import { DictionaryProvider } from "@/shared/providers/DictionaryProvider";
 import { UserProvider } from "@/shared/providers/UserProvider";
 import ToastsProvider from "@/shared/providers/ToastsProvider";
+import localFont from "next/font/local";
 
 const font = Rubik({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+const mono = localFont({
+  src: [
+    {
+      path: "../public/fonts/JetBrainsMono.ttf",
+      style: "normal",
+    },
+  ],
+  variable: "--font-mono",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +34,7 @@ const RootLayout: FC<PropsWithChildren> = async ({ children }) => {
   const dictionary = await getDictionary();
 
   return (
-    <html className={`${font.variable} h-full antialiased light`}>
+    <html className={`${font.variable} ${mono.variable} h-full antialiased light`}>
       <body className="min-h-full flex flex-col">
         <Background />
         <DictionaryProvider dictionary={dictionary} locale={locale}>
