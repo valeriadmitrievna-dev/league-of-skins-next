@@ -30,7 +30,7 @@ const SignInPage = () => {
     formState: { errors },
   } = useForm<SignInFormInput>();
 
-  const { execute, loading, error } = useApi((body: SignInFormInput) =>
+  const { execute, loading, error } = useApi((body?: SignInFormInput) =>
     api<{ access: string }>("/api/auth/signin", {
       method: "POST",
       json: body,

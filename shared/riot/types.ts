@@ -4,14 +4,21 @@ export type LogType = "default" | "warning" | "success" | "error";
 
 export interface LangProgress {
   status: LangStatus;
-  categories: {
+  categories?: {
     versions?: CategoryStatus;
     skinlines?: CategoryStatus;
     champions?: CategoryStatus;
     skins?: CategoryStatus;
     chromas?: CategoryStatus;
   };
+  counts?: {
+    skinlines?: number;
+    champions?: number;
+    skins?: number;
+    chromas?: number;
+  };
   timeSeconds?: number;
+  lastUpdate?: string;
   error?: string;
 }
 

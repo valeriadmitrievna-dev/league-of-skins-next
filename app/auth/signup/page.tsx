@@ -31,7 +31,7 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm<SignUpFormInput>();
 
-  const { execute, loading, error } = useApi((body: SignUpFormInput) =>
+  const { execute, loading, error } = useApi((body?: SignUpFormInput) =>
     api<{ access: string }>("/api/auth/signup", {
       method: "POST",
       json: body,

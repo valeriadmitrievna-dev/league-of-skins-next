@@ -5,7 +5,6 @@ import { type FC } from "react";
 import { Button } from "@/components/ui/button";
 import { LANGUAGES } from "@/shared/constants/languages";
 import { Combobox, ComboboxContent, ComboboxItem, ComboboxList, ComboboxTrigger } from "@/components/ui/combobox";
-import { setLanguage } from "@/lib/actions/setLanguage";
 import { useChangeLanguage, useT } from "next-i18next/client";
 
 const LanguageSwitcher: FC = () => {

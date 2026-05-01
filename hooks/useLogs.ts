@@ -1,17 +1,12 @@
 "use client";
-import { useEffect, useState } from "react";
-import { logger, type Log } from "@/lib/logger";
+import useClientLogs from "./useClientLogs";
+import { useServerLogs } from "./useServerLogs";
 
 const useLogs = () => {
-  const [logs, setLogs] = useState<Log[]>(logger.getLogs());
+  const clientLogs = useClientLogs();
+  const serverLogs = useServerLogs();
 
-  useEffect(() => {
-    return logger.subscribe((log) => {
-      setLogs((prev) => [log, ...prev]);
-    });
-  }, []);
-
-  return logs;
+  return [...clientLogs, ...serverLogs].sort((a, b) => +new Date(b.time) - +new Date(a.time))
 };
 
 export default useLogs;

@@ -1,5 +1,4 @@
 export interface Log {
-  id: string;
   type: "default" | "warning" | "success" | "error";
   source: "client" | "server";
   message: string;
@@ -25,7 +24,6 @@ const createLogger =
   (type: Log["type"]) =>
   (...messages: unknown[]) => {
     const log: Log = {
-      id: crypto.randomUUID(),
       type,
       source: typeof window === "undefined" ? "server" : "client",
       message: messages.map(String).join(" "),

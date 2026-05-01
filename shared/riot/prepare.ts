@@ -1,24 +1,21 @@
 import { uniqBy } from "lodash";
 import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
 import { getCDragonPath } from "@/shared/utils/getCDragonPath";
-import { LangProgress } from "@/widgets/Logs/types";
 import { getVersions } from "@/riot/versions.riot";
 import { getSkinlines } from "@/riot/skinlines.riot";
 import { getChampions } from "@/riot/champions.riot";
 import { config } from "@/lib/config";
 import { getChampion } from "@/riot/champion.riot";
-import { logger } from '@/lib/logger';
+import { LangProgress } from "./types";
 
 export type ProgressCallback = (message: string, type?: "default" | "success" | "error") => void;
 export type LangProgressCallback = (lang: string, update: Partial<LangProgress>) => void;
 
-export const prepareRiotClient = async (
-  languages: string[],
-  onLangUpdate: LangProgressCallback,
-) => {
+export const prepareRiotClient = async (languages: string[], logger: any, onLangUpdate: LangProgressCallback) => {
   logger.log("PREPARE START");
 
   for (const lang of languages) {
+    const timeStart = performance.now();
     onLangUpdate(lang, {
       status: "loading",
       categories: { versions: "idle", skinlines: "idle", champions: "idle", skins: "idle", chromas: "idle" },
@@ -155,8 +152,10 @@ export const prepareRiotClient = async (
         }
 
         onLangUpdate(lang, { categories: { skins: "done", chromas: "done" } });
-        logger.success(`[${lang}] ${champion.name}`);
       }
+
+      logger.success(`[${lang}] Skins: ${skins.length}`);
+      logger.success(`[${lang}] Chromas: ${chromas.length}`);
 
       // отправляем на сервер
       logger.log(`[${lang}] Saving...`);
@@ -170,12 +169,14 @@ export const prepareRiotClient = async (
       });
 
       logger.success(`[${lang}] Done`);
-      onLangUpdate(lang, { status: "done" });
+      onLangUpdate(lang, { status: "done", lastUpdate: String(new Date()) });
     } catch (error) {
       logger.error(`[${lang}] ERROR: ${(error as Error).message}`);
       onLangUpdate(lang, { status: "error" });
     }
-  }
 
+    const timeSeconds = Math.round(performance.now() - timeStart) / 1000;
+    onLangUpdate(lang, { timeSeconds });
+  }
   logger.log("PREPARE END");
 };

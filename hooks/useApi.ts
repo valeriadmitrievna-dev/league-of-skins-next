@@ -36,12 +36,12 @@ export const api = async <T>(url: string, options: RequestOptions = {}) => {
   return data as T;
 };
 
-export const useApi = <T, B = any>(fn: (body: B) => Promise<T>) => {
+export const useApi = <T, B = any>(fn: (body?: B) => Promise<T>) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
   const [data, setData] = useState<T | null>(null);
 
-  const execute = async (body: B) => {
+  const execute = async (body?: B) => {
     setData(null);
     setLoading(true);
     setError(null);
