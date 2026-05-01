@@ -5,14 +5,15 @@ import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import { SearchParams } from "@/shared/types";
 import ChromaCard from "../ChromaCard";
-import { useLocale } from "@/shared/providers/DictionaryProvider";
+import { useT } from "next-i18next/client";
 
 interface SearchChromasResultProps {
   params: SearchParams;
 }
 
 const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
-  const locale = useLocale();
+  const { i18n } = useT();
+  const locale = i18n.language;
   const { search, championId, skinContentId, skin, owned, server } = params;
 
   const { data, isLoading, loaderRef, count, initialized } = useInfiniteLoad({

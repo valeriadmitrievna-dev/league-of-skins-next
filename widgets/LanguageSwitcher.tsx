@@ -6,14 +6,17 @@ import { Button } from "@/components/ui/button";
 import { LANGUAGES } from "@/shared/constants/languages";
 import { Combobox, ComboboxContent, ComboboxItem, ComboboxList, ComboboxTrigger } from "@/components/ui/combobox";
 import { setLanguage } from "@/lib/actions/setLanguage";
-import { useLocale } from "@/shared/providers/DictionaryProvider";
+import { useChangeLanguage, useT } from "next-i18next/client";
 
 const LanguageSwitcher: FC = () => {
-  const locale = useLocale();
+  const { i18n } = useT();
+  const locale = i18n.language;
 
-  const changeLanguageHandler = async (lang: string | null) => {
+  const changeLanguage = useChangeLanguage();
+
+  const changeLanguageHandler = (lang: string | null) => {
     if (lang) {
-      await setLanguage(lang);
+      changeLanguage(lang);
     }
   };
 

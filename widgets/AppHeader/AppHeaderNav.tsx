@@ -3,18 +3,18 @@ import { Button } from "@/components/ui/button";
 import AppHeaderLink from "./AppHeaderLink";
 import { cn } from "@/shared/cn";
 import Link from "next/link";
-import { getDictionary } from "@/lib/i18n";
+import { ShieldAlertIcon } from "lucide-react";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { getServerUser } from "@/lib/auth";
 import LogoutButton from "@/components/LogoutButton";
-import { ShieldAlertIcon } from "lucide-react";
+import { getT } from "next-i18next/server";
 
 interface AppHeaderNavProps {
   className?: string;
 }
 
 const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
-  const t = await getDictionary();
+  const { t } = await getT();
   const user = await getServerUser();
   const isAuth = !!user;
 
@@ -26,8 +26,8 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
   return (
     <nav className={cn("flex items-center gap-2 lg:gap-4 h-full", className)}>
       <div className="flex flex-col md:flex-row items-center gap-8 shrink-0 h-full">
-        <AppHeaderLink to="/search/skins" text={t.header.skins} className="py-2" />
-        <AppHeaderLink to="/search/chromas" text={t.header.chromas} className="py-2" />
+        <AppHeaderLink to="/search/skins" text={t("header.skins")} className="py-2" />
+        <AppHeaderLink to="/search/chromas" text={t("header.chromas")} className="py-2" />
         {/* <Separator orientation="vertical" className="h-4!" /> */}
         {/* <HoverCard openDelay={0} closeDelay={100} >
           <HoverCardTrigger className='h-full flex items-center'>
@@ -40,11 +40,11 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
         </HoverCard> */}
         {isAuth && (
           <>
-            <AppHeaderLink to="/wishlists" text={t.header.wishlists} className="w-full md:w-fit" />
-            <AppHeaderLink to="/collection" text={t.header.collection} className="w-full md:w-fit" />
+            <AppHeaderLink to="/wishlists" text={t("header.wishlists")} className="w-full md:w-fit" />
+            <AppHeaderLink to="/collection" text={t("header.collection")} className="w-full md:w-fit" />
           </>
         )}
-        <AppHeaderLink to="/about" text={t.header.about} className="w-full md:w-fit" />
+        <AppHeaderLink to="/about" text={t("header.about")} className="w-full md:w-fit" />
       </div>
 
       <div className="flex flex-col md:flex-row w-full gap-2">
@@ -61,10 +61,10 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
         {!isAuth && (
           <>
             <Button variant="outline" asChild>
-              <Link href={authLink("signup")}>{t.header.signup}</Link>
+              <Link href={authLink("signup")}>{t("header.signup")}</Link>
             </Button>
             <Button variant="outline" asChild>
-              <Link href={authLink("signin")}>{t.header.signin}</Link>
+              <Link href={authLink("signin")}>{t("header.signin")}</Link>
             </Button>
           </>
         )}

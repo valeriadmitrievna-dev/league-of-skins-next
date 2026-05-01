@@ -1,13 +1,15 @@
-import { getDictionary, getLocale } from "@/lib/i18n";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import SkinDetails from "@/widgets/Skin/SkinDetails";
 import SkinInfo from "@/widgets/Skin/SkinInfo";
+import { useT } from "next-i18next/client";
 
 const SkinPage = async ({ params }: { params: Promise<{ contentId: string }> }) => {
   const { contentId } = await params;
 
-  const locale = await getLocale();
+  const { i18n } = useT();
+  const locale = i18n.language;
+
   const appData = await getLangAppData(getLanguageCode(locale));
   const skin = (appData?.skins ?? []).find((skin: any) => skin.contentId === contentId);
 
