@@ -1,5 +1,5 @@
 import { PlusIcon } from "lucide-react";
-import { useState, type FC, type ReactNode } from "react";
+import { useEffect, useState, type FC, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,9 @@ import { useDictionary } from "@/shared/providers/DictionaryProvider";
 import { useUser } from "@/shared/providers/UserProvider";
 import { useRouter } from "next/navigation";
 import WishlistCreate from "./WishlistCreate";
-import WishlistLine from './WishlistLine';
+import WishlistLine from "./WishlistLine";
+import { setPendingWishlist } from "@/lib/pendindWishlist";
+import usePendingWishlist from "@/hooks/usePendindWishlist";
 
 interface WishlistDialogProps {
   trigger: (options: {
@@ -37,12 +39,11 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
   const router = useRouter();
 
   const { isAuth } = useUser();
-  // const addSkinsWaiting = useSelector(appAddSkinsWaitingSelector);
-  // const addChromasWaiting = useSelector(appAddChromasWaitingSelector);
+  const pending = usePendingWishlist();
 
   const [open, setOpen] = useState(false);
 
-  const wishlists: any[] = [{ id: 'test', name: 'Test', skins: [] }];
+  const wishlists: any[] = [];
 
   const allSkins = wishlists.flatMap((w) => w.skins);
   const allChromas = wishlists.flatMap((w) => w.chromas);
@@ -52,27 +53,20 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
   const openHandler = () => {
     if (!skinContentIds.length && !chromaContentIds.length) return;
 
-    if (isAuth) setOpen(true);
-    else {
-      // if (skinContentIds.length) dispatch(setAddSkinsWaiting(skinContentIds));
-      // if (chromaContentIds.length) dispatch(setAddChromasWaiting(chromaContentIds));
-
-      const pathname = "";
+    if (isAuth) {
+      setOpen(true);
+    } else {
+      setPendingWishlist({ skinContentIds, chromaContentIds });
+      const pathname = window.location.pathname;
       router.push("/auth/signin?redirect=" + pathname);
-      router.refresh();
     }
   };
 
-  //useEffect(() => {
-  //  const skinsMatch = addSkinsWaiting.length > 0 && isEqual(addSkinsWaiting, skinContentIds);
-  //  const chromasMatch = addChromasWaiting.length > 0 && isEqual(addChromasWaiting, chromaContentIds);
-  //
-  //  if ((skinsMatch || chromasMatch) && !open && isAuth) {
-  //    dispatch(setAddSkinsWaiting([]));
-  //    dispatch(setAddChromasWaiting([]));
-  //    setOpen(true);
-  //  }
-  //}, [isAuth, addSkinsWaiting, addChromasWaiting]);
+  useEffect(() => {
+    if (pending?.skinContentIds?.length || pending?.chromaContentIds?.length) {
+      setOpen(true);
+    }
+  }, [pending]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

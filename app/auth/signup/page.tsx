@@ -45,6 +45,7 @@ const SignUpPage = () => {
       const redirect = searchParams.get("redirect") ?? "/";
       await refetchUser();
       router.push(redirect);
+      router.refresh();
     }
   };
 
