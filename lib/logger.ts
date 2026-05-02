@@ -1,6 +1,6 @@
 export interface Log {
   type: "default" | "warning" | "success" | "error";
-  source: "client" | "server";
+  source?: "client" | "server";
   message: string;
   time: Date;
 }

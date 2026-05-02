@@ -1,3 +1,3 @@
 import { redirect } from "next/navigation";
-const Administration = () => redirect("/administration/logs");
+const Administration = () => redirect("/administration/test");
 export default Administration;

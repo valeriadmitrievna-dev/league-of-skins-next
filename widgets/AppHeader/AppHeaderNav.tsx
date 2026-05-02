@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import AppHeaderLink from "./AppHeaderLink";
 import { cn } from "@/shared/cn";
 import Link from "next/link";
-import { ShieldAlertIcon } from "lucide-react";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { getServerUser } from "@/lib/auth";
 import LogoutButton from "@/components/LogoutButton";
 import { getT } from "next-i18next/server";
 import { cookies } from "next/headers";
+import AdminNavLink from "../Admin/AdminNavLink";
 
 interface AppHeaderNavProps {
   className?: string;
@@ -54,11 +54,7 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
       <div className="flex flex-col md:flex-row w-full gap-2">
         <div className="flex gap-2 items-center justify-center md:ml-4">
           <LanguageSwitcher />
-          <Button variant="outline" size="icon" asChild>
-            <Link href="/administration">
-              <ShieldAlertIcon />
-            </Link>
-          </Button>
+          <AdminNavLink />
           {/* {isAuth && <UserSettings />} */}
         </div>
 

@@ -18,7 +18,7 @@ export const POST = endpoint(async ({ body }) => {
   const { data: existingUser } = await supabase.from("users").select("*").eq("email", email).single();
   if (existingUser) throw new RequestError({ code: "ERR_0006", status: 400 });
 
-  const hashed = await hash(password, 10);
+  const hashed = await hash(password, 11);
 
   const { data: user, error } = await supabase
     .from("users")
@@ -26,7 +26,8 @@ export const POST = endpoint(async ({ body }) => {
       email: email,
       password: hashed,
       name: name,
-      updated_at: new Date(),
+      updated_at: String(new Date()),
+      created_at: String(new Date()),
     })
     .select()
     .single();
