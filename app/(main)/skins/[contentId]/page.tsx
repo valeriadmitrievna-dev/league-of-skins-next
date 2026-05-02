@@ -10,7 +10,7 @@ const SkinPage = async ({ params }: { params: Promise<{ contentId: string }> }) 
   const { i18n } = useT();
   const locale = i18n.language;
 
-  const appData = await getLangAppData(getLanguageCode(locale));
+  const appData: any = await getLangAppData(getLanguageCode(locale));
   const skin = (appData?.skins ?? []).find((skin: any) => skin.contentId === contentId);
 
   if (!skin) {

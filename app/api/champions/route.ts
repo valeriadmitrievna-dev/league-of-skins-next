@@ -8,7 +8,7 @@ export async function GET (req: NextRequest) {
     const lang = getLanguageCode(req.headers.get("Language") ?? "en");
     const { page, size } = Object.fromEntries(req.nextUrl.searchParams);
 
-    const champions = (await getLangAppData(lang))?.champions ?? [];
+    const champions = (await getLangAppData(lang) as any)?.champions ?? [];
 
     return Response.json({
       count: champions.length,

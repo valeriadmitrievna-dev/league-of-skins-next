@@ -12,7 +12,7 @@ const SearchChromas: FC<{ searchParams: SearchParams }> = async ({ searchParams 
   const { i18n } = await getT();
   const locale = i18n.language;
 
-  const appData = await getLangAppData(getLanguageCode(locale));
+  const appData: any = await getLangAppData(getLanguageCode(locale));
   const champions = appData?.champions ?? [];
   const skins =
     !appData || !params.championId

@@ -1,6 +1,6 @@
-import { createSkinPredicate } from '@/shared/utils/createSkinPredicate';
+import { createSkinPredicate } from "@/shared/utils/createSkinPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getLanguageCode } from '@/shared/utils/getLanguageCode';
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 import { NextRequest } from "next/server";
 
@@ -10,18 +10,18 @@ export async function GET(req: NextRequest) {
 
     const { page, size, ...params } = Object.fromEntries(req.nextUrl.searchParams);
 
-    const originAppData = await getLangAppData();
-    const appData = await getLangAppData(lang);
-    if (!appData) return Response.json({ count: 0, data: [] })
-    
-    const predicate = await createSkinPredicate(params, null, lang);
-    const filteredSkins = appData.skins.filter(predicate);
+    const originAppData: any = await getLangAppData();
+    const appData: any = await getLangAppData(lang);
+    if (!appData) return Response.json({ count: 0, data: [] });
 
-    const skins = filteredSkins.map(skin => {
-      const originSkin = originAppData.skins.find(originSkin => originSkin.contentId === skin.contentId);
+    const predicate = await createSkinPredicate(params, null, lang);
+    const filteredSkins: any[] = appData.skins.filter(predicate);
+
+    const skins = filteredSkins.map((skin) => {
+      const originSkin = originAppData.skins.find((originSkin: any) => originSkin.contentId === skin.contentId);
       // return { ...skin, ...(user ? { owned: user.ownedSkins.includes(skin.contentId) } : {}), originName: originSkin?.name }
       return { ...skin, originName: originSkin?.name };
-    })
+    });
 
     return Response.json({
       count: skins.length,

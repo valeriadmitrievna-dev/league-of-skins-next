@@ -3,14 +3,14 @@ import { isEqual, uniqWith } from "lodash";
 
 export const getChromas = async (lang: string = "en_US") => {
   try {
-    const data = await getLangAppData(lang);
+    const data: any = await getLangAppData(lang);
 
     if (data) {
       const chromas: any[] = uniqWith(
         data.skins
-          .filter((skin) => skin.chromas.length)
-          .map((skin) =>
-            skin.chromas?.map((chroma) => {
+          .filter((skin: any) => skin.chromas.length)
+          .map((skin: any) =>
+            skin.chromas?.map((chroma: any) => {
               return {
                 id: chroma.id.toString(),
                 contentId: chroma.contentId,
@@ -38,13 +38,13 @@ export const getChromas = async (lang: string = "en_US") => {
 
 export const getAllChromas = async (lang: string = "en_US") => {
   try {
-    const data = await getLangAppData(lang);
+    const data: any = await getLangAppData(lang);
 
     if (data) {
       const chromas: any[] = data.skins
-        .filter((skin) => skin.chromas.length)
-        .map((skin) =>
-          skin.chromas?.map((chroma) => {
+        .filter((skin: any) => skin.chromas.length)
+        .map((skin: any) =>
+          skin.chromas?.map((chroma: any) => {
             return {
               id: chroma.id.toString(),
               contentId: chroma.contentId,
