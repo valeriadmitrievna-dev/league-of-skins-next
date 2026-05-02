@@ -130,7 +130,7 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
                 {(item) => (
                   <ComboboxItem key={item} value={item}>
                     <span className="block rounded-sm size-3" style={{ background: RARITIES[item]?.color }} />
-                    {t(`rarity${item}`)}
+                    {t(`rarity.${item}`)}
                   </ComboboxItem>
                 )}
               </ComboboxList>

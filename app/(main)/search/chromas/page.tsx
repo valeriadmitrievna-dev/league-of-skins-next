@@ -5,14 +5,15 @@ import SearchChromasFilters from "@/widgets/SearchChromas/SearchChromasFilters";
 import SearchChromasInput from "@/widgets/SearchChromas/SearchChromasInput";
 import SearchChromasResult from "@/widgets/SearchChromas/SearchChromasResult";
 import { getT } from "next-i18next/server";
+import { cookies } from "next/headers";
 import { FC } from "react";
 
 const SearchChromas: FC<{ searchParams: SearchParams }> = async ({ searchParams }) => {
   const params = await searchParams;
-  const { i18n } = await getT();
-  const locale = i18n.language;
+  const cookieStore = await cookies();
+  const lng = cookieStore.get("i18next")?.value ?? "en";
 
-  const appData: any = await getLangAppData(getLanguageCode(locale));
+  const appData: any = await getLangAppData(getLanguageCode(lng));
   const champions = appData?.champions ?? [];
   const skins =
     !appData || !params.championId
