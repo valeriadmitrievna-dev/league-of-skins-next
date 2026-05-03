@@ -28,6 +28,7 @@ export const POST = async (req: Request) => {
 
     const response = Response.json({ ok: true });
     response.headers.append("Set-Cookie", serializeCookie("accessToken", newAccess, ACCESS_COOKIE));
+    response.headers.append("Set-Cookie", `isAuth=1; Secure; SameSite=strict; Path=/; Max-Age=${60 * 15}`);
     return response;
   } catch {
     return Response.json({ error: "Invalid token" }, { status: 401 });

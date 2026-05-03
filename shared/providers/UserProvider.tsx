@@ -1,6 +1,6 @@
 "use client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createContext, useContext, FC, PropsWithChildren } from "react";
+import { createContext, useContext, FC, PropsWithChildren, useState } from "react";
 
 import { fetchClient } from "@/lib/fetchClient";
 import { DbUser } from "@/types/db";
@@ -14,8 +14,14 @@ interface UserContext {
 
 const UserContext = createContext<UserContext | null>(null);
 
+const getInitialAuth = () => {
+  if (typeof document === "undefined") return false;
+  return document.cookie.includes("isAuth=1");
+};
+
 export const UserProvider: FC<PropsWithChildren> = ({ children }) => {
   const queryClient = useQueryClient();
+  const [isAuthFast] = useState(getInitialAuth);
 
   const { data: user = null, isLoading } = useQuery({
     queryKey: ["user"],
@@ -26,9 +32,10 @@ export const UserProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const refetch = () => queryClient.invalidateQueries({ queryKey: ["user"] });
 
-  return <UserContext.Provider value={{ user, isAuth: !!user, isLoading, refetch }}>{children}</UserContext.Provider>;
-};
+  const isAuth = user ? true : isAuthFast;
 
+  return <UserContext.Provider value={{ user, isAuth, isLoading, refetch }}>{children}</UserContext.Provider>;
+};
 export const useUser = () => {
   const ctx = useContext(UserContext);
   if (!ctx) throw new Error("useUser must be used within UserProvider");

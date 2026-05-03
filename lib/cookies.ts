@@ -24,10 +24,18 @@ export const setAuthCookies = async (access: string, refresh: string) => {
   const cookieStore = await cookies();
   cookieStore.set("accessToken", access, ACCESS_COOKIE);
   cookieStore.set("refreshToken", refresh, REFRESH_COOKIE);
+
+  cookieStore.set("isAuth", "1", {
+    secure: true,
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 15,
+  });
 };
 
 export const clearAuthCookies = async () => {
   const cookieStore = await cookies();
   cookieStore.delete("accessToken");
   cookieStore.delete("refreshToken");
+  cookieStore.delete("isAuth");
 };
