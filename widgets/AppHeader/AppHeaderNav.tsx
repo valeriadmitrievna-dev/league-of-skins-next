@@ -7,7 +7,7 @@ import LanguageSwitcher from "../LanguageSwitcher";
 import { getServerUser } from "@/lib/auth";
 import LogoutButton from "@/components/LogoutButton";
 import { getT } from "next-i18next/server";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import AdminNavLink from "../Admin/AdminNavLink";
 
 interface AppHeaderNavProps {
@@ -19,12 +19,14 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
   const lng = cookieStore.get("i18next")?.value ?? "en";
   const { t } = await getT("common", { lng });
 
+  const headerStore = await headers();
+  const pathname = headerStore.get("x-pathname") ?? "/";
+
   const user = await getServerUser();
   const isAuth = !!user;
 
   const authLink = (type: "signin" | "signup") => {
-    // return `/auth/${type}${pathname === "/" ? "" : "?redirect=" + pathname}`;
-    return `/auth/${type}`;
+    return `/auth/${type}${pathname === "/" ? "" : "?redirect=" + pathname}`;
   };
 
   return (
@@ -32,16 +34,6 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
       <div className="flex flex-col md:flex-row items-center gap-8 shrink-0 h-full">
         <AppHeaderLink to="/search/skins" text={t("header.skins")} className="py-2" />
         <AppHeaderLink to="/search/chromas" text={t("header.chromas")} className="py-2" />
-        {/* <Separator orientation="vertical" className="h-4!" /> */}
-        {/* <HoverCard openDelay={0} closeDelay={100} >
-          <HoverCardTrigger className='h-full flex items-center'>
-            <AppHeaderItem>{t("header.search")}</AppHeaderItem>
-          </HoverCardTrigger>
-          <HoverCardContent className="flex flex-col items-start py-3 px-5">
-            <AppHeaderLink to="/search/skins" text={t("header.skins")} className='py-2' />
-            <AppHeaderLink to="/search/chromas" text={t("header.chromas")} className='py-2' />
-          </HoverCardContent>
-        </HoverCard> */}
         {isAuth && (
           <>
             <AppHeaderLink to="/wishlists" text={t("header.wishlists")} className="w-full md:w-fit" />

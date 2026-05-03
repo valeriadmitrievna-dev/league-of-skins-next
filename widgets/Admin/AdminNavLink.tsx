@@ -7,7 +7,6 @@ import Link from "next/link";
 
 const AdminNavLink = () => {
   const { user } = useUser();
-  console.log("[DEV]", user);
 
   if (user?.role === "admin" || config.nodeEnv === "development") {
     return (

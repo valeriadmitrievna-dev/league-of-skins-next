@@ -1,3 +1,4 @@
+// proxy.ts
 import { NextResponse, type NextRequest } from "next/server";
 import { verifyAccessToken } from "./lib/auth";
 import { createProxy } from "next-i18next/proxy";

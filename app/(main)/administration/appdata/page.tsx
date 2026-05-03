@@ -17,7 +17,7 @@ const AdministrationAppData = () => {
   const { data, isLoading: loading } = useQuery({
     queryKey: ["admin-appdata"],
     queryFn: () => fetchClient<Record<string, LangProgress>>("/api/admin/appdata"),
-    staleTime: 0, // всегда свежие данные для admin
+    staleTime: 0,
   });
 
   const logger = {

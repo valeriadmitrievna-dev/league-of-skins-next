@@ -17,7 +17,7 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
   queryKey,
   params = {},
   headers = {},
-  size = 30,
+  size = 20,
   skip,
 }: InfiniteLoad) => {
   const ref = useRef<HTMLDivElement | null>(null);

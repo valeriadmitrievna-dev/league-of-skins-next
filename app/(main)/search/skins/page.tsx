@@ -1,53 +1,97 @@
-import { SearchParams } from "@/shared/types";
-import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getLanguageCode } from '@/shared/utils/getLanguageCode';
-import SearchSkinsFilters from "@/widgets/SearchSkins/SearchSkinsFilters";
-import SearchSkinsInput from "@/widgets/SearchSkins/SearchSkinsInput";
-import SearchSkinsResult from "@/widgets/SearchSkins/SearchSkinsResult";
-import { isEqual, uniqWith } from "lodash";
-import { cookies } from 'next/headers';
-import { FC } from "react";
+"use client";
+import Search from "@/components/Search";
+import { Spinner } from "@/components/ui/spinner";
+import useInfiniteLoad from "@/hooks/useInfiniteLoad";
+import { useQueryParams } from "@/hooks/useQueryParams";
+import { useApp } from '@/shared/providers/AppProvider';
+import { useUser } from "@/shared/providers/UserProvider";
+import SearchSkinsFilters from "@/widgets/SearchSkinsFilters";
+import SkinCard from "@/widgets/Skin/SkinCard";
+import VirtualizedGrid from "@/widgets/VirtualizedGrid";
+import { useT } from "next-i18next/client";
+import { FC, useCallback } from "react";
 
-const SearchSkins: FC<{ searchParams: SearchParams }> = async ({ searchParams }) => {
-  const params = await searchParams;
-  const cookieStore = await cookies();
-  const lng = cookieStore.get("i18next")?.value ?? "en";
+const SearchSkins: FC = () => {
+  const { i18n } = useT();
+  const locale = i18n.language;
 
-  const appData: any = await getLangAppData(getLanguageCode(lng));
-  const champions = appData?.champions ?? [];
-  const skinlines = appData?.skinlines.filter((skinline: any) => skinline.name) ?? [];
-  const rarities = [...new Set((appData?.skins ?? []).map((skin: any) => skin.rarity))] as string[];
-  const chromas = uniqWith(
-    (appData?.skins ?? [])
-      .filter((skin: any) => skin.chromas.length)
-      .map((skin: any) =>
-        skin.chromas?.map((chroma: any) => {
-          return {
-            id: chroma.id.toString(),
-            contentId: chroma.contentId,
-            name: chroma.name,
-            skinName: skin.name,
-            skinContentId: skin.contentId,
-            championId: skin.championId,
-            colors: chroma.colors,
-            path: chroma.path,
-            fullName: chroma.fullName,
-            pbe: chroma.pbe,
-          };
-        }),
-      )
-      .flat(),
-    (a: any, b: any) => a.name === b.name && isEqual(a.colors, b.colors),
+  const { user } = useUser();
+  const { get: getSearch, update: updateSearch } = useQueryParams();
+  const { get, update, reset, hasActive } = useQueryParams([
+    "owned",
+    "legacy",
+    "championId",
+    "rarity",
+    "skinlineId",
+    "chromaId",
+    "server",
+  ]);
+
+  const search = getSearch("search");
+  const championId = get("championId");
+  const skinlineId = get("skinlineId");
+  const rarity = get("rarity");
+  const chromaId = get("chromaId");
+  const legacy = get("legacy");
+  const owned = get("owned");
+  const server = get("server");
+
+  const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
+    url: "/api/skins",
+    queryKey: ["skins"],
+    params: {
+      ...(search ? { search } : {}),
+      ...(championId ? { championId } : {}),
+      ...(skinlineId ? { skinlineId } : {}),
+      ...(rarity ? { rarity } : {}),
+      ...(chromaId ? { chromaId } : {}),
+      legacy: legacy || "all",
+      owned: owned || "all",
+      server: server || "all",
+    },
+    headers: { Language: locale },
+  });
+
+  const renderItem = useCallback(
+    (item: unknown, _index: number) => {
+      const skin = item as any;
+      const ownedSkins = user?.ownedSkins as string[] | undefined;
+      return (
+        <SkinCard
+          key={skin.id}
+          data={skin}
+          owned={ownedSkins?.includes(skin.contentId)}
+          toggleOwnedButton
+          addToWishlistButton
+        />
+      );
+    },
+    [user],
   );
 
   return (
     <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">
-      <SearchSkinsFilters champions={champions} rarities={rarities} skinlines={skinlines} chromas={chromas} />
+      <SearchSkinsFilters
+        getValue={get}
+        setValue={update}
+        {...(hasActive ? { reset } : {})}
+        loading={isLoading || isFetching}
+        count={count}
+      />
       <div className="pb-10">
-        <div className="mb-4">
-          <SearchSkinsInput />
-        </div>
-        <SearchSkinsResult params={params} />
+        <Search value={search ?? ""} onSearch={(value) => updateSearch("search", value)} className="mb-4" />
+        {initialized && !isLoading && !data.length && "No items"}
+        <VirtualizedGrid
+          items={data}
+          loading={!initialized && isLoading}
+          fetching={isFetching}
+          overscan={4}
+          render={renderItem}
+          columnGap={16}
+          rowGap={24}
+        />
+        {!!data.length && isLoading && <Spinner className="mx-auto mt-4 size-8" />}
+        <div ref={loaderRef} />
       </div>
     </div>
   );
