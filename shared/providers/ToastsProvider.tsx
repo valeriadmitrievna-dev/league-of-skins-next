@@ -21,14 +21,14 @@ const ToastsProvider = ({ ...props }: ToasterProps) => {
           "--border-radius": "var(--radius)",
           "--toast-close-button-start": "unset",
           "--toast-close-button-end": "0",
-          "--toast-close-button-transform": "translate(35%, -35%)"
+          "--toast-close-button-transform": "translate(35%, -35%)",
         } as React.CSSProperties
       }
       toastOptions={{
         classNames: {
           toast: "cn-toast px-4! py-2! border-foreground/20!",
-          icon: 'mt-[2px] mr-0! self-start!',
-          description: 'text-[12px]/[14px]! mt-1! pb-1',
+          icon: "mt-[2px] mr-0! self-start!",
+          description: "text-[12px]/[14px]! mt-1! pb-1",
         },
       }}
       position="bottom-left"

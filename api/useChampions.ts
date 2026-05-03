@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchClient } from "@/lib/fetchClient";
-import { AppDataChampion } from '@/types/appdata';
+import { AppDataChampion } from "@/types/appdata";
 
 const useChampions = (langCode: string = "en_US") => {
   return useQuery({

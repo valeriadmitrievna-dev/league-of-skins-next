@@ -1,10 +1,9 @@
 import { errorHandler } from "@/errors";
 import { RequestError } from "@/errors";
-import { getLanguageCode } from '@/shared/utils/getLanguageCode';
-import { DbUser } from '@/types/db';
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
+import { DbUser } from "@/types/db";
 
 import { getServerUser } from "./auth";
-
 
 export type EndpointContext = {
   language: string;

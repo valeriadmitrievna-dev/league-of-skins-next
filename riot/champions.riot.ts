@@ -1,5 +1,5 @@
 import { dDragonUrl } from "@/shared/constants/riot";
-import { RiotChampionItem } from '@/types/riot';
+import { RiotChampionItem } from "@/types/riot";
 
 export const getChampions = async (version: string, lang: string = "en_US") => {
   try {

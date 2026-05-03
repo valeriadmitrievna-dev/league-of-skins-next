@@ -14,8 +14,6 @@ import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 import ChromaCard from "../ChromaCard";
 
-
-
 interface SkinDetailsProps {
   data: AppDataSkin;
   className?: string;
@@ -108,10 +106,10 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
           <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
             {data.features.map((feature) => (
               <div key={feature.description} className="relative overflow-hidden rounded-md aspect-1056/720">
-                <Video src={feature.videoPath ?? ''} className="w-full aspect-1056/720" controls loop />
+                <Video src={feature.videoPath ?? ""} className="w-full aspect-1056/720" controls loop />
 
                 <div className="absolute w-full z-10 top-2 left-2">
-                  <Image src={feature.iconPath ?? ''} className="w-[10%] aspect-square" />
+                  <Image src={feature.iconPath ?? ""} className="w-[10%] aspect-square" />
                 </div>
               </div>
             ))}

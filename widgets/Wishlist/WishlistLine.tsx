@@ -5,7 +5,7 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { DbWishlist } from '@/types/db';
+import { DbWishlist } from "@/types/db";
 
 interface WishlistLineProps {
   wishlist: DbWishlist;

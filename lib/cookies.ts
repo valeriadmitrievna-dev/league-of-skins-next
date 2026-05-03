@@ -6,7 +6,7 @@ export const setAuthCookies = async (access: string, refresh: string) => {
   cookieStore.set("accessToken", access, {
     httpOnly: true,
     secure: true,
-    sameSite: 'strict',
+    sameSite: "strict",
     path: "/",
     maxAge: 60 * 15,
   });
@@ -14,7 +14,7 @@ export const setAuthCookies = async (access: string, refresh: string) => {
   cookieStore.set("refreshToken", refresh, {
     httpOnly: true,
     secure: true,
-    sameSite: 'strict',
+    sameSite: "strict",
     path: "/",
     maxAge: 60 * 60 * 24 * 7,
   });

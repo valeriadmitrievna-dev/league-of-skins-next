@@ -9,11 +9,10 @@ import usePendingWishlist from "@/hooks/usePendindWishlist";
 import { setPendingWishlist } from "@/lib/pendindWishlist";
 import { cn } from "@/shared/cn";
 import { useUser } from "@/shared/providers/UserProvider";
-import { DbWishlist } from '@/types/db';
+import { DbWishlist } from "@/types/db";
 
 import WishlistCreate from "./WishlistCreate";
 import WishlistLine from "./WishlistLine";
-
 
 interface WishlistDialogProps {
   trigger: (options: {

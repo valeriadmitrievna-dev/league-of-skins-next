@@ -7,7 +7,7 @@ import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useUser } from "@/shared/providers/UserProvider";
-import { AppDataSkin } from '@/types/appdata';
+import { AppDataSkin } from "@/types/appdata";
 import SearchSkinsFilters from "@/widgets/SearchSkinsFilters";
 import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";

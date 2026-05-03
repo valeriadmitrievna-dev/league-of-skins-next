@@ -9,10 +9,7 @@ export const POST = async () => {
   const supabase = await createClient();
 
   if (token) {
-    await supabase
-      .from("refresh_tokens")
-      .delete()
-      .eq("token", token);
+    await supabase.from("refresh_tokens").delete().eq("token", token);
   }
 
   cookieStore.delete("accessToken");

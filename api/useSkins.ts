@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchClient } from "@/lib/fetchClient";
-import { AppDataSkin } from '@/types/appdata';
+import { AppDataSkin } from "@/types/appdata";
 
 const useSkins = (championId: string | null, langCode: string = "en_US") => {
   return useQuery({

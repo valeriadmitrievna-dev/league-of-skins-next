@@ -94,7 +94,7 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   });
 
   return (
-    <div ref={parentRef} className={cn({ "hidden": !isMounted }, className)}>
+    <div ref={parentRef} className={cn({ hidden: !isMounted }, className)}>
       {loading && (
         <div
           className={cn("grid", gridClassName)}

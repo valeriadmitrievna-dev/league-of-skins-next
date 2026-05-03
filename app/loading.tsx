@@ -1,5 +1,5 @@
-import Background from '@/components/Background';
-import { Spinner } from '@/components/ui/spinner';
+import Background from "@/components/Background";
+import { Spinner } from "@/components/ui/spinner";
 
 const Loading = () => {
   return (

@@ -23,7 +23,6 @@ import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import FilterPanelTitle from "./Filters/FilterPanelTitle";
 import FilterToggleGroup from "./Filters/FilterToggleGroup";
 
-
 type SearchChromasParam = "owned" | "skin" | "championId" | "skinContentId" | "server";
 
 interface SearchFiltersProps {

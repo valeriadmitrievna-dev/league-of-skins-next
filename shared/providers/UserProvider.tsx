@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, FC, PropsWithChildren } from "react";
 
 import { fetchClient } from "@/lib/fetchClient";
-import { DbUser } from '@/types/db';
+import { DbUser } from "@/types/db";
 
 interface UserContext {
   user: DbUser | null;
@@ -26,11 +26,7 @@ export const UserProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const refetch = () => queryClient.invalidateQueries({ queryKey: ["user"] });
 
-  return (
-    <UserContext.Provider value={{ user, isAuth: !!user, isLoading, refetch }}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={{ user, isAuth: !!user, isLoading, refetch }}>{children}</UserContext.Provider>;
 };
 
 export const useUser = () => {

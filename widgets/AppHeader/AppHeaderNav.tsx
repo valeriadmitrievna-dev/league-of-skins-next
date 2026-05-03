@@ -12,9 +12,6 @@ import AppHeaderLink from "./AppHeaderLink";
 import AdminNavLink from "../Admin/AdminNavLink";
 import LanguageSwitcher from "../LanguageSwitcher";
 
-
-
-
 interface AppHeaderNavProps {
   className?: string;
 }

@@ -6,12 +6,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 const eslintConfig = defineConfig([
-  globalIgnores([
-    ".next/**",
-    "out/**", 
-    "build/**",
-    "next-env.d.ts",
-  ]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
   {
     plugins: {
       "react-hooks": reactHooks,
@@ -51,17 +46,14 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: "^error$|^err$|^_",
         },
       ],
-      "@typescript-eslint/no-empty-object-type": [
-        "error",
-        { allowInterfaces: "with-single-extends" },
-      ],
+      "@typescript-eslint/no-empty-object-type": ["error", { allowInterfaces: "with-single-extends" }],
 
       "react-hooks/exhaustive-deps": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-refresh/only-export-components": "off",
 
-      "react-compiler/react-compiler": "off",  // setState в effect
-      "jsx-a11y/alt-text": "off",              // alt на img
+      "react-compiler/react-compiler": "off", // setState в effect
+      "jsx-a11y/alt-text": "off", // alt на img
       "@next/next/no-img-element": "off",
 
       "no-empty": ["error", { allowEmptyCatch: true }],

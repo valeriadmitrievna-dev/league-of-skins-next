@@ -1,7 +1,7 @@
 import { ImageOffIcon } from "lucide-react";
 import { useState, type ComponentProps, type FC } from "react";
 
-import { cn } from '@/shared/cn';
+import { cn } from "@/shared/cn";
 
 import Skeleton from "./Skeleton";
 

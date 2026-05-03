@@ -1,16 +1,16 @@
 import { cDragonUrl } from "@/shared/constants/riot";
-import { RiotSkinline } from '@/types/riot';
+import { RiotSkinline } from "@/types/riot";
 
-export const getSkinlines = async (lang: string = 'default', server: 'latest' | 'pbe' = 'latest') => {
-  lang = lang.toLowerCase()
-  const language = lang === 'en_us' ? 'default' : lang
-  const url = `${cDragonUrl}/${server}/plugins/rcp-be-lol-game-data/global/${language}/v1/skinlines.json`
+export const getSkinlines = async (lang: string = "default", server: "latest" | "pbe" = "latest") => {
+  lang = lang.toLowerCase();
+  const language = lang === "en_us" ? "default" : lang;
+  const url = `${cDragonUrl}/${server}/plugins/rcp-be-lol-game-data/global/${language}/v1/skinlines.json`;
 
   try {
-    const res = await fetch(url)
+    const res = await fetch(url);
     const data: RiotSkinline[] = await res.json();
     return data;
   } catch (error) {
-    console.error(`[ERROR][getSkinlines][${server}]`, (error as Error).message)
+    console.error(`[ERROR][getSkinlines][${server}]`, (error as Error).message);
   }
-}
+};

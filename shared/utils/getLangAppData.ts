@@ -1,5 +1,5 @@
 import { RequestError } from "@/errors";
-import { AppDataLang } from '@/types/appdata';
+import { AppDataLang } from "@/types/appdata";
 
 import { readJsonFile } from "./getFileData";
 import { baseFolder } from "../constants/riot";

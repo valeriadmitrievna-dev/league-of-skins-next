@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/shared/cn";
-import { AppDataChroma } from '@/types/appdata';
+import { AppDataChroma } from "@/types/appdata";
 
 interface ChromaCardProps extends ComponentProps<"div"> {
   className?: string;

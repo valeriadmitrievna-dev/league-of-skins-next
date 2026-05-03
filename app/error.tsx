@@ -19,15 +19,11 @@ const ErrorPage: FC<ErrorPageProps> = ({ error, reset }) => {
         <p className="text-muted-foreground max-w-md">
           {error.message || "Произошла непредвиденная ошибка. Попробуйте обновить страницу."}
         </p>
-        {error.digest && (
-          <p className="text-xs text-muted-foreground font-mono">
-            ID: {error.digest}
-          </p>
-        )}
+        {error.digest && <p className="text-xs text-muted-foreground font-mono">ID: {error.digest}</p>}
       </div>
       <div className="flex gap-3">
         <Button onClick={reset}>Попробовать снова</Button>
-        <Button variant="outline" onClick={() => window.location.href = "/"}>
+        <Button variant="outline" onClick={() => (window.location.href = "/")}>
           На главную
         </Button>
       </div>

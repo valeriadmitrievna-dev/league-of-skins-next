@@ -5,7 +5,6 @@ import type { FC } from "react";
 
 import { cn } from "@/shared/cn";
 
-
 interface AppHeaderLinkProps {
   className?: string;
   to: string;

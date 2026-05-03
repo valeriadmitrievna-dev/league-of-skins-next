@@ -30,7 +30,7 @@ export interface AppDataSkin {
   championId: string;
   championKey: string;
   championName: string;
-  originName?: string
+  originName?: string;
   contentId: string;
   name: string;
   pbe?: boolean;

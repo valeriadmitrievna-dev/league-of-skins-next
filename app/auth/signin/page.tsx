@@ -30,10 +30,7 @@ const SignInPage = () => {
     formState: { errors },
   } = useForm<SignInFormInput>();
 
-  const {
-    mutate: signin,
-    isPending: loading,
-  } = useMutation({
+  const { mutate: signin, isPending: loading } = useMutation({
     mutationFn: (body: SignInFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signin", { method: "POST", json: body }),
     onSuccess: () => {
       const redirect = searchParams.get("redirect") ?? "/";

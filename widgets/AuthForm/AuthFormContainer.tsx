@@ -7,7 +7,6 @@ import { Spinner } from "@/components/ui/spinner";
 import AuthFormTitle from "./AuthFormTitle";
 import LanguageSwitcher from "../LanguageSwitcher";
 
-
 interface AuthFormContainerProps extends PropsWithChildren {
   title?: string;
   submitText?: string;

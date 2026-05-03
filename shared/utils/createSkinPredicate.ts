@@ -2,7 +2,7 @@ import { isEqual } from "lodash";
 
 import { SearchSkinsRequest } from "@/api/types";
 import { AppDataSkin } from "@/types/appdata";
-import { DbUser } from '@/types/db';
+import { DbUser } from "@/types/db";
 
 import { checkSearch } from "./checkSearch";
 import { getLangAppData } from "./getLangAppData";
