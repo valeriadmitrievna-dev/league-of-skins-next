@@ -1,6 +1,7 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useIntersection } from "react-use";
 import { RefObject, useEffect, useRef } from "react";
+import { useIntersection } from "react-use";
+
 import { fetchClient } from "@/lib/fetchClient";
 
 interface InfiniteLoad {

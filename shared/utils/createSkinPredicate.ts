@@ -1,9 +1,11 @@
 import { isEqual } from "lodash";
-import { getLangAppData } from "./getLangAppData";
-import { checkSearch } from "./checkSearch";
-import { AppDataSkin } from "@/types/appdata";
+
 import { SearchSkinsRequest } from "@/api/types";
+import { AppDataSkin } from "@/types/appdata";
 import { DbUser } from '@/types/db';
+
+import { checkSearch } from "./checkSearch";
+import { getLangAppData } from "./getLangAppData";
 
 export const createSkinPredicate = async (query: SearchSkinsRequest, user: DbUser | null, lang: string) => {
   const chromas = (await getLangAppData(lang))?.chromas || [];

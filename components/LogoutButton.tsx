@@ -1,5 +1,6 @@
 "use client";
 import useLogout from "@/hooks/useLogout";
+
 import { Button } from "./ui/button";
 
 const LogoutButton = () => {

@@ -4,8 +4,8 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC, type JS
 import { useWindowSize } from "react-use";
 
 import Skeleton from "@/components/Skeleton";
-import { BREAKPOINTS } from "@/shared/constants/styles";
 import { cn } from "@/shared/cn";
+import { BREAKPOINTS } from "@/shared/constants/styles";
 
 interface VirtualizedGridProps {
   items: unknown[];

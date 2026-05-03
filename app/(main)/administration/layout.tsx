@@ -1,5 +1,6 @@
-import AdminLink from "@/widgets/Admin/AdminLink";
 import { FC, PropsWithChildren } from "react";
+
+import AdminLink from "@/widgets/Admin/AdminLink";
 
 const AdministrationLayout: FC<PropsWithChildren> = async ({ children }) => {
   return (

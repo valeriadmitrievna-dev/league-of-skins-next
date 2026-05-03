@@ -1,9 +1,10 @@
 "use client";
+import { ShieldAlertIcon } from "lucide-react";
+import Link from "next/link";
+
 import { Button } from "@/components/ui/button";
 import { config } from "@/lib/config";
 import { useUser } from "@/shared/providers/UserProvider";
-import { ShieldAlertIcon } from "lucide-react";
-import Link from "next/link";
 
 const AdminNavLink = () => {
   const { user } = useUser();

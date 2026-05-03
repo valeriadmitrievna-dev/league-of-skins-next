@@ -1,4 +1,5 @@
 import { PlusIcon } from "lucide-react";
+import { useT } from "next-i18next/client";
 import { useState, type ChangeEvent, type FC, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
@@ -6,7 +7,6 @@ import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/shared/cn";
-import { useT } from "next-i18next/client";
 
 interface WishlistCreateProps {
   buttonClassName?: string;
@@ -17,8 +17,8 @@ interface WishlistCreateProps {
 
 const WishlistCreate: FC<WishlistCreateProps> = ({
   buttonClassName,
-  skinContentIds = [],
-  chromaContentIds = [],
+  // skinContentIds = [],
+  // chromaContentIds = [],
   children,
 }) => {
   const { t } = useT();

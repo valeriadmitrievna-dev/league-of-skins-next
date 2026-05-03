@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "@/styles/index.css";
-import Background from "@/components/Background";
-import { UserProvider } from "@/shared/providers/UserProvider";
-import ToastsProvider from "@/shared/providers/ToastsProvider";
 import localFont from "next/font/local";
-
-import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
-import { I18nProvider } from "next-i18next/client";
-import i18nConfig from "../i18n.config";
 import { cookies } from "next/headers";
+import { I18nProvider } from "next-i18next/client";
+import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
+
+import Background from "@/components/Background";
 import { AppProvider } from "@/shared/providers/AppProvider";
 import QueryProvider from "@/shared/providers/QueryProvider";
+import ToastsProvider from "@/shared/providers/ToastsProvider";
+import { UserProvider } from "@/shared/providers/UserProvider";
+
+import i18nConfig from "../i18n.config";
 
 initServerI18next(i18nConfig);
 

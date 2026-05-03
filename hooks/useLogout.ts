@@ -1,7 +1,8 @@
 "use client";
-import { fetchClient } from "@/lib/fetchClient";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+
+import { fetchClient } from "@/lib/fetchClient";
 
 const useLogout = () => {
   const router = useRouter();

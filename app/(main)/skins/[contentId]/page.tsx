@@ -1,8 +1,9 @@
+import { cookies } from "next/headers";
+
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import SkinDetails from "@/widgets/Skin/SkinDetails";
 import SkinInfo from "@/widgets/Skin/SkinInfo";
-import { cookies } from "next/headers";
 
 const SkinPage = async ({ params }: { params: Promise<{ contentId: string }> }) => {
   const { contentId } = await params;

@@ -1,8 +1,10 @@
 import { errorHandler } from "@/errors";
 import { RequestError } from "@/errors";
-import { getServerUser } from "./auth";
-import { DbUser } from '@/types/db';
 import { getLanguageCode } from '@/shared/utils/getLanguageCode';
+import { DbUser } from '@/types/db';
+
+import { getServerUser } from "./auth";
+
 
 export type EndpointContext = {
   language: string;
@@ -21,6 +23,7 @@ const buildContext = async (req: Request): Promise<EndpointContext> => {
     language: getLanguageCode(language),
     user,
     body: () => req.json(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     query: () => Object.fromEntries(new URL(req.url).searchParams.entries()) as any,
   };
 };

@@ -1,13 +1,13 @@
+import { BookmarkIcon } from "lucide-react";
+import Link from "next/link";
 import type { ComponentProps, FC } from "react";
+import { toast } from "sonner";
 
 import Image from "@/components/Image";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import Link from "next/link";
-import { cn } from "@/shared/cn";
-import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
-import { BookmarkIcon } from "lucide-react";
+import { cn } from "@/shared/cn";
 import { AppDataChroma } from '@/types/appdata';
 
 interface ChromaCardProps extends ComponentProps<"div"> {
@@ -24,9 +24,9 @@ const ChromaCard: FC<ChromaCardProps> = ({
   className,
   data,
   owned,
-  addToWishlistButton,
+  // addToWishlistButton,
   toggleOwnedButton,
-  wishlistId,
+  // wishlistId,
   plain,
   ...props
 }) => {

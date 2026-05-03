@@ -1,7 +1,8 @@
-import { Log } from "@/lib/logger";
-import { cn } from "@/shared/cn";
 import { format } from "date-fns";
 import { FC } from "react";
+
+import { Log } from "@/lib/logger";
+import { cn } from "@/shared/cn";
 
 interface LogLineProps extends Omit<Log, "source"> {
   source?: Log["source"];

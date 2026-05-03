@@ -1,7 +1,11 @@
 "use client";
 import { orderBy } from "lodash";
+import { useT } from "next-i18next/client";
 import { type FC } from "react";
 
+import useChampions from "@/api/useChampions";
+import useSkins from "@/api/useSkins";
+import Skeleton from "@/components/Skeleton";
 import {
   Combobox,
   ComboboxContent,
@@ -13,17 +17,12 @@ import {
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/shared/cn";
+import { useUser } from "@/shared/providers/UserProvider";
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 
-import { useQueryParams } from "@/hooks/useQueryParams";
 import FilterPanelTitle from "./Filters/FilterPanelTitle";
 import FilterToggleGroup from "./Filters/FilterToggleGroup";
-import { useUser } from "@/shared/providers/UserProvider";
-import { useT } from "next-i18next/client";
-import { useApp } from "@/shared/providers/AppProvider";
-import { getLanguageCode } from "@/shared/utils/getLanguageCode";
-import useChampions from "@/api/useChampions";
-import Skeleton from "@/components/Skeleton";
-import useSkins from "@/api/useSkins";
+
 
 type SearchChromasParam = "owned" | "skin" | "championId" | "skinContentId" | "server";
 

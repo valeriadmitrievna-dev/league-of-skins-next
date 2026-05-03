@@ -1,8 +1,14 @@
 "use client";
 import { orderBy } from "lodash";
+import { useT } from "next-i18next/client";
 import { type FC } from "react";
 
+import useChampions from "@/api/useChampions";
+import useChromasUnique from "@/api/useChromasUnique";
+import useRarities from "@/api/useRarities";
+import useSkinlines from "@/api/useSkinlines";
 import ChromaColor from "@/components/ChromaColor";
+import Skeleton from "@/components/Skeleton";
 import {
   Combobox,
   ComboboxContent,
@@ -13,19 +19,13 @@ import {
 } from "@/components/ui/combobox";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
-import { RARITIES } from "@/shared/constants/rarities";
 import { cn } from "@/shared/cn";
+import { RARITIES } from "@/shared/constants/rarities";
+import { useUser } from "@/shared/providers/UserProvider";
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 
 import FilterPanelTitle from "./Filters/FilterPanelTitle";
 import FilterToggleGroup from "./Filters/FilterToggleGroup";
-import { useUser } from "@/shared/providers/UserProvider";
-import { useT } from "next-i18next/client";
-import { getLanguageCode } from "@/shared/utils/getLanguageCode";
-import Skeleton from "@/components/Skeleton";
-import useChampions from "@/api/useChampions";
-import useSkinlines from "@/api/useSkinlines";
-import useRarities from "@/api/useRarities";
-import useChromasUnique from "@/api/useChromasUnique";
 
 type SearchSkinsParam = "owned" | "legacy" | "championId" | "rarity" | "skinlineId" | "chromaId" | "server";
 

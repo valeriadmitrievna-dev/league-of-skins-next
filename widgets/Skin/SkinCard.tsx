@@ -1,18 +1,19 @@
 "use client";
+import { BookmarkIcon, HeartIcon } from "lucide-react";
+import Link from "next/link";
+import { useT } from "next-i18next/client";
 import { type FC } from "react";
 import { toast } from "sonner";
 
 import ChromaColor from "@/components/ChromaColor";
-import { Badge } from "@/components/ui/badge";
-import { RARITIES } from "@/shared/constants/rarities";
-import { cn } from "@/shared/cn";
-import Link from "next/link";
 import Image from "@/components/Image";
+import { Badge } from "@/components/ui/badge";
 import { Spinner } from "@/components/ui/spinner";
-import { BookmarkIcon, HeartIcon } from "lucide-react";
-import WishlistDialog from "../Wishlist/WishlistDialog";
-import { useT } from "next-i18next/client";
+import { cn } from "@/shared/cn";
+import { RARITIES } from "@/shared/constants/rarities";
 import { AppDataSkin } from "@/types/appdata";
+
+import WishlistDialog from "../Wishlist/WishlistDialog";
 
 interface SkinCardProps {
   className?: string;
@@ -23,7 +24,7 @@ interface SkinCardProps {
   wishlistId?: string;
 }
 
-const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButton, toggleOwnedButton, wishlistId }) => {
+const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButton, toggleOwnedButton }) => {
   const { t } = useT();
 
   const toggleOwnedHandler = async () => {

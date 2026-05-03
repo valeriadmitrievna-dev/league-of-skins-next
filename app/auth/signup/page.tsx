@@ -1,14 +1,15 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { useForm, type SubmitHandler } from "react-hook-form";
-import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
+import { useMutation } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
-import { MouseEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useT } from "next-i18next/client";
-import { useMutation } from "@tanstack/react-query";
+import { MouseEvent, useState } from "react";
+import { useForm, type SubmitHandler } from "react-hook-form";
+
+import { Button } from "@/components/ui/button";
 import { fetchClient } from "@/lib/fetchClient";
+import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
 
 interface SignUpFormInput {
   name: string;

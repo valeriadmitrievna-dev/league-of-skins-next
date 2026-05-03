@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+
 import { logger, type Log } from "@/lib/logger";
 
 const useClientLogs = () => {

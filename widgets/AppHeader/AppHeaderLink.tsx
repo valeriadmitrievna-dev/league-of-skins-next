@@ -1,9 +1,10 @@
 "use client";
-import type { FC } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
+import type { FC } from "react";
 
 import { cn } from "@/shared/cn";
-import { usePathname } from "next/navigation";
+
 
 interface AppHeaderLinkProps {
   className?: string;

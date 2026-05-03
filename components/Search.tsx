@@ -1,11 +1,11 @@
 "use client";
 import { SearchIcon, XIcon } from "lucide-react";
+import { useT } from "next-i18next/client";
 import { useState, type ChangeEvent, type ComponentProps, type FC } from "react";
 import { useDebounce } from "react-use";
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import { cn } from "@/shared/cn";
-import { useT } from "next-i18next/client";
 
 type SearchSize = "default" | "sm" | "lg";
 

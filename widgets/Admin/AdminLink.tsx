@@ -1,8 +1,9 @@
 "use client";
-import { cn } from "@/shared/cn";
 import Link, { LinkProps } from "next/link";
 import { usePathname } from "next/navigation";
 import { FC } from "react";
+
+import { cn } from "@/shared/cn";
 
 interface AdminLinkProps extends LinkProps {
   children: string;

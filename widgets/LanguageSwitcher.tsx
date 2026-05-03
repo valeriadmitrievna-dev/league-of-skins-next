@@ -1,11 +1,11 @@
 "use client";
 import { GlobeIcon } from "lucide-react";
+import { useChangeLanguage, useT } from "next-i18next/client";
 import { type FC } from "react";
 
 import { Button } from "@/components/ui/button";
-import { LANGUAGES } from "@/shared/constants/languages";
 import { Combobox, ComboboxContent, ComboboxItem, ComboboxList, ComboboxTrigger } from "@/components/ui/combobox";
-import { useChangeLanguage, useT } from "next-i18next/client";
+import { LANGUAGES } from "@/shared/constants/languages";
 
 const LanguageSwitcher: FC = () => {
   const { i18n } = useT();

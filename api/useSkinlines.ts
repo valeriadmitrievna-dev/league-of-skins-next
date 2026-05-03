@@ -1,6 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+
 import { fetchClient } from "@/lib/fetchClient";
 import { AppDataSkinline } from '@/types/appdata';
-import { useQuery } from "@tanstack/react-query";
 
 const useSkinlines = (langCode: string = "en_US") => {
   return useQuery({

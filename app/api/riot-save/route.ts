@@ -1,7 +1,8 @@
 import { NextRequest } from 'next/server'
+
+import { baseFolder } from '@/shared/constants/riot'
 import { saveToJson } from '@/shared/utils/getFileData'
 import { clearAppDataCache } from '@/shared/utils/getLangAppData'
-import { baseFolder } from '@/shared/constants/riot'
 
 export const POST = async (req: NextRequest) => {
   try {

@@ -1,16 +1,16 @@
 "use client";
+import { useT } from "next-i18next/client";
+import { FC, useCallback } from "react";
+
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
-import { useApp } from '@/shared/providers/AppProvider';
 import { useUser } from "@/shared/providers/UserProvider";
 import { AppDataSkin } from '@/types/appdata';
 import SearchSkinsFilters from "@/widgets/SearchSkinsFilters";
 import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
-import { useT } from "next-i18next/client";
-import { FC, useCallback } from "react";
 
 const SearchSkins: FC = () => {
   const { i18n } = useT();

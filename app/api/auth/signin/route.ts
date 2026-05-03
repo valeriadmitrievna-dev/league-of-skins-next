@@ -1,9 +1,10 @@
 import { compare } from "bcrypt";
-import { createClient } from "@/lib/supabase/server";
+
+import { RequestError } from "@/errors";
 import { signAccessToken, signRefreshToken } from "@/lib/auth";
 import { setAuthCookies } from "@/lib/cookies";
 import { endpoint } from "@/lib/endpoint";
-import { RequestError } from "@/errors";
+import { createClient } from "@/lib/supabase/server";
 
 export const POST = endpoint(async ({ body }) => {
   const { email, password } = await body<{ email: string; password: string }>();
@@ -24,7 +25,7 @@ export const POST = endpoint(async ({ body }) => {
   const access = signAccessToken(user.id);
   const refresh = signRefreshToken(user.id);
 
-  const { error: insertError } = await supabase.from("refresh_tokens").insert({
+  await supabase.from("refresh_tokens").insert({
     token: refresh,
     user_id: user.id,
   });

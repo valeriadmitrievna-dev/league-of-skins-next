@@ -1,18 +1,19 @@
 import { PlusIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useT } from "next-i18next/client";
 import { useEffect, useState, type FC, type ReactNode } from "react";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import usePendingWishlist from "@/hooks/usePendindWishlist";
+import { setPendingWishlist } from "@/lib/pendindWishlist";
 import { cn } from "@/shared/cn";
 import { useUser } from "@/shared/providers/UserProvider";
-import { useRouter } from "next/navigation";
+import { DbWishlist } from '@/types/db';
+
 import WishlistCreate from "./WishlistCreate";
 import WishlistLine from "./WishlistLine";
-import { setPendingWishlist } from "@/lib/pendindWishlist";
-import usePendingWishlist from "@/hooks/usePendindWishlist";
-import { useT } from "next-i18next/client";
-import { DbWishlist } from '@/types/db';
+
 
 interface WishlistDialogProps {
   trigger: (options: {

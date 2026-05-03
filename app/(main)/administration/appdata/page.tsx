@@ -1,14 +1,15 @@
 "use client";
+import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
 import LogLine from "@/components/LogLine";
 import Skeleton from "@/components/Skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { fetchClient } from "@/lib/fetchClient";
 import { Log } from "@/lib/logger";
 import { prepareRiotClient } from "@/shared/riot/prepare";
-import { LangProgress, LogType } from "@/shared/riot/types";
+import { LangProgress } from "@/shared/riot/types";
 import AdminAppDataLanguage from "@/widgets/Admin/AdminAppDataLanguage";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
 
 const AdministrationAppData = () => {
   const [logs, setLogs] = useState<Omit<Log, "source">[]>([]);

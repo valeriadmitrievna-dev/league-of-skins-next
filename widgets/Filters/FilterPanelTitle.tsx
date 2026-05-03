@@ -1,9 +1,9 @@
 // import { SlidersHorizontalIcon } from "lucide-react";
+import { useT } from "next-i18next/client";
 import type { FC } from "react";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/shared/cn";
-import { useT } from "next-i18next/client";
 
 interface FilterPanelTitleProps {
   title?: string;

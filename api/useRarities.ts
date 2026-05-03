@@ -1,5 +1,6 @@
-import { fetchClient } from "@/lib/fetchClient";
 import { useQuery } from "@tanstack/react-query";
+
+import { fetchClient } from "@/lib/fetchClient";
 
 const useRarities = () => {
   return useQuery({

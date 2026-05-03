@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { formatDistance } from "date-fns";
+import { RefreshCwIcon } from "lucide-react";
+import { FC } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/shared/cn";
 import { CategoryStatus, LangProgress, LangStatus } from "@/shared/riot/types";
-import { format, formatDistance } from "date-fns";
-import { RefreshCwIcon } from "lucide-react";
-import { FC } from "react";
 
 interface AdminAppDataLanguageProps {
   language: string;

@@ -1,5 +1,4 @@
 import { endpoint } from "@/lib/endpoint";
-import { logger } from "@/lib/logger";
 import { baseFolder } from "@/shared/constants/riot";
 import { LangProgress } from "@/shared/riot/types";
 import { readDirectory } from "@/shared/utils/getFileData";

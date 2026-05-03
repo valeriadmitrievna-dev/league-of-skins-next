@@ -1,7 +1,8 @@
 import { RequestError } from "@/errors";
+import { AppDataLang } from '@/types/appdata';
+
 import { readJsonFile } from "./getFileData";
 import { baseFolder } from "../constants/riot";
-import { AppDataLang } from '@/types/appdata';
 
 // В Next.js dev-режиме модуль может переинициализироваться при HMR,
 // но в prod воркеры не шарят память между собой.

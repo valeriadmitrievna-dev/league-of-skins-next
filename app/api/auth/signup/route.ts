@@ -1,9 +1,10 @@
 import { hash } from "bcrypt";
-import { createClient } from "@/lib/supabase/server";
+
+import { RequestError } from "@/errors";
 import { signAccessToken, signRefreshToken } from "@/lib/auth";
 import { setAuthCookies } from "@/lib/cookies";
-import { RequestError } from "@/errors";
 import { endpoint } from "@/lib/endpoint";
+import { createClient } from "@/lib/supabase/server";
 
 export const POST = endpoint(async ({ body }) => {
   const { email, password, name } = await body<{ email: string; password: string; name: string }>();

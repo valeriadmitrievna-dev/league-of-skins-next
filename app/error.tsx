@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, type FC } from "react";
-import { Button } from "@/components/ui/button";
 import { AlertTriangleIcon } from "lucide-react";
+import { type FC } from "react";
+
+import { Button } from "@/components/ui/button";
 
 interface ErrorPageProps {
   error: Error & { digest?: string };

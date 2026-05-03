@@ -1,7 +1,8 @@
-import { AppDataChroma } from '@/types/appdata';
-import { checkSearch } from './checkSearch';
 import { SearchChromasRequest } from '@/api/types';
+import { AppDataChroma } from '@/types/appdata';
 import { DbUser } from '@/types/db';
+
+import { checkSearch } from './checkSearch';
 
 export const createChromaPredicate = (query: SearchChromasRequest, user: DbUser | null) => {
   query.owned ??= 'all';

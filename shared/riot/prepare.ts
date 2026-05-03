@@ -1,17 +1,20 @@
 import { uniqBy } from "lodash";
-import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
-import { getCDragonPath } from "@/shared/utils/getCDragonPath";
-import { getVersions } from "@/riot/versions.riot";
-import { getSkinlines } from "@/riot/skinlines.riot";
-import { getChampions } from "@/riot/champions.riot";
+
 import { config } from "@/lib/config";
 import { getChampion } from "@/riot/champion.riot";
-import { LangProgress } from "./types";
+import { getChampions } from "@/riot/champions.riot";
+import { getSkinlines } from "@/riot/skinlines.riot";
+import { getVersions } from "@/riot/versions.riot";
+import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
+import { getCDragonPath } from "@/shared/utils/getCDragonPath";
 import { AppDataChroma, AppDataSkin } from "@/types/appdata";
+
+import { LangProgress } from "./types";
 
 export type ProgressCallback = (message: string, type?: "default" | "success" | "error") => void;
 export type LangProgressCallback = (lang: string, update: Partial<LangProgress>) => void;
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const prepareRiotClient = async (languages: string[], logger: any, onLangUpdate: LangProgressCallback) => {
   logger.log("PREPARE START");
 

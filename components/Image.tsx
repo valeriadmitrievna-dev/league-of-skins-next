@@ -1,8 +1,9 @@
 import { ImageOffIcon } from "lucide-react";
 import { useState, type ComponentProps, type FC } from "react";
 
-import Skeleton from "./Skeleton";
 import { cn } from '@/shared/cn';
+
+import Skeleton from "./Skeleton";
 
 interface ImageProps extends ComponentProps<"img"> {
   pulseLoading?: boolean;

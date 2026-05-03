@@ -1,5 +1,6 @@
-import { cn } from "@/shared/cn";
 import { FC } from "react";
+
+import { cn } from "@/shared/cn";
 
 interface AuthFormTitleProps {
   children: string;

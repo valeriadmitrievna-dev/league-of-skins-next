@@ -1,6 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
+
 import { fetchClient } from "@/lib/fetchClient";
 import { AppDataChroma } from '@/types/appdata';
-import { useQuery } from "@tanstack/react-query";
 
 const useChromasUnique = (langCode: string = "en_US") => {
   return useQuery({

@@ -1,19 +1,21 @@
 "use client";
 
-import { cn } from "@/shared/cn";
-import { FC } from "react";
-import SkinInfoLine from "./SkinInfoLine";
-import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
-import { RARITIES } from "@/shared/constants/rarities";
-import Image from "@/components/Image";
 import { format } from "date-fns";
+import { PlayIcon } from "lucide-react";
+import Link from "next/link";
+import { useT } from "next-i18next/client";
+import { FC } from "react";
+
 import RPIcon from "@/assets/riot-points-icon.svg";
 import ChromaColor from "@/components/ChromaColor";
+import Image from "@/components/Image";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { PlayIcon } from "lucide-react";
-import { useT } from "next-i18next/client";
+import { cn } from "@/shared/cn";
+import { RARITIES } from "@/shared/constants/rarities";
 import { AppDataSkin } from "@/types/appdata";
+
+import SkinInfoLine from "./SkinInfoLine";
 
 interface SkinInfoProps {
   data: AppDataSkin;
@@ -63,7 +65,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
           info={
             <Badge className="gap-x-1.5 border-none" asChild>
               <Link href={"/search/skins?rarity=" + data.rarity}>
-                {RARITIES?.icon && <Image src={rarityData?.icon} className="size-4" />}
+                {RARITIES?.icon && <Image src={rarityData?.icon} className="size-4" alt={t(`rarity.${data.rarity}`)} />}
                 {t(`rarity.${data.rarity}`)}
               </Link>
             </Badge>

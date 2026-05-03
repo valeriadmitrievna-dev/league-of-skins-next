@@ -1,8 +1,9 @@
+import { NextRequest } from "next/server";
+
 import { createChromaPredicate } from "@/shared/utils/createChromaPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
-import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {

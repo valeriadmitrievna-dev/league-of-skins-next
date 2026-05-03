@@ -1,9 +1,12 @@
-import { Card } from "@/components/ui/card";
 import { FC, PropsWithChildren, ReactNode } from "react";
+
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Spinner } from "@/components/ui/spinner";
+
 import AuthFormTitle from "./AuthFormTitle";
 import LanguageSwitcher from "../LanguageSwitcher";
-import { Button } from "@/components/ui/button";
-import { Spinner } from "@/components/ui/spinner";
+
 
 interface AuthFormContainerProps extends PropsWithChildren {
   title?: string;

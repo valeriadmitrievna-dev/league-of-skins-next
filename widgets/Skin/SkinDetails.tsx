@@ -1,16 +1,20 @@
 "use client";
 
+import Link from "next/link";
+import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
+
 import Image from "@/components/Image";
 import { Typography } from "@/components/Typography";
 import { Badge } from "@/components/ui/badge";
 import Video from "@/components/Video";
-import VirtualizedGrid from "@/widgets/VirtualizedGrid";
-import Link from "next/link";
 import { cn } from "@/shared/cn";
-import ChromaCard from "../ChromaCard";
-import { useT } from "next-i18next/client";
 import { AppDataChroma, AppDataSkin } from "@/types/appdata";
+import VirtualizedGrid from "@/widgets/VirtualizedGrid";
+
+import ChromaCard from "../ChromaCard";
+
+
 
 interface SkinDetailsProps {
   data: AppDataSkin;

@@ -19,7 +19,7 @@ export const POST = async (req: Request) => {
     if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
 
     const supabase = await createClient();
-    const { data: storedToken, error } = await supabase.from("refresh_tokens").select("*").eq("token", token).single();
+    const { data: storedToken } = await supabase.from("refresh_tokens").select("*").eq("token", token).single();
 
     if (!storedToken) throw new RequestError({ code: "ERR_0001", status: 401 });
 

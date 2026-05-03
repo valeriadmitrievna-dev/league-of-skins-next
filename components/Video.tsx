@@ -1,8 +1,9 @@
 import { VideoOffIcon } from "lucide-react";
 import { useRef, useState, type ComponentProps, type FC } from "react";
 
-import Skeleton from "./Skeleton";
 import { cn } from "@/shared/cn";
+
+import Skeleton from "./Skeleton";
 
 interface VideoProps extends ComponentProps<"video"> {
   src?: string;

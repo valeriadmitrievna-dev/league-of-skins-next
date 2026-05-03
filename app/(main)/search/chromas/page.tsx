@@ -1,4 +1,7 @@
 "use client";
+import { useT } from "next-i18next/client";
+import { FC, useCallback } from "react";
+
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
@@ -8,8 +11,6 @@ import { AppDataChroma } from "@/types/appdata";
 import ChromaCard from "@/widgets/ChromaCard";
 import SearchChromasFilters from "@/widgets/SearchChromasFilters";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
-import { useT } from "next-i18next/client";
-import { FC, useCallback } from "react";
 
 const SearchChromas: FC = () => {
   const { i18n } = useT();

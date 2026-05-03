@@ -1,6 +1,7 @@
+import { isEqual, uniqWith } from "lodash";
+
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { AppDataChroma, AppDataChromaItem } from '@/types/appdata';
-import { isEqual, uniqWith } from "lodash";
 
 export const getChromas = async (lang: string = "en_US") => {
   try {

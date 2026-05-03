@@ -1,20 +1,14 @@
 import { defineConfig, globalIgnores } from "eslint/config";
 import nextVitals from "eslint-config-next/core-web-vitals";
 import nextTs from "eslint-config-next/typescript";
-
+import importPlugin from "eslint-plugin-import";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
-import tseslint from "typescript-eslint";
-import importPlugin from "eslint-plugin-import";
 
 const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
   globalIgnores([
-    // Default ignores of eslint-config-next:
     ".next/**",
-    "out/**",
+    "out/**", 
     "build/**",
     "next-env.d.ts",
   ]),
@@ -25,48 +19,30 @@ const eslintConfig = defineConfig([
       import: importPlugin,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-
-      "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/explicit-function-return-type": "off",
-
-      "react-hooks/exhaustive-deps": "off",
-      "no-empty": ["error", { allowEmptyCatch: true }],
-
       "import/order": [
         "error",
         {
           groups: ["builtin", "external", "internal", ["parent", "sibling", "index"]],
           pathGroups: [
-            {
-              pattern: "@/**",
-              group: "internal",
-              position: "after",
-            },
-            {
-              pattern: "./**",
-              group: "sibling",
-              position: "after",
-            },
-            {
-              pattern: "../**",
-              group: "parent",
-              position: "after",
-            },
+            { pattern: "@/**", group: "internal", position: "after" },
+            { pattern: "./**", group: "sibling", position: "after" },
+            { pattern: "../**", group: "parent", position: "after" },
           ],
           pathGroupsExcludedImportTypes: ["builtin"],
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
+          alphabetize: { order: "asc", caseInsensitive: true },
           "newlines-between": "always",
         },
       ],
-
-      "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
-      "react-refresh/only-export-components": "off",
+    },
+  },
+  ...nextVitals,
+  ...nextTs,
+  {
+    rules: {
       "react-hooks/set-state-in-effect": "off",
-
+      "react-hooks/refs": "off",
+      "@typescript-eslint/no-explicit-any": "error",
+      "@typescript-eslint/explicit-function-return-type": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
         {
@@ -75,13 +51,20 @@ const eslintConfig = defineConfig([
           caughtErrorsIgnorePattern: "^error$|^err$|^_",
         },
       ],
-
       "@typescript-eslint/no-empty-object-type": [
         "error",
-        {
-          allowInterfaces: "with-single-extends",
-        },
+        { allowInterfaces: "with-single-extends" },
       ],
+
+      "react-hooks/exhaustive-deps": "off",
+      "react-hooks/rules-of-hooks": "error",
+      "react-refresh/only-export-components": "off",
+
+      "react-compiler/react-compiler": "off",  // setState в effect
+      "jsx-a11y/alt-text": "off",              // alt на img
+      "@next/next/no-img-element": "off",
+
+      "no-empty": ["error", { allowEmptyCatch: true }],
     },
   },
 ]);

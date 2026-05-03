@@ -1,6 +1,7 @@
-import { AppHeader } from "@/widgets/AppHeader";
-import { FC, PropsWithChildren } from "react";
 import NextTopLoader from "nextjs-toploader";
+import { FC, PropsWithChildren } from "react";
+
+import { AppHeader } from "@/widgets/AppHeader";
 
 const MainLayout: FC<PropsWithChildren> = ({ children }) => {
   return (

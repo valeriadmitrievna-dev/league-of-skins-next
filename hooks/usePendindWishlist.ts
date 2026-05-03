@@ -1,7 +1,8 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useUser } from "@/shared/providers/UserProvider";
+
 import { clearPendingWishlist, getPendingWishlist, PendingWishlist } from '@/lib/pendindWishlist';
+import { useUser } from "@/shared/providers/UserProvider";
 
 const usePendingWishlist = () => {
   const { isAuth } = useUser();
