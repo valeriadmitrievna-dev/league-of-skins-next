@@ -57,7 +57,7 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   rowGap = 12,
 }) => {
   const parentRef = useRef<HTMLDivElement | null>(null);
-  const [_, setContainerWidth] = useState(0);
+  const [, setContainerWidth] = useState(0);
 
   const [isMounted, setIsMounted] = useState(false);
   const { width: windowWidth } = useWindowSize();
@@ -71,7 +71,7 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
 
     obs.observe(parentRef.current);
     return () => obs.disconnect();
-  }, [loading]);
+  }, []);
 
   useEffect(() => {
     setIsMounted(true);

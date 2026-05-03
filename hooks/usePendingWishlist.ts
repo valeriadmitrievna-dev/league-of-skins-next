@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 
-import { clearPendingWishlist, getPendingWishlist, PendingWishlist } from "@/lib/pendindWishlist";
+import { clearPendingWishlist, getPendingWishlist, PendingWishlist } from "@/lib/pendingWishlist";
 import { useUser } from "@/shared/providers/UserProvider";
 
 const usePendingWishlist = () => {

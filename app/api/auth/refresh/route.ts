@@ -1,5 +1,6 @@
 import { RequestError } from "@/errors";
 import { signAccessToken, verifyRefreshToken } from "@/lib/auth";
+import { ACCESS_COOKIE, serializeCookie } from "@/lib/cookies";
 import { createClient } from "@/lib/supabase/server";
 
 export const POST = async (req: Request) => {
@@ -26,8 +27,7 @@ export const POST = async (req: Request) => {
     const newAccess = signAccessToken(payload.userId);
 
     const response = Response.json({ ok: true });
-    response.headers.append("Set-Cookie", `accessToken=${newAccess}; HttpOnly; Secure; Path=/; Max-Age=${60 * 15}`);
-
+    response.headers.append("Set-Cookie", serializeCookie("accessToken", newAccess, ACCESS_COOKIE));
     return response;
   } catch {
     return Response.json({ error: "Invalid token" }, { status: 401 });

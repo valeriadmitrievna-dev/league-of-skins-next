@@ -5,8 +5,8 @@ import { useEffect, useState, type FC, type ReactNode } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import usePendingWishlist from "@/hooks/usePendindWishlist";
-import { setPendingWishlist } from "@/lib/pendindWishlist";
+import usePendingWishlist from "@/hooks/usePendingWishlist";
+import { setPendingWishlist } from "@/lib/pendingWishlist";
 import { cn } from "@/shared/cn";
 import { useUser } from "@/shared/providers/UserProvider";
 import { DbWishlist } from "@/types/db";

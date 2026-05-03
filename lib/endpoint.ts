@@ -13,17 +13,29 @@ export type EndpointContext = {
 };
 
 export type ProtectedContext = EndpointContext & { user: DbUser };
+export type PublicContext = Omit<EndpointContext, "user">;
+
+const buildPublicContext = (req: Request): PublicContext => ({
+  language: getLanguageCode(req.headers.get("Language") ?? "en_US"),
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  body: () => req.json() as any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  query: () => Object.fromEntries(new URL(req.url).searchParams.entries()) as any,
+});
 
 const buildContext = async (req: Request): Promise<EndpointContext> => {
-  const language = req.headers.get("Language") ?? "en_US";
   const user = await getServerUser();
+  return { ...buildPublicContext(req), user };
+};
 
-  return {
-    language: getLanguageCode(language),
-    user,
-    body: () => req.json(),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    query: () => Object.fromEntries(new URL(req.url).searchParams.entries()) as any,
+export const publicEndpoint = (fn: (ctx: PublicContext) => Promise<unknown>) => {
+  return async (req: Request): Promise<Response> => {
+    try {
+      const result = await fn(buildPublicContext(req));
+      return Response.json(result);
+    } catch (err) {
+      return errorHandler(err);
+    }
   };
 };
 

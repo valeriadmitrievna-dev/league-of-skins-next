@@ -4,7 +4,10 @@ type RequestOptions = RequestInit & {
 };
 
 export const fetchClient = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
-  const { json, query, headers, ...rest } = options;
+  const { json, query, headers, signal, ...rest } = options;
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
 
   const queryString = query
     ? "?" +
@@ -14,18 +17,23 @@ export const fetchClient = async <T>(url: string, options: RequestOptions = {}):
         .join("&")
     : "";
 
-  const res = await fetch(url + queryString, {
-    ...rest,
-    headers: {
-      ...(json ? { "Content-Type": "application/json" } : {}),
-      ...headers,
-    },
-    body: json ? JSON.stringify(json) : undefined,
-  });
+  try {
+    const res = await fetch(url + queryString, {
+      ...rest,
+      headers: {
+        ...(json ? { "Content-Type": "application/json" } : {}),
+        ...headers,
+      },
+      body: json ? JSON.stringify(json) : undefined,
+      signal: signal ?? controller.signal,
+    });
 
-  const data = await res.json().catch(() => null);
+    const data = await res.json().catch(() => null);
 
-  if (!res.ok) throw data;
+    if (!res.ok) throw data;
 
-  return data as T;
+    return data as T;
+  } finally {
+    clearTimeout(timeout);
+  }
 };
