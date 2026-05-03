@@ -9,6 +9,7 @@ import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 import { fetchClient } from "@/lib/fetchClient";
+import { useUser } from '@/shared/providers/UserProvider';
 import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
 
 interface SignInFormInput {
@@ -21,6 +22,7 @@ const SignInPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
+  const { refetch: refetchUser, isLoading: isUserLoading } = useUser();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -32,12 +34,11 @@ const SignInPage = () => {
 
   const { mutate: signin, isPending: loading } = useMutation({
     mutationFn: (body: SignInFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signin", { method: "POST", json: body }),
-    onSuccess: () => {
+    onSuccess: async () => {
       const redirect = searchParams.get("redirect") ?? "/";
+      await refetchUser();
       router.push(redirect);
-    },
-    onError: () => {
-      // error доступен через error из useMutation
+      router.refresh();
     },
   });
 
@@ -60,7 +61,7 @@ const SignInPage = () => {
         title={t("auth.signin_title")}
         submitText={t("auth.submit_signin")}
         onSubmit={handleSubmit(submitHandler)}
-        loading={loading}
+        loading={loading || isUserLoading}
         extra={
           <>
             {t("auth.signin_extra")}{" "}
@@ -77,7 +78,7 @@ const SignInPage = () => {
           type="email"
           aria-invalid={errors.email ? "true" : "false"}
           description={errors.email?.message}
-          disabled={loading}
+          disabled={loading || isUserLoading}
           {...register("email", {
             required: t("auth.field_required"),
             pattern: {
@@ -94,7 +95,7 @@ const SignInPage = () => {
           type={isPasswordVisible ? "text" : "password"}
           aria-invalid={errors.password ? "true" : "false"}
           description={errors.password?.message}
-          disabled={loading}
+          disabled={loading || isUserLoading}
           {...register("password", {
             required: t("auth.field_required"),
             minLength: { message: t("auth.field_minlength") + "6", value: 6 },
