@@ -5,12 +5,14 @@ import localFont from "next/font/local";
 import { cookies } from "next/headers";
 import { I18nProvider } from "next-i18next/client";
 import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
+import NextTopLoader from "nextjs-toploader";
 
 import Background from "@/components/Background";
 import { AppProvider } from "@/shared/providers/AppProvider";
 import QueryProvider from "@/shared/providers/QueryProvider";
 import ToastsProvider from "@/shared/providers/ToastsProvider";
 import { UserProvider } from "@/shared/providers/UserProvider";
+import { AppHeader } from "@/widgets/AppHeader";
 
 import i18nConfig from "../i18n.config";
 
@@ -57,7 +59,11 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             <UserProvider>
               <ToastsProvider />
               <AppProvider>
-                <div className="z-1">{children}</div>
+                <div className="min-h-screen grid grid-rows-[auto_1fr] z-1">
+                  <AppHeader />
+                  <NextTopLoader color="var(--color-primary)" showSpinner={false} />
+                  <main className="h-full p-4 md:p-5 my-container">{children}</main>
+                </div>
               </AppProvider>
             </UserProvider>
           </QueryProvider>
