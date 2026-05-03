@@ -1,12 +1,15 @@
 "use client";
-import { api } from "@/hooks/useApi";
+import { fetchClient } from "@/lib/fetchClient";
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 
 const useLogout = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
 
   const logout = async () => {
-    await api("/api/auth/logout", { method: "POST" });
+    await fetchClient("/api/auth/logout", { method: "POST" });
+    queryClient.setQueryData(["user"], null);
     router.refresh();
   };
 

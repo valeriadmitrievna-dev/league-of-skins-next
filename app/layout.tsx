@@ -10,6 +10,8 @@ import { initServerI18next, getT, getResources, generateI18nStaticParams } from 
 import { I18nProvider } from "next-i18next/client";
 import i18nConfig from "../i18n.config";
 import { cookies } from "next/headers";
+import { AppProvider } from "@/shared/providers/AppProvider";
+import QueryProvider from "@/shared/providers/QueryProvider";
 
 initServerI18next(i18nConfig);
 
@@ -50,10 +52,14 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
         <Background />
 
         <I18nProvider language={lng} resources={resources}>
-          <UserProvider>
-            <ToastsProvider />
-            <div className="z-1">{children}</div>
-          </UserProvider>
+          <QueryProvider>
+            <UserProvider>
+              <ToastsProvider />
+              <AppProvider>
+                <div className="z-1">{children}</div>
+              </AppProvider>
+            </UserProvider>
+          </QueryProvider>
         </I18nProvider>
       </body>
     </html>

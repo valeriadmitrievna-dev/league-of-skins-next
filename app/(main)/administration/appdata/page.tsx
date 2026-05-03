@@ -1,45 +1,50 @@
 "use client";
-import LogLine from '@/components/LogLine';
+import LogLine from "@/components/LogLine";
 import Skeleton from "@/components/Skeleton";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { api, useApi } from "@/hooks/useApi";
-import { Log } from '@/lib/logger';
+import { fetchClient } from "@/lib/fetchClient";
+import { Log } from "@/lib/logger";
 import { prepareRiotClient } from "@/shared/riot/prepare";
 import { LangProgress, LogType } from "@/shared/riot/types";
 import AdminAppDataLanguage from "@/widgets/Admin/AdminAppDataLanguage";
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 
 const AdministrationAppData = () => {
-  const [logs, setLogs] = useState<Omit<Log, 'source'>[]>([]);
+  const [logs, setLogs] = useState<Omit<Log, "source">[]>([]);
   const [languages, setLanguages] = useState<Record<string, LangProgress>>({});
 
-  const { execute, loading, error, data } = useApi<Record<string, LangProgress>>(() =>
-    api<Record<string, LangProgress>>("/api/admin/appdata", {
-      method: "GET",
-    }),
-  );
+  const { data, isLoading: loading } = useQuery({
+    queryKey: ["admin-appdata"],
+    queryFn: () => fetchClient<Record<string, LangProgress>>("/api/admin/appdata"),
+    staleTime: 0, // всегда свежие данные для admin
+  });
 
   const logger = {
-    log: (...messages: string[]) => setLogs(prev => [...prev, { type: 'default', time: new Date(), message: messages.join(' ') }]),
-    error: (...messages: string[]) => setLogs(prev => [...prev, { type: 'error', time: new Date(), message: messages.join(' ') }]),
-    success: (...messages: string[]) => setLogs(prev => [...prev, { type: 'success', time: new Date(), message: messages.join(' ') }]),
-    warning: (...messages: string[]) => setLogs(prev => [...prev, { type: 'warning', time: new Date(), message: messages.join(' ') }]),
-  }
+    log: (...messages: string[]) =>
+      setLogs((prev) => [...prev, { type: "default", time: new Date(), message: messages.join(" ") }]),
+    error: (...messages: string[]) =>
+      setLogs((prev) => [...prev, { type: "error", time: new Date(), message: messages.join(" ") }]),
+    success: (...messages: string[]) =>
+      setLogs((prev) => [...prev, { type: "success", time: new Date(), message: messages.join(" ") }]),
+    warning: (...messages: string[]) =>
+      setLogs((prev) => [...prev, { type: "warning", time: new Date(), message: messages.join(" ") }]),
+  };
 
   const updateHandler = async (langs: string | string[]) => {
     setLogs([]);
-    
+
     if (typeof langs !== "string") {
       setLanguages({});
     }
 
-    if (typeof langs === 'string') {
-      setLanguages(prev => ({
+    if (typeof langs === "string") {
+      setLanguages((prev) => ({
         ...prev,
         [langs]: {
-          status: 'idle',
-        }
-      }))
+          status: "idle",
+        },
+      }));
     }
 
     const languages = typeof langs === "string" ? [langs] : langs;
@@ -67,13 +72,7 @@ const AdministrationAppData = () => {
   };
 
   useEffect(() => {
-    execute();
-  }, []);
-
-  useEffect(() => {
-    if (data) {
-      setLanguages(data);
-    }
+    if (data) setLanguages(data);
   }, [data]);
 
   return (
@@ -90,7 +89,7 @@ const AdministrationAppData = () => {
       </ScrollArea>
       <ScrollArea className="size-full bg-muted/50 overflow-hidden rounded-md p-2">
         {logs.map((log, i) => (
-          <LogLine key={i} {...log} className='text-xs' />
+          <LogLine key={i} {...log} className="text-xs" />
         ))}
       </ScrollArea>
     </div>

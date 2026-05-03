@@ -1,11 +1,13 @@
 "use client";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
-import { FC, useCallback } from "react";
+import { FC, useCallback, useEffect } from "react";
 import VirtualizedGrid from "../VirtualizedGrid";
 import { Spinner } from "@/components/ui/spinner";
 import { SearchParams } from "@/shared/types";
 import ChromaCard from "../ChromaCard";
 import { useT } from "next-i18next/client";
+import { useApp } from "@/shared/providers/AppProvider";
+import { useUser } from "@/shared/providers/UserProvider";
 
 interface SearchChromasResultProps {
   params: SearchParams;
@@ -14,10 +16,14 @@ interface SearchChromasResultProps {
 const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
   const { i18n } = useT();
   const locale = i18n.language;
+
+  const { user } = useUser();
+  const { setChromasCount } = useApp();
   const { search, championId, skinContentId, skin, owned, server } = params;
 
-  const { data, isLoading, loaderRef, count, initialized } = useInfiniteLoad({
-    url: "/api/chromas",
+  const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
+    url: "/api/skins",
+    queryKey: ["skins"],
     params: {
       ...(search ? { search } : {}),
       ...(championId ? { championId } : {}),
@@ -29,17 +35,34 @@ const SearchChromasResult: FC<SearchChromasResultProps> = ({ params }) => {
     headers: { Language: locale },
   });
 
-  const renderItem = useCallback((item: unknown, _index: number) => {
-    const chroma = item as any;
-    return <ChromaCard key={chroma.id} data={chroma} />;
-  }, []);
+  const renderItem = useCallback(
+    (item: unknown, _index: number) => {
+      const chroma = item as any;
+      const ownedChromas = (user?.ownedChromas as string[]) ?? [];
+      return (
+        <ChromaCard
+          key={chroma.id}
+          data={chroma}
+          owned={ownedChromas?.includes(chroma.contentId)}
+          toggleOwnedButton
+          addToWishlistButton
+        />
+      );
+    },
+    [user],
+  );
+
+  useEffect(() => {
+    setChromasCount(count);
+  }, [count]);
 
   return (
     <>
       {initialized && !isLoading && !data.length && "No items"}
       <VirtualizedGrid
         items={data}
-        loading={!data.length && isLoading}
+        loading={!initialized && isLoading}
+        fetching={isFetching}
         overscan={4}
         render={renderItem}
         columnGap={16}

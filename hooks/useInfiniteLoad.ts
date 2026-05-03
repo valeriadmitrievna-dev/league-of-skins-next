@@ -1,101 +1,63 @@
-import { RefObject, useCallback, useEffect, useRef, useState } from "react";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useIntersection } from "react-use";
+import { RefObject, useEffect, useRef } from "react";
+import { fetchClient } from "@/lib/fetchClient";
 
 interface InfiniteLoad {
   url: string;
+  queryKey: unknown[];
   params?: Record<string, string | undefined>;
-  headers?: HeadersInit;
+  headers?: Record<string, string>;
   size?: number;
   skip?: boolean;
 }
 
 const useInfiniteLoad = <T extends Record<string, unknown>>({
   url,
+  queryKey,
   params = {},
   headers = {},
   size = 30,
   skip,
 }: InfiniteLoad) => {
-  const paramsKey = JSON.stringify({ ...params, ...headers });
-  const initializedRef = useRef(false);
-  const prevParamsKeyRef = useRef(paramsKey);
-
-  if (prevParamsKeyRef.current !== paramsKey) {
-    prevParamsKeyRef.current = paramsKey;
-    initializedRef.current = false;
-  }
-
-  const initialized = initializedRef.current;
-
-  const [page, setPage] = useState(1);
-  const [isLoading, setLoading] = useState(true);
-  const [hasMore, setHasMore] = useState(true);
-  const [count, setCount] = useState(0);
-  const [data, setData] = useState<T[]>([]);
-
   const ref = useRef<HTMLDivElement | null>(null);
-  const abortRef = useRef<AbortController | null>(null);
-
   const intersection = useIntersection(ref as RefObject<HTMLDivElement>, {
     root: null,
     rootMargin: "200px",
     threshold: 0,
   });
 
-  const loadData = useCallback(
-    async (currentPage: number) => {
-      if (skip) return;
-
-      abortRef.current?.abort();
-      const controller = new AbortController();
-      abortRef.current = controller;
-
-      setLoading(true);
-
-      try {
-        const query = new URLSearchParams({
-          ...params,
-          page: String(currentPage),
-          size: String(size),
-        });
-
-        const res = await fetch(`${url}?${query}`, {
-          headers,
-          signal: controller.signal,
-        });
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-
-        const result = await res.json();
-
-        setCount(result.count);
-        setData((prev) => (currentPage === 1 ? result.data : [...prev, ...result.data]));
-        setHasMore(currentPage * size < result.count);
-        setPage(currentPage + 1);
-      } catch (e: any) {
-        if (e.name !== "AbortError") console.error(e);
-      } finally {
-        setLoading(false);
-      }
+  const query = useInfiniteQuery({
+    queryKey: [...queryKey, params, headers],
+    queryFn: ({ pageParam }) =>
+      fetchClient<{ count: number; data: T[] }>(url, {
+        query: { ...params, page: pageParam as number, size },
+        headers,
+      }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const loaded = allPages.length * size;
+      return loaded < lastPage.count ? allPages.length + 1 : undefined;
     },
-    [url, paramsKey, size, skip],
-  );
+    placeholderData: (prev) => prev,
+    enabled: !skip,
+  });
 
   useEffect(() => {
-    setData([]);
-    setPage(1);
-    setHasMore(true);
-    setCount(0);
-    loadData(1);
-  }, [paramsKey, url]);
-
-  useEffect(() => {
-    if (intersection?.isIntersecting && hasMore && !isLoading) {
-      loadData(page);
+    if (intersection?.isIntersecting && query.hasNextPage && !query.isFetchingNextPage) {
+      query.fetchNextPage();
     }
   }, [intersection?.isIntersecting]);
 
-  return { data, isLoading, loaderRef: ref, hasMore, count, initialized };
+  return {
+    data: query.data?.pages.flatMap((p) => p.data) ?? [],
+    count: query.data?.pages[0]?.count ?? 0,
+    isLoading: query.isLoading,
+    isFetching: query.isFetching,
+    initialized: query.isFetched,
+    loaderRef: ref,
+    hasMore: query.hasNextPage ?? false,
+  };
 };
 
 export default useInfiniteLoad;

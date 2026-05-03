@@ -19,6 +19,7 @@ import FilterPanelTitle from "../Filters/FilterPanelTitle";
 import FilterToggleGroup from "../Filters/FilterToggleGroup";
 import { useUser } from "@/shared/providers/UserProvider";
 import { useT } from "next-i18next/client";
+import { useApp } from '@/shared/providers/AppProvider';
 
 interface SearchFiltersProps {
   champions: any[];
@@ -29,6 +30,7 @@ interface SearchFiltersProps {
 const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, className }) => {
   const { t } = useT();
   const { isAuth } = useUser();
+  const { chromasCount } = useApp();
 
   const { get, update, updateMany, reset, hasActive } = useQueryParams([
     "owned",
@@ -131,10 +133,10 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({ champions, skins, classN
             </Combobox>
           </Field>
         )}
-        {/* <p className="block text-sm text-muted-foreground">
-          {t("filters.found_count", { count: chromasFound })} <span className="font-medium">{chromasFound}</span>{" "}
-          {t("shared.chroma", { count: chromasFound })}
-        </p> */}
+        <p className="block text-sm text-muted-foreground">
+          {t("filters.found_count", { count: chromasCount })} <span className="font-medium">{chromasCount}</span>{" "}
+          {t("shared.skin", { count: chromasCount })}
+        </p>
       </div>
     </div>
   );

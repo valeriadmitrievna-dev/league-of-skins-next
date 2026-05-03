@@ -5,6 +5,9 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { cn } from "@/shared/cn";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
+import { BookmarkIcon } from "lucide-react";
 
 interface ChromaCardProps extends ComponentProps<"div"> {
   className?: string;
@@ -26,10 +29,13 @@ const ChromaCard: FC<ChromaCardProps> = ({
   plain,
   ...props
 }) => {
-  // const toggleOwnedHandler = () => {
-  //   if (owned) updateOwnedChromas({ removeIds: [data.contentId] });
-  //   else updateOwnedChromas({ addIds: [data.contentId] });
-  // };
+  const toggleOwnedHandler = async () => {
+    if (owned) {
+      toast.success("Образ удален из купленных");
+    } else {
+      toast.success("Образ отмечен как купленный");
+    }
+  };
 
   // const removeFromWishlistHandler = async () => {
   //   try {
@@ -73,8 +79,8 @@ const ChromaCard: FC<ChromaCardProps> = ({
       </Card>
       <div className="flex items-center justify-between">
         <span className="text-sm text-muted-foreground font-medium line-clamp-1 mr-auto">{data.skinName}</span>
-        {/* {toggleOwnedButton &&
-          (isOwningUpdating ? (
+        {toggleOwnedButton &&
+          (false ? (
             <Spinner className="size-5 my-1 mr-0.5 text-primary shrink-0" />
           ) : (
             <BookmarkIcon
@@ -85,7 +91,7 @@ const ChromaCard: FC<ChromaCardProps> = ({
               })}
             />
           ))}
-        {addToWishlistButton && (
+        {/* {addToWishlistButton && (
           <AddToWishlist
             chromaName={data.fullName}
             chromaContentIds={[data.contentId]}

@@ -23,6 +23,7 @@ import FilterToggleGroup from "../Filters/FilterToggleGroup";
 import { plural } from "@/shared/utils/plural";
 import { useUser } from "@/shared/providers/UserProvider";
 import { useT } from "next-i18next/client";
+import { useApp } from '@/shared/providers/AppProvider';
 
 interface SearchFiltersProps {
   champions: any[];
@@ -35,8 +36,8 @@ interface SearchFiltersProps {
 const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rarities, chromas, className }) => {
   const { t } = useT();
   const { isAuth } = useUser();
+  const { skinsCount } = useApp();
 
-  const { get: getCount } = useQueryParams();
   const { get, update, reset, hasActive } = useQueryParams([
     "owned",
     "legacy",
@@ -46,8 +47,6 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
     "chromaId",
     "server",
   ]);
-
-  const count = Number(getCount("count") ?? 0);
 
   const legacyOptions = [
     { value: "all", label: t("filters.all") },
@@ -181,19 +180,8 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ champions, skinlines, rari
           </Combobox>
         </Field>
         <p className="block text-sm text-muted-foreground">
-          {plural(count, {
-            _one: t("filters.found_count_one"),
-            _few: t("filters.found_count_few"),
-            _many: t("filters.found_count_many"),
-            _other: t("filters.found_count_other"),
-          })}
-          <span className="font-medium"> {count} </span>
-          {plural(count, {
-            _one: t("shared.skin_one"),
-            _few: t("shared.skin_few"),
-            _many: t("shared.skin_many"),
-            _other: t("shared.skin_other"),
-          })}
+          {t("filters.found_count", { count: skinsCount })} <span className="font-medium">{skinsCount}</span>{" "}
+          {t("shared.skin", { count: skinsCount })}
         </p>
       </div>
     </div>

@@ -1,10 +1,11 @@
+"use client";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { useLayoutEffect, useMemo, useRef, useState, type FC, type JSX, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC, type JSX, type ReactNode } from "react";
 import { useWindowSize } from "react-use";
 
 import Skeleton from "@/components/Skeleton";
 import { BREAKPOINTS } from "@/shared/constants/styles";
-import { cn } from '@/shared/cn';
+import { cn } from "@/shared/cn";
 
 interface VirtualizedGridProps {
   items: unknown[];
@@ -58,6 +59,7 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [_, setContainerWidth] = useState(0);
 
+  const [isMounted, setIsMounted] = useState(false);
   const { width: windowWidth } = useWindowSize();
 
   useLayoutEffect(() => {
@@ -71,11 +73,16 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
     return () => obs.disconnect();
   }, [loading]);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const columns = useMemo(() => {
+    if (!isMounted) return defaultBreakpoints.at(-1)?.columns ?? 5;
     const sorted = [...responsiveColumns].sort((a, b) => b.minWidth - a.minWidth);
     const bp = sorted.find((b) => windowWidth >= b.minWidth);
     return bp?.columns ?? 4;
-  }, [responsiveColumns, windowWidth]);
+  }, [responsiveColumns, windowWidth, isMounted]);
 
   const rowCount = Math.ceil(items.length / columns);
 
@@ -87,9 +94,12 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   });
 
   return (
-    <div ref={parentRef} className={cn("", className)}>
+    <div ref={parentRef} className={cn({ "hidden": !isMounted }, className)}>
       {loading && (
-        <div className={cn("grid", gridClassName)} style={{ gridTemplateColumns: `repeat(${columns}, 1fr)`, rowGap, columnGap }}>
+        <div
+          className={cn("grid", gridClassName)}
+          style={{ gridTemplateColumns: `repeat(${columns}, 1fr)`, rowGap, columnGap }}
+        >
           <Skeleton count={20} asChild className="h-auto aspect-[1/1.2]" />
         </div>
       )}
@@ -127,10 +137,7 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
                 const key = itemKey ? itemKey(item, itemIndex) : itemIndex;
 
                 return (
-                  <div
-                    key={key}
-                    className={cn({ "pointer-events-none animate-pulse": fetching })}
-                  >
+                  <div key={key} className={cn({ "pointer-events-none animate-pulse": fetching })}>
                     {render(item, itemIndex)}
                   </div>
                 );

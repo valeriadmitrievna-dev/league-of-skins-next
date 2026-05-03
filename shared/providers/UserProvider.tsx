@@ -1,6 +1,7 @@
 "use client";
-import { createContext, useContext, useEffect, useState, PropsWithChildren, FC } from "react";
-import { api } from "@/hooks/useApi";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { createContext, useContext, FC, PropsWithChildren } from "react";
+import { fetchClient } from "@/lib/fetchClient";
 
 type DbUser = Record<string, unknown>;
 
@@ -8,32 +9,27 @@ interface UserContext {
   user: DbUser | null;
   isAuth: boolean;
   isLoading: boolean;
-  refetch: () => Promise<void>;
+  refetch: () => void;
 }
 
 const UserContext = createContext<UserContext | null>(null);
 
 export const UserProvider: FC<PropsWithChildren> = ({ children }) => {
-  const [user, setUser] = useState<DbUser | null>(null);
-  const [isLoading, setLoading] = useState(true);
+  const queryClient = useQueryClient();
 
-  const fetchUser = async () => {
-    try {
-      const data = await api<DbUser>("/api/auth/me");
-      setUser(data);
-    } catch {
-      setUser(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { data: user = null, isLoading } = useQuery({
+    queryKey: ["user"],
+    queryFn: () => fetchClient<DbUser>("/api/auth/me").catch(() => null),
+    staleTime: Infinity,
+    retry: false,
+  });
 
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  const refetch = () => queryClient.invalidateQueries({ queryKey: ["user"] });
 
   return (
-    <UserContext.Provider value={{ user, isAuth: !!user, isLoading, refetch: fetchUser }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, isAuth: !!user, isLoading, refetch }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 

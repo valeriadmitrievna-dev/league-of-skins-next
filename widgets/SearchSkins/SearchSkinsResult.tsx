@@ -6,9 +6,9 @@ import { Spinner } from "@/components/ui/spinner";
 import SkinCard from "../Skin/SkinCard";
 import { SearchParams } from "@/shared/types";
 
-import { useQueryParams } from "@/hooks/useQueryParams";
 import { useUser } from "@/shared/providers/UserProvider";
 import { useT } from "next-i18next/client";
+import { useApp } from "@/shared/providers/AppProvider";
 
 interface SearchSkinsResultProps {
   params: SearchParams;
@@ -18,12 +18,13 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
   const { i18n } = useT();
   const locale = i18n.language;
 
-  const { update } = useQueryParams();
   const { user } = useUser();
+  const { setSkinsCount } = useApp();
   const { search, championId, rarity, skinlineId, chromaId, legacy, owned, server } = params;
 
-  const { data, isLoading, loaderRef, count, initialized } = useInfiniteLoad({
+  const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/skins",
+    queryKey: ["skins"],
     params: {
       ...(search ? { search } : {}),
       ...(championId ? { championId } : {}),
@@ -55,7 +56,7 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
   );
 
   useEffect(() => {
-    update("count", count ? String(count) : null);
+    setSkinsCount(count);
   }, [count]);
 
   return (
@@ -63,7 +64,8 @@ const SearchSkinsResult: FC<SearchSkinsResultProps> = ({ params }) => {
       {initialized && !isLoading && !data.length && "No items"}
       <VirtualizedGrid
         items={data}
-        loading={!data.length && isLoading}
+        loading={!initialized && isLoading}
+        fetching={isFetching}
         overscan={4}
         render={renderItem}
         columnGap={16}

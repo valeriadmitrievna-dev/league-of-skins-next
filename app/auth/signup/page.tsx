@@ -6,9 +6,9 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react"
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { api, useApi } from "@/hooks/useApi";
-import { useUser } from "@/shared/providers/UserProvider";
 import { useT } from "next-i18next/client";
+import { useMutation } from "@tanstack/react-query";
+import { fetchClient } from "@/lib/fetchClient";
 
 interface SignUpFormInput {
   name: string;
@@ -21,7 +21,6 @@ const SignUpPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
-  const { refetch: refetchUser } = useUser();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -31,22 +30,16 @@ const SignUpPage = () => {
     formState: { errors },
   } = useForm<SignUpFormInput>();
 
-  const { execute, loading, error } = useApi((body?: SignUpFormInput) =>
-    api<{ access: string }>("/api/auth/signup", {
-      method: "POST",
-      json: body,
-    }),
-  );
-
-  const submitHandler: SubmitHandler<SignUpFormInput> = async (body) => {
-    const { data, error } = await execute(body);
-
-    if (!error) {
+  const { mutate: signup, isPending: loading } = useMutation({
+    mutationFn: (body: SignUpFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signup", { method: "POST", json: body }),
+    onSuccess: () => {
       const redirect = searchParams.get("redirect") ?? "/";
-      await refetchUser();
       router.push(redirect);
-      router.refresh();
-    }
+    },
+  });
+
+  const submitHandler: SubmitHandler<SignUpFormInput> = (body) => {
+    signup(body);
   };
 
   const togglePasswordVisibilityHandler = (event: MouseEvent<SVGElement>) => {

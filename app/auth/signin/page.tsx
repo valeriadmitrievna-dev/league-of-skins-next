@@ -6,9 +6,9 @@ import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
 import { MouseEvent, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { api, useApi } from "@/hooks/useApi";
-import { useUser } from "@/shared/providers/UserProvider";
 import { useT } from "next-i18next/client";
+import { useMutation } from "@tanstack/react-query";
+import { fetchClient } from "@/lib/fetchClient";
 
 interface SignInFormInput {
   email: string;
@@ -20,7 +20,6 @@ const SignInPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
-  const { refetch: refetchUser } = useUser();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
@@ -30,22 +29,22 @@ const SignInPage = () => {
     formState: { errors },
   } = useForm<SignInFormInput>();
 
-  const { execute, loading, error } = useApi((body?: SignInFormInput) =>
-    api<{ access: string }>("/api/auth/signin", {
-      method: "POST",
-      json: body,
-    }),
-  );
-
-  const submitHandler: SubmitHandler<SignInFormInput> = async (body) => {
-    const { data, error } = await execute(body);
-
-    if (!error) {
+  const {
+    mutate: signin,
+    isPending: loading,
+  } = useMutation({
+    mutationFn: (body: SignInFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signin", { method: "POST", json: body }),
+    onSuccess: () => {
       const redirect = searchParams.get("redirect") ?? "/";
-      await refetchUser();
       router.push(redirect);
-      router.refresh();
-    }
+    },
+    onError: () => {
+      // error доступен через error из useMutation
+    },
+  });
+
+  const submitHandler: SubmitHandler<SignInFormInput> = (body) => {
+    signin(body);
   };
 
   const togglePasswordVisibilityHandler = (event: MouseEvent<SVGElement>) => {
