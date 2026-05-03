@@ -5,6 +5,7 @@ import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useApp } from '@/shared/providers/AppProvider';
 import { useUser } from "@/shared/providers/UserProvider";
+import { AppDataSkin } from '@/types/appdata';
 import SearchSkinsFilters from "@/widgets/SearchSkinsFilters";
 import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
@@ -54,13 +55,13 @@ const SearchSkins: FC = () => {
 
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
-      const skin = item as any;
-      const ownedSkins = user?.ownedSkins as string[] | undefined;
+      const skin = item as AppDataSkin;
+      const ownedSkins = user?.owned_skins ?? [];
       return (
         <SkinCard
           key={skin.id}
           data={skin}
-          owned={ownedSkins?.includes(skin.contentId)}
+          owned={ownedSkins.includes(skin.contentId)}
           toggleOwnedButton
           addToWishlistButton
         />

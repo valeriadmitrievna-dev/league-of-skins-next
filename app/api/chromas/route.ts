@@ -1,6 +1,6 @@
-import { createChromaPredicate } from '@/shared/utils/createChromaPredicate';
+import { createChromaPredicate } from "@/shared/utils/createChromaPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getLanguageCode } from '@/shared/utils/getLanguageCode';
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 import { NextRequest } from "next/server";
 
@@ -10,7 +10,7 @@ export async function GET(req: NextRequest) {
 
     const { page, size, ...params } = Object.fromEntries(req.nextUrl.searchParams);
 
-    const appData: any = await getLangAppData(lang);
+    const appData = await getLangAppData(lang);
     const predicate = await createChromaPredicate(params, null);
     const filteredChromas = appData.chromas.filter(predicate);
 

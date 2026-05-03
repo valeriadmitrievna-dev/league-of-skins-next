@@ -12,10 +12,11 @@ import { Spinner } from "@/components/ui/spinner";
 import { BookmarkIcon, HeartIcon } from "lucide-react";
 import WishlistDialog from "../Wishlist/WishlistDialog";
 import { useT } from "next-i18next/client";
+import { AppDataSkin } from "@/types/appdata";
 
 interface SkinCardProps {
   className?: string;
-  data: any;
+  data: AppDataSkin;
   owned?: boolean | "hidden";
   addToWishlistButton?: boolean;
   toggleOwnedButton?: boolean;
@@ -90,7 +91,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
 
         {!!data.chromas.length && (
           <div className="flex items-center flex-wrap absolute left-1.5 bottom-1.5 z-2 gap-x-1">
-            {data.chromas.slice(0, 3).map((chroma: any) => (
+            {data.chromas.slice(0, 3).map((chroma) => (
               <ChromaColor key={chroma.id} colors={chroma.colors} className="size-5 rounded-sm border-none" />
             ))}
             {data.chromas.length > 3 && (

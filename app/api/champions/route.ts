@@ -4,7 +4,7 @@ import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 
 export const GET = endpoint(async ({ language, query }) => {
   const { page, size } = query();
-  const appData: any = await getLangAppData(language);
+  const appData = await getLangAppData(language);
   const champions = appData?.champions ?? [];
 
   return {

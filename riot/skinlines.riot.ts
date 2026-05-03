@@ -1,4 +1,5 @@
 import { cDragonUrl } from "@/shared/constants/riot";
+import { RiotSkinline } from '@/types/riot';
 
 export const getSkinlines = async (lang: string = 'default', server: 'latest' | 'pbe' = 'latest') => {
   lang = lang.toLowerCase()
@@ -7,9 +8,9 @@ export const getSkinlines = async (lang: string = 'default', server: 'latest' | 
 
   try {
     const res = await fetch(url)
-    const data: any[] = await res.json();
+    const data: RiotSkinline[] = await res.json();
     return data;
   } catch (error) {
-    console.error(`[ERROR][getSkinlines][${server}]`, (error as any).message)
+    console.error(`[ERROR][getSkinlines][${server}]`, (error as Error).message)
   }
 }

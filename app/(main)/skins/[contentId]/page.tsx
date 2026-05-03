@@ -10,8 +10,8 @@ const SkinPage = async ({ params }: { params: Promise<{ contentId: string }> }) 
   const cookieStore = await cookies();
   const lng = cookieStore.get("i18next")?.value ?? "en";
 
-  const appData: any = await getLangAppData(getLanguageCode(lng));
-  const skin = (appData?.skins ?? []).find((skin: any) => skin.contentId === contentId);
+  const appData = await getLangAppData(getLanguageCode(lng));
+  const skin = (appData?.skins ?? []).find((skin) => skin.contentId === contentId);
 
   if (!skin) {
     return <>No skin</>;

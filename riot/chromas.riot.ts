@@ -1,16 +1,17 @@
 import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { AppDataChroma, AppDataChromaItem } from '@/types/appdata';
 import { isEqual, uniqWith } from "lodash";
 
 export const getChromas = async (lang: string = "en_US") => {
   try {
-    const data: any = await getLangAppData(lang);
+    const data = await getLangAppData(lang);
 
     if (data) {
-      const chromas: any[] = uniqWith(
+      const chromas: AppDataChroma[] = uniqWith(
         data.skins
-          .filter((skin: any) => skin.chromas.length)
-          .map((skin: any) =>
-            skin.chromas?.map((chroma: any) => {
+          .filter((skin) => skin.chromas.length)
+          .map((skin) =>
+            skin.chromas?.map((chroma) => {
               return {
                 id: chroma.id.toString(),
                 contentId: chroma.contentId,
@@ -29,22 +30,22 @@ export const getChromas = async (lang: string = "en_US") => {
         (a, b) => a.name === b.name && isEqual(a.colors, b.colors),
       );
 
-      return uniqWith(chromas, (a, b) => a.name === b.name && isEqual(a.colors, b.colors)) as any[];
+      return uniqWith(chromas, (a, b) => a.name === b.name && isEqual(a.colors, b.colors));
     }
   } catch (error) {
-    console.error("[ERROR][getChromas]", (error as any).message);
+    console.error("[ERROR][getChromas]", (error as Error).message);
   }
 };
 
 export const getAllChromas = async (lang: string = "en_US") => {
   try {
-    const data: any = await getLangAppData(lang);
+    const data = await getLangAppData(lang);
 
     if (data) {
-      const chromas: any[] = data.skins
-        .filter((skin: any) => skin.chromas.length)
-        .map((skin: any) =>
-          skin.chromas?.map((chroma: any) => {
+      const chromas: AppDataChromaItem[] = data.skins
+        .filter((skin) => skin.chromas.length)
+        .map((skin) =>
+          skin.chromas?.map((chroma) => {
             return {
               id: chroma.id.toString(),
               contentId: chroma.contentId,
@@ -63,6 +64,6 @@ export const getAllChromas = async (lang: string = "en_US") => {
       return chromas;
     }
   } catch (error) {
-    console.error("[ERROR][getChromas]", (error as any).message);
+    console.error("[ERROR][getChromas]", (error as Error).message);
   }
 };

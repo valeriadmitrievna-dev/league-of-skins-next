@@ -1,4 +1,5 @@
 import { cDragonUrl } from '@/shared/constants/riot';
+import { RiotChampion } from '@/types/riot';
 
 export const getChampion = async (championKey: string, lang: string = 'default', server: 'latest' | 'pbe' = 'latest') => {
   lang = lang.toLowerCase();
@@ -7,10 +8,10 @@ export const getChampion = async (championKey: string, lang: string = 'default',
 
   try {
     const res = await fetch(url);
-    const data = await res.json();
+    const data: RiotChampion = await res.json();
     return data;
   } catch (error) {
     console.error(`[ERROR][getChampion][${server}]`, url);
-    console.error(`[ERROR][getChampion][${server}]`, (error as any).message);
+    console.error(`[ERROR][getChampion][${server}]`, (error as Error).message);
   }
 };

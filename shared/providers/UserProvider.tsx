@@ -2,8 +2,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createContext, useContext, FC, PropsWithChildren } from "react";
 import { fetchClient } from "@/lib/fetchClient";
-
-type DbUser = Record<string, unknown>;
+import { DbUser } from '@/types/db';
 
 interface UserContext {
   user: DbUser | null;

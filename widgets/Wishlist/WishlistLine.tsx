@@ -1,12 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { DbWishlist } from '@/types/db';
 import { CircleMinusIcon, CirclePlusIcon } from "lucide-react";
 import Link from "next/link";
 import { FC, MouseEvent } from "react";
 import { toast } from "sonner";
 
 interface WishlistLineProps {
-  wishlist: any;
+  wishlist: DbWishlist;
   skinContentIds?: string[];
   chromaContentIds?: string[];
 }

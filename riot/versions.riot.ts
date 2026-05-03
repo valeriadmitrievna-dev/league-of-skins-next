@@ -7,6 +7,6 @@ export const getVersions = async () => {
     const data: string[] = await res.json();
     return data;
   } catch (error) {
-    console.error("[ERROR][getVersions]", (error as any).message);
+    console.error("[ERROR][getVersions]", (error as Error).message);
   }
 };

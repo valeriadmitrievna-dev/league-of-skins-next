@@ -1,8 +1,8 @@
 import { errorHandler } from "@/errors";
 import { RequestError } from "@/errors";
 import { getServerUser } from "./auth";
-
-export type DbUser = Record<string, unknown>;
+import { DbUser } from '@/types/db';
+import { getLanguageCode } from '@/shared/utils/getLanguageCode';
 
 export type EndpointContext = {
   language: string;
@@ -18,7 +18,7 @@ const buildContext = async (req: Request): Promise<EndpointContext> => {
   const user = await getServerUser();
 
   return {
-    language,
+    language: getLanguageCode(language),
     user,
     body: () => req.json(),
     query: () => Object.fromEntries(new URL(req.url).searchParams.entries()) as any,

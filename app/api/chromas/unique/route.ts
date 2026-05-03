@@ -1,16 +1,17 @@
 import { endpoint } from "@/lib/endpoint";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
+import { AppDataChroma } from '@/types/appdata';
 import { isEqual, uniqWith } from "lodash";
 
 export const GET = endpoint(async ({ language, query }) => {
   const { page, size } = query();
-  const appData: any = await getLangAppData(language);
-  const chromas = uniqWith(
+  const appData = await getLangAppData(language);
+  const chromas: AppDataChroma[] = uniqWith(
     (appData?.skins ?? [])
-      .filter((skin: any) => skin.chromas.length)
-      .map((skin: any) =>
-        skin.chromas?.map((chroma: any) => {
+      .filter((skin) => skin.chromas.length)
+      .map((skin) =>
+        skin.chromas?.map((chroma) => {
           return {
             id: chroma.id.toString(),
             contentId: chroma.contentId,
@@ -26,7 +27,7 @@ export const GET = endpoint(async ({ language, query }) => {
         }),
       )
       .flat(),
-    (a: any, b: any) => a.name === b.name && isEqual(a.colors, b.colors),
+    (a, b) => a.name === b.name && isEqual(a.colors, b.colors),
   );
 
   return {

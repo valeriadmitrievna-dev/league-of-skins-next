@@ -1,33 +1,26 @@
+import { endpoint } from "@/lib/endpoint";
 import { createSkinPredicate } from "@/shared/utils/createSkinPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
-import { NextRequest } from "next/server";
+import { AppDataSkin } from "@/types/appdata";
 
-export async function GET(req: NextRequest) {
-  try {
-    const lang = getLanguageCode(req.headers.get("Language") ?? "en");
+export const GET = endpoint(async ({ language, query, user }) => {
+  const { page, size, ...params } = query();
 
-    const { page, size, ...params } = Object.fromEntries(req.nextUrl.searchParams);
+  const originAppData = await getLangAppData();
+  const appData = await getLangAppData(language);
+  if (!appData) return { count: 0, data: [] };
 
-    const originAppData: any = await getLangAppData();
-    const appData: any = await getLangAppData(lang);
-    if (!appData) return Response.json({ count: 0, data: [] });
+  const predicate = await createSkinPredicate(params, user, language);
+  const filteredSkins = appData.skins.filter(predicate);
 
-    const predicate = await createSkinPredicate(params, null, lang);
-    const filteredSkins: any[] = appData.skins.filter(predicate);
+  const skins: AppDataSkin[] = filteredSkins.map((skin) => {
+    const originSkin = originAppData.skins.find((originSkin) => originSkin.contentId === skin.contentId);
+    return { ...skin, ...(user ? { owned: user.owned_skins.includes(skin.contentId) } : {}), originName: originSkin?.name };
+  });
 
-    const skins = filteredSkins.map((skin) => {
-      const originSkin = originAppData.skins.find((originSkin: any) => originSkin.contentId === skin.contentId);
-      // return { ...skin, ...(user ? { owned: user.ownedSkins.includes(skin.contentId) } : {}), originName: originSkin?.name }
-      return { ...skin, originName: originSkin?.name };
-    });
-
-    return Response.json({
-      count: skins.length,
-      data: getPaginatedSlice(skins, page, size),
-    });
-  } catch {
-    return Response.json({ code: "ERR_0000" }, { status: 500 });
-  }
-}
+  return {
+    count: skins.length,
+    data: getPaginatedSlice(skins, page, size),
+  };
+});

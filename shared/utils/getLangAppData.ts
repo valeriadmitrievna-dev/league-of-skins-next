@@ -1,6 +1,7 @@
 import { RequestError } from "@/errors";
 import { readJsonFile } from "./getFileData";
 import { baseFolder } from "../constants/riot";
+import { AppDataLang } from '@/types/appdata';
 
 // В Next.js dev-режиме модуль может переинициализироваться при HMR,
 // но в prod воркеры не шарят память между собой.
@@ -9,10 +10,10 @@ import { baseFolder } from "../constants/riot";
 // Не полагайся на него как на source of truth между запросами.
 const cache = new Map<string, unknown>();
 
-export const getLangAppData = async <T = unknown>(lang: string = "en_US"): Promise<T> => {
-  if (cache.has(lang)) return cache.get(lang) as T;
+export const getLangAppData = async (lang: string = "en_US"): Promise<AppDataLang> => {
+  if (cache.has(lang)) return cache.get(lang) as AppDataLang;
 
-  const data = await readJsonFile<T>(`${baseFolder}/${lang}.json`);
+  const data = await readJsonFile<AppDataLang>(`${baseFolder}/${lang}.json`);
 
   if (!data) {
     throw new RequestError({ code: "ERR_0003", status: 404 });

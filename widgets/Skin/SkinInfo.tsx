@@ -13,9 +13,10 @@ import ChromaColor from "@/components/ChromaColor";
 import { Button } from "@/components/ui/button";
 import { PlayIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
+import { AppDataSkin } from "@/types/appdata";
 
 interface SkinInfoProps {
-  data: any;
+  data: AppDataSkin;
   className?: string;
 }
 
@@ -91,7 +92,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
         <div className="my-card px-4! text-xs h-fit">
           <p className="mb-2">{t("skin.chromas")}</p>
           <div className="flex flex-wrap gap-2">
-            {data.chromas.map((chroma: any) => (
+            {data.chromas.map((chroma) => (
               <ChromaColor key={chroma.contentId} colors={chroma.colors} onClick={() => chromaScrollHandler(chroma.id)} />
             ))}
           </div>

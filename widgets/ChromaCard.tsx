@@ -8,10 +8,11 @@ import { cn } from "@/shared/cn";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { BookmarkIcon } from "lucide-react";
+import { AppDataChroma } from '@/types/appdata';
 
 interface ChromaCardProps extends ComponentProps<"div"> {
   className?: string;
-  data: any;
+  data: AppDataChroma;
   owned?: boolean | "hidden";
   addToWishlistButton?: boolean;
   toggleOwnedButton?: boolean;

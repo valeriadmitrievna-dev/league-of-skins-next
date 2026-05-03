@@ -1,29 +1,30 @@
+import { AppDataChroma } from '@/types/appdata';
 import { checkSearch } from './checkSearch';
+import { SearchChromasRequest } from '@/api/types';
+import { DbUser } from '@/types/db';
 
-type LocalChroma = any;
-
-export const createChromaPredicate = (query: any, user: any | null) => {
+export const createChromaPredicate = (query: SearchChromasRequest, user: DbUser | null) => {
   query.owned ??= 'all';
   query.skin ??= 'all';
 
   const filters = {
-    byChampionId: (chroma: LocalChroma) => !query.championId || chroma.championId === query.championId,
-    bySkinContentIdId: (chroma: LocalChroma) => !query.skinContentId || chroma.skinContentId === query.skinContentId,
-    bySearch: (chroma: LocalChroma) => !query.search || checkSearch(chroma.name, query.search),
-    byOwned: (chroma: LocalChroma) => {
+    byChampionId: (chroma: AppDataChroma) => !query.championId || chroma.championId === query.championId,
+    bySkinContentIdId: (chroma: AppDataChroma) => !query.skinContentId || chroma.skinContentId === query.skinContentId,
+    bySearch: (chroma: AppDataChroma) => !query.search || checkSearch(chroma.name, query.search),
+    byOwned: (chroma: AppDataChroma) => {
       if (!user || query.owned === 'all') return true;
-      return query.owned === 'on' ? user.ownedChromas.includes(chroma.contentId) : !user.ownedChromas.includes(chroma.contentId);
+      return query.owned === 'on' ? user.owned_chromas.includes(chroma.contentId) : !user.owned_chromas.includes(chroma.contentId);
     },
-    bySkin: (chroma: LocalChroma) => {
+    bySkin: (chroma: AppDataChroma) => {
       if (!user || query.skin === 'all') return true;
-      return query.skin === 'on' ? user.ownedSkins.includes(chroma.skinContentId) : !user.ownedSkins.includes(chroma.skinContentId);
+      return query.skin === 'on' ? user.owned_skins.includes(chroma.skinContentId) : !user.owned_skins.includes(chroma.skinContentId);
     },
-    byServer: (chroma: LocalChroma) => {
+    byServer: (chroma: AppDataChroma) => {
       if (query.server === 'latest') return chroma.pbe === false;
       if (query.server === 'pbe') return chroma.pbe === true;
       return true;
     },
   };
 
-  return (chroma: LocalChroma) => Object.values(filters).every((filter) => filter(chroma));
+  return (chroma: AppDataChroma) => Object.values(filters).every((filter) => filter(chroma));
 };

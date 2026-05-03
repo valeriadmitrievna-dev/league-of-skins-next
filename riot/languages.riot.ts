@@ -4,9 +4,9 @@ export const getLanguages = async () => {
   try {
     const url = `${dDragonUrl}/cdn/languages.json`;
     const res = await fetch(url);
-    const data = await res.json();
+    const data: string[] = await res.json();
     return data;
   } catch (error) {
-    console.error("[ERROR][getLanguages]", (error as any).message);
+    console.error("[ERROR][getLanguages]", (error as Error).message);
   }
 };

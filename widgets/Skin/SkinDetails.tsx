@@ -10,9 +10,10 @@ import Link from "next/link";
 import { cn } from "@/shared/cn";
 import ChromaCard from "../ChromaCard";
 import { useT } from "next-i18next/client";
+import { AppDataChroma, AppDataSkin } from "@/types/appdata";
 
 interface SkinDetailsProps {
-  data: any;
+  data: AppDataSkin;
   className?: string;
 }
 
@@ -21,7 +22,7 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
 
   const renderChroma = useCallback(
     (item: unknown, _index: number) => {
-      const chroma = item as any;
+      const chroma = item as AppDataChroma;
       // const owned = ownedSet.has(chroma.contentId);
 
       return (
@@ -54,7 +55,7 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
       </div>
 
       <div className="mt-5 flex wrap-normal gap-2">
-        {data.skinlines.map((skinline: any) => (
+        {data.skinlines.map((skinline) => (
           <Link href={"/search/skins?skinlineId=" + String(skinline.id)} key={skinline.id}>
             <Badge variant="secondary">{skinline.name}</Badge>
           </Link>
@@ -74,7 +75,7 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
         <div className="mt-6">
           <Typography.H4 className="mb-4">{t("skin.quest")}</Typography.H4>
           <div className="grid gap-5 grid-cols-1 md:grid-cols-2">
-            {data.questSkinInfo.tiers.map((tier: any) => (
+            {data.questSkinInfo.tiers.map((tier) => (
               <div key={tier.name} className="group relative">
                 <span className="absolute top-2 left-2 size-8 flex items-center justify-center bg-neutral-900 text-neutral-100 rounded-md z-10">
                   {tier.stage}
@@ -101,12 +102,12 @@ const SkinDetails: FC<SkinDetailsProps> = ({ data, className }) => {
         <div className="mt-6">
           <Typography.H4 className="mb-4">{t("skin.features")}</Typography.H4>
           <div className="grid gap-3 grid-cols-1 md:grid-cols-2">
-            {data.features.map((feature: any) => (
+            {data.features.map((feature) => (
               <div key={feature.description} className="relative overflow-hidden rounded-md aspect-1056/720">
-                <Video src={feature.videoPath} className="w-full aspect-1056/720" controls loop />
+                <Video src={feature.videoPath ?? ''} className="w-full aspect-1056/720" controls loop />
 
                 <div className="absolute w-full z-10 top-2 left-2">
-                  <Image src={feature.iconPath} className="w-[10%] aspect-square" />
+                  <Image src={feature.iconPath ?? ''} className="w-[10%] aspect-square" />
                 </div>
               </div>
             ))}

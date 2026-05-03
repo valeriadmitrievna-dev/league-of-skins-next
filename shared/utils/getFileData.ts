@@ -1,6 +1,6 @@
-import { mkdir, writeFile } from 'fs/promises';
-import { readdir, readFile } from 'fs/promises';
-import { dirname } from 'path';
+import { mkdir, writeFile } from "fs/promises";
+import { readdir, readFile } from "fs/promises";
+import { dirname } from "path";
 
 export const readDirectory = async (dirpath: string): Promise<Record<string, string>> => {
   try {
@@ -9,22 +9,22 @@ export const readDirectory = async (dirpath: string): Promise<Record<string, str
 
     for (const filename of filenames) {
       const fullPath = `${dirpath}/${filename}`;
-      const content = await readFile(fullPath, 'utf-8');
+      const content = await readFile(fullPath, "utf-8");
       result[filename] = content;
     }
 
     return result;
   } catch (error) {
-    console.error('[ERROR] DIRECTORY READ FAILED ->', (error as any).message);
+    console.error("[ERROR] DIRECTORY READ FAILED ->", (error as Error).message);
     return {};
   }
 };
 
 export const readFileText = async (filepath: string): Promise<string> => {
   try {
-    return await readFile(filepath, 'utf-8');
+    return await readFile(filepath, "utf-8");
   } catch (error) {
-    console.error('[ERROR] FILE READ FAILED ->', (error as any).message);
+    console.error("[ERROR] FILE READ FAILED ->", (error as Error).message);
     throw error;
   }
 };
@@ -41,8 +41,8 @@ export const readJsonFile = async <T>(filepath: string, defaultValue?: T): Promi
 export const saveToJson = async <T>(path: string, data: T) => {
   try {
     await mkdir(dirname(path), { recursive: true });
-    await writeFile(path, JSON.stringify(data), 'utf-8');
+    await writeFile(path, JSON.stringify(data), "utf-8");
   } catch (error) {
-    console.error('[ERROR]', '[saveToJson]', (error as any).message);
+    console.error("[ERROR]", "[saveToJson]", (error as Error).message);
   }
 };

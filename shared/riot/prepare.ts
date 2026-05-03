@@ -7,6 +7,7 @@ import { getChampions } from "@/riot/champions.riot";
 import { config } from "@/lib/config";
 import { getChampion } from "@/riot/champion.riot";
 import { LangProgress } from "./types";
+import { AppDataChroma, AppDataSkin } from "@/types/appdata";
 
 export type ProgressCallback = (message: string, type?: "default" | "success" | "error") => void;
 export type LangProgressCallback = (lang: string, update: Partial<LangProgress>) => void;
@@ -78,8 +79,8 @@ export const prepareRiotClient = async (languages: string[], logger: any, onLang
         },
       }));
 
-      const skins: any[] = [];
-      const chromas: any[] = [];
+      const skins: AppDataSkin[] = [];
+      const chromas: AppDataChroma[] = [];
 
       // champion skins
       for (const champion of champions) {
@@ -92,17 +93,17 @@ export const prepareRiotClient = async (languages: string[], logger: any, onLang
           break;
         }
 
-        const champion_skins_live = champion_data.skins.filter((s: any) => !s.isBase).map((s: any) => s.contentId);
+        const champion_skins_live = champion_data.skins.filter((s) => !s.isBase).map((s) => s.contentId);
 
         const source_skins = champion_data_pbe
-          ? champion_data_pbe.skins.filter((s: any) => !s.isBase)
-          : champion_data.skins.filter((s: any) => !s.isBase);
+          ? champion_data_pbe.skins.filter((s) => !s.isBase)
+          : champion_data.skins.filter((s) => !s.isBase);
 
         onLangUpdate(lang, { categories: { skins: "loading", chromas: "loading" } });
         for (const skin of source_skins) {
           const pbe = champion_data_pbe ? !champion_skins_live.includes(skin.contentId) : false;
 
-          const skinChromas = (skin.chromas ?? []).map((chroma: any) => {
+          const skinChromas = (skin.chromas ?? []).map((chroma) => {
             const regex = /.*\(([^)]+)\)/;
             const match = chroma.name.match(regex);
             const chromaRuName = chroma.name.split("'")[chroma.name.split("'").length - 3];
@@ -143,11 +144,11 @@ export const prepareRiotClient = async (languages: string[], logger: any, onLang
             chromaPath: getCDragonPath(skin.chromaPath, pbe ? "pbe" : "latest"),
             chromas: skinChromas,
             skinlines: (skin.skinLines ?? [])
-              .map((sl: any) => {
-                const found = skinlines.find((s: any) => s.id === sl.id);
+              .map((sl) => {
+                const found = skinlines.find((s) => s.id === sl.id);
                 return found ? { id: String(sl.id), name: found.name } : null;
               })
-              .filter(Boolean),
+              .filter((s) => !!s),
           });
         }
 

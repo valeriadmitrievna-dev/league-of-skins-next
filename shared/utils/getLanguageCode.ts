@@ -1,5 +1,5 @@
-import { LANGUAGES } from '@/shared/constants/languages';
+import { LANGUAGES } from "@/shared/constants/languages";
 
 export const getLanguageCode = (lang: string) => {
-  return LANGUAGES[lang as keyof typeof LANGUAGES]?.code;
+  return LANGUAGES[lang as keyof typeof LANGUAGES]?.code ?? lang;
 };

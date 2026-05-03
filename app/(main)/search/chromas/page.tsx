@@ -1,12 +1,13 @@
 "use client";
-import Search from '@/components/Search';
-import { Spinner } from '@/components/ui/spinner';
+import Search from "@/components/Search";
+import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { useUser } from "@/shared/providers/UserProvider";
+import { AppDataChroma } from "@/types/appdata";
 import ChromaCard from "@/widgets/ChromaCard";
 import SearchChromasFilters from "@/widgets/SearchChromasFilters";
-import VirtualizedGrid from '@/widgets/VirtualizedGrid';
+import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
 
@@ -16,7 +17,13 @@ const SearchChromas: FC = () => {
 
   const { user } = useUser();
   const { get: getSearch, update: updateSearch } = useQueryParams();
-  const { get, update, updateMany, reset, hasActive } = useQueryParams(["owned", "skin", "championId", "skinContentId", "server"]);
+  const { get, update, updateMany, reset, hasActive } = useQueryParams([
+    "owned",
+    "skin",
+    "championId",
+    "skinContentId",
+    "server",
+  ]);
 
   const search = getSearch("search");
   const championId = get("championId");
@@ -41,13 +48,13 @@ const SearchChromas: FC = () => {
 
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
-      const chroma = item as any;
-      const ownedChromas = user?.ownedChromas as string[] | undefined;
+      const chroma = item as AppDataChroma;
+      const ownedChromas = user?.owned_chromas ?? [];
       return (
         <ChromaCard
           key={chroma.id}
           data={chroma}
-          owned={ownedChromas?.includes(chroma.contentId)}
+          owned={ownedChromas.includes(chroma.contentId)}
           toggleOwnedButton
           addToWishlistButton
         />

@@ -12,6 +12,7 @@ import WishlistLine from "./WishlistLine";
 import { setPendingWishlist } from "@/lib/pendindWishlist";
 import usePendingWishlist from "@/hooks/usePendindWishlist";
 import { useT } from "next-i18next/client";
+import { DbWishlist } from '@/types/db';
 
 interface WishlistDialogProps {
   trigger: (options: {
@@ -43,7 +44,7 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
 
   const [open, setOpen] = useState(false);
 
-  const wishlists: any[] = [];
+  const wishlists: DbWishlist[] = [];
 
   const allSkins = wishlists.flatMap((w) => w.skins);
   const allChromas = wishlists.flatMap((w) => w.chromas);
