@@ -28,6 +28,7 @@ export const UserProvider: FC<PropsWithChildren> = ({ children }) => {
     queryFn: () => fetchClient<DbUser>("/api/auth/me").catch(() => null),
     staleTime: Infinity,
     retry: false,
+    refetchOnMount: true,
   });
 
   const refetch = () => queryClient.invalidateQueries({ queryKey: ["user"] });

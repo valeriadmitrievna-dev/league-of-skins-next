@@ -26,6 +26,7 @@ export const fetchClient = async <T>(url: string, options: RequestOptions = {}):
       },
       body: json ? JSON.stringify(json) : undefined,
       signal: signal ?? controller.signal,
+      credentials: "include",
     });
 
     const data = await res.json().catch(() => null);

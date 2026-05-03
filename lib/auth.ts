@@ -39,10 +39,7 @@ export const getServerUser = async () => {
 
   const supabase = await createClient();
 
-  const { data: user } = await Promise.race([
-    supabase.from("users").select("*").eq("id", payload.userId).single(),
-    new Promise<{ data: null }>((resolve) => setTimeout(() => resolve({ data: null }), 3000)),
-  ]);
+  const { data: user } = await supabase.from("users").select("*").eq("id", payload.userId).single();
 
   return user ?? null;
 };
