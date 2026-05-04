@@ -35,9 +35,6 @@ const nextConfig: NextConfig = {
     });
     return config;
   },
-  generateBuildId: async () => {
-    return Date.now().toString();
-  },
 };
 
 export default nextConfig;
