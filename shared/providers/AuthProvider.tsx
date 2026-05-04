@@ -29,7 +29,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
     refetchOnMount: true,
   });
 
-  const { mutate: refresh, isPending: isRefreshLoading } = useMutation({
+  const { mutate: refresh } = useMutation({
     mutationFn: () => fetchClient("/api/auth/refresh", { method: "POST" }),
     onSuccess: async () => {
       router.refresh();
@@ -43,8 +43,8 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [error]);
 
   return (
-    <AuthContext.Provider value={{ isAuth: !!userId, userId, isLoading: isLoading || isRefreshLoading }}>
-      {isLoading || isRefreshLoading ? <LoadingScreen /> : children}
+    <AuthContext.Provider value={{ isAuth: !!userId, userId, isLoading: isLoading }}>
+      {isLoading ? <LoadingScreen /> : children}
     </AuthContext.Provider>
   );
 };
