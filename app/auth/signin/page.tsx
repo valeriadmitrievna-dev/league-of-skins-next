@@ -8,8 +8,8 @@ import { MouseEvent, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { errorClientHandler } from '@/errors';
 import { fetchClient } from "@/lib/fetchClient";
-import { useUser } from '@/shared/providers/UserProvider';
 import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
 
 interface SignInFormInput {
@@ -22,24 +22,17 @@ const SignInPage = () => {
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
-  const { refetch: refetchUser, isLoading: isUserLoading } = useUser();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInFormInput>();
+  const { register, handleSubmit, formState } = useForm<SignInFormInput>();
 
   const { mutate: signin, isPending: loading } = useMutation({
-    mutationFn: (body: SignInFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signin", { method: "POST", json: body }),
+    mutationFn: (body: SignInFormInput) => fetchClient("/api/auth/signin", { method: "POST", body: JSON.stringify(body) }),
     onSuccess: async () => {
       const redirect = searchParams.get("redirect") ?? "/";
-      await refetchUser();
       router.push(redirect);
-      router.refresh();
     },
+    onError: errorClientHandler,
   });
 
   const submitHandler: SubmitHandler<SignInFormInput> = (body) => {
@@ -61,7 +54,7 @@ const SignInPage = () => {
         title={t("auth.signin_title")}
         submitText={t("auth.submit_signin")}
         onSubmit={handleSubmit(submitHandler)}
-        loading={loading || isUserLoading}
+        loading={loading}
         extra={
           <>
             {t("auth.signin_extra")}{" "}
@@ -76,9 +69,9 @@ const SignInPage = () => {
           leftIcon={<MailIcon />}
           placeholder={t("auth.email_placeholder")}
           type="email"
-          aria-invalid={errors.email ? "true" : "false"}
-          description={errors.email?.message}
-          disabled={loading || isUserLoading}
+          aria-invalid={formState.errors.email ? "true" : "false"}
+          description={formState.errors.email?.message}
+          disabled={loading}
           {...register("email", {
             required: t("auth.field_required"),
             pattern: {
@@ -93,9 +86,9 @@ const SignInPage = () => {
           rightIcon={<PasswordIcon className="cursor-pointer" onClick={togglePasswordVisibilityHandler} />}
           placeholder={t("auth.password_placeholder")}
           type={isPasswordVisible ? "text" : "password"}
-          aria-invalid={errors.password ? "true" : "false"}
-          description={errors.password?.message}
-          disabled={loading || isUserLoading}
+          aria-invalid={formState.errors.password ? "true" : "false"}
+          description={formState.errors.password?.message}
+          disabled={loading}
           {...register("password", {
             required: t("auth.field_required"),
             minLength: { message: t("auth.field_minlength") + "6", value: 6 },

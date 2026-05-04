@@ -1,13 +1,9 @@
 type RequestOptions = RequestInit & {
-  json?: unknown;
   query?: Record<string, string | number | boolean | undefined>;
 };
 
 export const fetchClient = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
-  const { json, query, headers, signal, ...rest } = options;
-
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 15000);
+  const { query, headers, ...rest } = options;
 
   const queryString = query
     ? "?" +
@@ -17,24 +13,18 @@ export const fetchClient = async <T>(url: string, options: RequestOptions = {}):
         .join("&")
     : "";
 
-  try {
-    const res = await fetch(url + queryString, {
-      ...rest,
-      headers: {
-        ...(json ? { "Content-Type": "application/json" } : {}),
-        ...headers,
-      },
-      body: json ? JSON.stringify(json) : undefined,
-      signal: signal ?? controller.signal,
-      credentials: "include",
-    });
+  const res = await fetch(url + queryString, {
+    ...rest,
+    headers: {
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...headers,
+    },
+    credentials: "include",
+  });
 
-    const data = await res.json().catch(() => null);
+  const data = await res.json().catch(() => null);
 
-    if (!res.ok) throw data;
+  if (!res.ok) throw data;
 
-    return data as T;
-  } finally {
-    clearTimeout(timeout);
-  }
+  return data as T;
 };

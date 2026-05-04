@@ -2,10 +2,10 @@
 import { useEffect, useState } from "react";
 
 import { clearPendingWishlist, getPendingWishlist, PendingWishlist } from "@/lib/pendingWishlist";
-import { useUser } from "@/shared/providers/UserProvider";
+import { useAuth } from "@/shared/providers/AuthProvider";
 
 const usePendingWishlist = () => {
-  const { isAuth } = useUser();
+  const { isAuth } = useAuth();
   const [pending, setPending] = useState<PendingWishlist | null>(null);
 
   useEffect(() => {

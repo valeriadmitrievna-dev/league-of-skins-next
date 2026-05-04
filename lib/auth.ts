@@ -1,10 +1,9 @@
 import jwt from "jsonwebtoken";
 
 import { config } from "./config";
-import { createClient } from "./supabase/server";
 
 export const signAccessToken = (userId: string) => {
-  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: "5m" });
+  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: "15m" });
 };
 
 export const signRefreshToken = (userId: string) => {
@@ -27,19 +26,19 @@ export const verifyAccessToken = (token: string) => {
   }
 };
 
-export const getServerUser = async () => {
-  const { cookies } = await import("next/headers");
-  const cookieStore = await cookies();
-  const token = cookieStore.get("accessToken")?.value;
+// export const getServerUser = async () => {
+//   const { cookies } = await import("next/headers");
+//   const cookieStore = await cookies();
+//   const token = cookieStore.get("accessToken")?.value;
 
-  if (!token) return null;
+//   if (!token) return null;
 
-  const payload = verifyAccessToken(token);
-  if (!payload) return null;
+//   const payload = verifyAccessToken(token);
+//   if (!payload) return null;
 
-  const supabase = await createClient();
+//   const supabase = await createClient();
 
-  const { data: user } = await supabase.from("users").select("*").eq("id", payload.userId).single();
+//   const { data: user } = await supabase.from("users").select("*").eq("id", payload.userId).single();
 
-  return user ?? null;
-};
+//   return user ?? null;
+// };

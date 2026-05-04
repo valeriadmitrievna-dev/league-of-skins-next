@@ -1,36 +1,45 @@
-import { RequestError } from "@/errors";
-import { signAccessToken, verifyRefreshToken } from "@/lib/auth";
-import { ACCESS_COOKIE, serializeCookie } from "@/lib/cookies";
+import { cookies } from "next/headers";
+
+import { errorHandler, RequestError } from "@/errors";
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from "@/lib/auth";
+import { setAuthCookies } from "@/lib/cookies";
 import { createClient } from "@/lib/supabase/server";
 
-export const POST = async (req: Request) => {
+export const POST = async () => {
   try {
-    const cookieHeader = req.headers.get("cookie") ?? "";
+    console.log("[REFRESH]", "start refresh");
+    const cookieStore = await cookies();
 
-    const token = cookieHeader
-      .split(";")
-      .find((c) => c.trim().startsWith("refreshToken="))
-      ?.split("=")[1]
-      ?.trim();
+    const refreshToken = cookieStore.get("refreshToken")?.value;
+    if (!refreshToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+    console.log("[REFRESH]", "got cookie refresh token");
 
-    if (!token) throw new RequestError({ code: "ERR_0001", status: 401 });
-
-    const payload = verifyRefreshToken(token);
-
+    const payload = verifyRefreshToken(refreshToken);
     if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
+    console.log("[REFRESH]", "got payload:", JSON.stringify(payload));
 
     const supabase = await createClient();
-    const { data: storedToken } = await supabase.from("refresh_tokens").select("*").eq("token", token).single();
 
+    const { data: storedToken } = await supabase.from("refresh_tokens").select("*").eq("token", refreshToken).single();
     if (!storedToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+    console.log("[REFRESH]", "got database refresh token");
 
-    const newAccess = signAccessToken(payload.userId);
+    await supabase.from("refresh_tokens").delete().eq("token", refreshToken);
+    console.log("[REFRESH]", "deleted old refresh token from database");
+    const newAccessToken = signAccessToken(payload.userId);
+    const newRefreshToken = signRefreshToken(payload.userId);
 
-    const response = Response.json({ ok: true });
-    response.headers.append("Set-Cookie", serializeCookie("accessToken", newAccess, ACCESS_COOKIE));
-    response.headers.append("Set-Cookie", `isAuth=1; Secure; SameSite=strict; Path=/; Max-Age=${60 * 15}`);
-    return response;
-  } catch {
-    return Response.json({ error: "Invalid token" }, { status: 401 });
+    await supabase.from("refresh_tokens").insert({
+      token: newRefreshToken,
+      user_id: payload.userId,
+    });
+    console.log("[REFRESH]", "stored new refresh token");
+
+    await setAuthCookies(newAccessToken, newRefreshToken);
+    console.log("[REFRESH]", "set new tokens for cookie");
+
+    return Response.json({ ok: true })
+  } catch (error) {
+    return errorHandler(error);
   }
 };

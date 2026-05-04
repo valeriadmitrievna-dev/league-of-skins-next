@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import usePendingWishlist from "@/hooks/usePendingWishlist";
 import { setPendingWishlist } from "@/lib/pendingWishlist";
 import { cn } from "@/shared/cn";
-import { useUser } from "@/shared/providers/UserProvider";
+import { useAuth } from "@/shared/providers/AuthProvider";
 import { DbWishlist } from "@/types/db";
 
 import WishlistCreate from "./WishlistCreate";
@@ -39,7 +39,7 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
   const { t } = useT();
   const router = useRouter();
 
-  const { isAuth } = useUser();
+  const { isAuth } = useAuth();
   const pending = usePendingWishlist();
 
   const [open, setOpen] = useState(false);

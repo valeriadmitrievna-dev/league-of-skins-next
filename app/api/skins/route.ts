@@ -1,26 +1,37 @@
-import { endpoint } from "@/lib/endpoint";
+import { NextRequest } from "next/server";
+
+import { errorHandler } from "@/errors";
+import { getLangCookie } from "@/lib/cookies";
 import { createSkinPredicate } from "@/shared/utils/createSkinPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 import { AppDataSkin } from "@/types/appdata";
 
-export const GET = endpoint(async ({ language, query, user }) => {
-  const { page, size, ...params } = query();
+export const GET = async (req: NextRequest) => {
+  try {
+    const searchParams = req.nextUrl.searchParams;
+    const { page, size, ...params } = Object.fromEntries(searchParams.entries());
+    const lang = await getLangCookie();
 
-  const originAppData = await getLangAppData();
-  const appData = await getLangAppData(language);
-  if (!appData) return { count: 0, data: [] };
+    const originAppData = await getLangAppData();
+    const appData = await getLangAppData(getLanguageCode(lang));
+    if (!appData) return Response.json({ count: 0, data: [] });
 
-  const predicate = await createSkinPredicate(params, user, language);
-  const filteredSkins = appData.skins.filter(predicate);
+    const predicate = await createSkinPredicate(params, null, getLanguageCode(lang));
+    const filteredSkins = appData.skins.filter(predicate);
 
-  const skins: AppDataSkin[] = filteredSkins.map((skin) => {
-    const originSkin = originAppData.skins.find((originSkin) => originSkin.contentId === skin.contentId);
-    return { ...skin, ...(user ? { owned: user.owned_skins.includes(skin.contentId) } : {}), originName: originSkin?.name };
-  });
+    const skins: AppDataSkin[] = filteredSkins.map((skin) => {
+      const originSkin = originAppData.skins.find((originSkin) => originSkin.contentId === skin.contentId);
+      return { ...skin, originName: originSkin?.name };
+      // return { ...skin, ...(user ? { owned: user.owned_skins.includes(skin.contentId) } : {}), originName: originSkin?.name };
+    });
 
-  return {
-    count: skins.length,
-    data: getPaginatedSlice(skins, page, size),
-  };
-});
+    return Response.json({
+      count: skins.length,
+      data: getPaginatedSlice(skins, page, size),
+    });
+  } catch (error) {
+    return errorHandler(error);
+  }
+};

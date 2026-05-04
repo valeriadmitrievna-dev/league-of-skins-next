@@ -1,13 +1,13 @@
 import { hash } from "bcrypt";
+import { NextRequest } from "next/server";
 
 import { RequestError } from "@/errors";
 import { signAccessToken, signRefreshToken } from "@/lib/auth";
 import { setAuthCookies } from "@/lib/cookies";
-import { endpoint } from "@/lib/endpoint";
 import { createClient } from "@/lib/supabase/server";
 
-export const POST = endpoint(async ({ body }) => {
-  const { email, password, name } = await body<{ email: string; password: string; name: string }>();
+export const POST = async (req: NextRequest) => {
+  const { email, password, name } = await req.json() as { email: string; password: string; name: string };
   const supabase = await createClient();
 
   const emptyFields = Object.entries({ email, password, name })
@@ -19,7 +19,7 @@ export const POST = endpoint(async ({ body }) => {
   const { data: existingUser } = await supabase.from("users").select("*").eq("email", email).single();
   if (existingUser) throw new RequestError({ code: "ERR_0006", status: 400 });
 
-  const hashed = await hash(password, 11);
+  const hashed = await hash(password, 10);
 
   const { data: user, error } = await supabase
     .from("users")
@@ -45,5 +45,5 @@ export const POST = endpoint(async ({ body }) => {
 
   await setAuthCookies(access, refresh);
 
-  return { ok: true };
-});
+  return Response.json({ ok: true });
+};
