@@ -9,13 +9,17 @@ export interface LangProgress {
     skinlines?: CategoryStatus;
     champions?: CategoryStatus;
     skins?: CategoryStatus;
+    skins_pbe?: CategoryStatus;
     chromas?: CategoryStatus;
+    chromas_pbe?: CategoryStatus;
   };
   counts?: {
     skinlines?: number;
     champions?: number;
     skins?: number;
+    skins_pbe?: number;
     chromas?: number;
+    chromas_pbe?: number;
   };
   timeSeconds?: number;
   lastUpdate?: string;
