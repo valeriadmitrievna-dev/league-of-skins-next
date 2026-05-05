@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 import { config } from "./config";
 
 export const signAccessToken = (userId: string) => {
-  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: "15m" });
+  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: `${config.accessTokenLiveInMinutes}m` });
 };
 
 export const signRefreshToken = (userId: string) => {

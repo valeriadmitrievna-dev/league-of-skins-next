@@ -1,11 +1,13 @@
 import { cookies } from "next/headers";
 
+import { config } from './config';
+
 export const ACCESS_COOKIE = {
   httpOnly: true,
   secure: true,
   sameSite: "strict" as const,
   // path: "/",
-  maxAge: 60 * 15,
+  maxAge: 60 * config.accessTokenLiveInMinutes,
 };
 
 export const REFRESH_COOKIE = {

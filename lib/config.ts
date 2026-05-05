@@ -5,6 +5,7 @@ interface Config {
   riotVersion: string;
   jwtAccessSecret: string;
   jwtRefreshSecret: string;
+  accessTokenLiveInMinutes: number;
 }
 
 export const config: Config = {
@@ -12,4 +13,5 @@ export const config: Config = {
   riotVersion: process.env.RIOT_VERSION || "16.4.1",
   jwtAccessSecret: process.env.JWT_SECRET!,
   jwtRefreshSecret: process.env.JWT_REFRESH_SECRET!,
+  accessTokenLiveInMinutes: 15,
 };

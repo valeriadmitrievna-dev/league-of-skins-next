@@ -29,7 +29,7 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = 
     queryKey: ["me"],
     queryFn: () => fetchClient<{ userId: string | null }>("/api/auth/me"),
     initialData: initialUserId !== null ? { userId: initialUserId } : undefined,
-    staleTime: Infinity,
+    staleTime: 0,
     refetchOnMount: true,
   });
 
