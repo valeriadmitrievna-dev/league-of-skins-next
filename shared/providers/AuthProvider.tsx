@@ -3,7 +3,6 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, FC, PropsWithChildren, useEffect } from "react";
 
-import LoadingScreen from '@/components/LoadingScreen';
 import { RequestError } from "@/errors";
 import { fetchClient } from "@/lib/fetchClient";
 
@@ -15,16 +14,21 @@ interface AuthContext {
 
 const AuthContext = createContext<AuthContext | null>(null);
 
-export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
+interface AuthProviderProps extends PropsWithChildren {
+  initialUserId?: string | null;
+}
+
+export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = null }) => {
   const router = useRouter();
 
   const {
-    data: { userId } = { userId: null },
+    data: { userId } = { userId: initialUserId },
     isLoading,
     error,
   } = useQuery({
     queryKey: ["me"],
     queryFn: () => fetchClient<{ userId: string | null }>("/api/auth/me"),
+    initialData: initialUserId !== null ? { userId: initialUserId } : undefined,
     staleTime: Infinity,
     refetchOnMount: true,
   });
@@ -43,11 +47,12 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [error]);
 
   return (
-    <AuthContext.Provider value={{ isAuth: !!userId, userId, isLoading: isLoading }}>
-      {isLoading ? <LoadingScreen /> : children}
+    <AuthContext.Provider value={{ isAuth: !!userId, userId: userId ?? null, isLoading }}>
+      {children}
     </AuthContext.Provider>
   );
 };
+
 export const useAuth = () => {
   const ctx = useContext(AuthContext);
   if (!ctx) throw new Error("useAuth must be used within AuthProvider");

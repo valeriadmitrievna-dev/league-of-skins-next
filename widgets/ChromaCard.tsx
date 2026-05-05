@@ -1,4 +1,4 @@
-import { BookmarkIcon } from "lucide-react";
+import { BookmarkIcon, HeartIcon } from "lucide-react";
 import Link from "next/link";
 import type { ComponentProps, FC } from "react";
 import { toast } from "sonner";
@@ -9,6 +9,8 @@ import { Card } from "@/components/ui/card";
 import { Spinner } from "@/components/ui/spinner";
 import { cn } from "@/shared/cn";
 import { AppDataChroma } from "@/types/appdata";
+
+import WishlistDialog from './Wishlist/WishlistDialog';
 
 interface ChromaCardProps extends ComponentProps<"div"> {
   className?: string;
@@ -24,7 +26,7 @@ const ChromaCard: FC<ChromaCardProps> = ({
   className,
   data,
   owned,
-  // addToWishlistButton,
+  addToWishlistButton,
   toggleOwnedButton,
   // wishlistId,
   plain,
@@ -92,8 +94,8 @@ const ChromaCard: FC<ChromaCardProps> = ({
               })}
             />
           ))}
-        {/* {addToWishlistButton && (
-          <AddToWishlist
+        {addToWishlistButton && (
+          <WishlistDialog
             chromaName={data.fullName}
             chromaContentIds={[data.contentId]}
             trigger={({ onOpen, isChromaInWishlist }) => (
@@ -107,7 +109,7 @@ const ChromaCard: FC<ChromaCardProps> = ({
             )}
           />
         )}
-        {wishlistId &&
+        {/* {wishlistId &&
           (isWishlistUpdating ? (
             <Spinner className="size-5 my-1 text-primary shrink-0" />
           ) : (

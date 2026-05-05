@@ -26,19 +26,11 @@ export const verifyAccessToken = (token: string) => {
   }
 };
 
-// export const getServerUser = async () => {
-//   const { cookies } = await import("next/headers");
-//   const cookieStore = await cookies();
-//   const token = cookieStore.get("accessToken")?.value;
-
-//   if (!token) return null;
-
-//   const payload = verifyAccessToken(token);
-//   if (!payload) return null;
-
-//   const supabase = await createClient();
-
-//   const { data: user } = await supabase.from("users").select("*").eq("id", payload.userId).single();
-
-//   return user ?? null;
-// };
+export const getServerUserId = async (): Promise<string | null> => {
+  const { cookies } = await import("next/headers");
+  const cookieStore = await cookies();
+  const token = cookieStore.get("accessToken")?.value;
+  if (!token) return null;
+  const payload = verifyAccessToken(token);
+  return payload?.userId ?? null;
+};

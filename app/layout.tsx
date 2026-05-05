@@ -6,7 +6,8 @@ import { I18nProvider } from "next-i18next/client";
 import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
 
 import Background from "@/components/Background";
-import { getLangCookie } from '@/lib/cookies';
+import { getServerUserId } from "@/lib/auth";
+import { getLangCookie } from "@/lib/cookies";
 import { AppProvider } from "@/shared/providers/AppProvider";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
 import QueryProvider from "@/shared/providers/QueryProvider";
@@ -42,6 +43,7 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const lng = await getLangCookie();
+  const userId = await getServerUserId();
 
   const { i18n } = await getT();
   const resources = getResources(i18n);
@@ -53,7 +55,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
 
         <I18nProvider language={lng} resources={resources}>
           <QueryProvider>
-            <AuthProvider>
+            <AuthProvider initialUserId={userId}>
               <ToastsProvider />
               <AppProvider>
                 <div className="z-1">{children}</div>
