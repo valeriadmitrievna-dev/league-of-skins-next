@@ -10,7 +10,7 @@ const getCCSVariable = (name: string) => {
   return getComputedStyle(document.body).getPropertyValue(name);
 };
 
-const BackgroundCanvas: FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => {
+const DiamondBackground: FC<PropsWithChildren<{ className?: string }>> = ({ children, className }) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
@@ -140,4 +140,4 @@ const BackgroundCanvas: FC<PropsWithChildren<{ className?: string }>> = ({ child
   );
 };
 
-export default BackgroundCanvas;
+export default DiamondBackground;

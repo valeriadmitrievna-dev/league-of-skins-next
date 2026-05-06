@@ -35,8 +35,8 @@ export const POST = async (req: NextRequest) => {
 
   if (error) throw new RequestError({ code: "ERR_0000", status: 500, message: error.message });
 
-  const access = signAccessToken(user.id);
-  const refresh = signRefreshToken(user.id);
+  const access = signAccessToken({ userId: user.id, role: user.role });
+  const refresh = signRefreshToken({ userId: user.id, role: user.role });
 
   await supabase.from("refresh_tokens").insert({
     token: refresh,

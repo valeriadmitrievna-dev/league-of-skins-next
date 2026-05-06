@@ -1,18 +1,25 @@
 import jwt from "jsonwebtoken";
 
+import { DbUser } from '@/types/db';
+
 import { config } from "./config";
 
-export const signAccessToken = (userId: string) => {
-  return jwt.sign({ userId }, config.jwtAccessSecret, { expiresIn: `${config.accessTokenLiveInMinutes}m` });
+export type TokenPayload = {
+  userId: string;
+  role: DbUser['role']
+}
+
+export const signAccessToken = (data: TokenPayload) => {
+  return jwt.sign(data, config.jwtAccessSecret, { expiresIn: `${config.accessTokenLiveInMinutes}m` });
 };
 
-export const signRefreshToken = (userId: string) => {
-  return jwt.sign({ userId }, config.jwtRefreshSecret, { expiresIn: "7d" });
+export const signRefreshToken = (data: TokenPayload) => {
+  return jwt.sign(data, config.jwtRefreshSecret, { expiresIn: "7d" });
 };
 
 export const verifyRefreshToken = (token: string) => {
   try {
-    return jwt.verify(token, config.jwtRefreshSecret) as { userId: string };
+    return jwt.verify(token, config.jwtRefreshSecret) as TokenPayload;
   } catch {
     return null;
   }
@@ -20,7 +27,7 @@ export const verifyRefreshToken = (token: string) => {
 
 export const verifyAccessToken = (token: string) => {
   try {
-    return jwt.verify(token, config.jwtAccessSecret) as { userId: string };
+    return jwt.verify(token, config.jwtAccessSecret) as TokenPayload;
   } catch {
     return null;
   }

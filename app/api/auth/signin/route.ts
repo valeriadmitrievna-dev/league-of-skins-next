@@ -23,8 +23,8 @@ export const POST = async (req: NextRequest) => {
     const valid = await compare(password, user.password);
     if (!valid) throw new RequestError({ code: "ERR_0008", status: 400 });
 
-    const access = signAccessToken(user.id);
-    const refresh = signRefreshToken(user.id);
+    const access = signAccessToken({ userId: user.id, role: user.role });
+    const refresh = signRefreshToken({ userId: user.id, role: user.role });
 
     await supabase.from("refresh_tokens").insert({
       token: refresh,

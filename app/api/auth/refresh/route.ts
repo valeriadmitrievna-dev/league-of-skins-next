@@ -23,8 +23,8 @@ export const POST = async () => {
       throw new RequestError({ code: "ERR_0001", status: 401, message: "No stored token" });
     }
 
-    const newAccessToken = signAccessToken(payload.userId);
-    const newRefreshToken = signRefreshToken(payload.userId);
+    const newAccessToken = signAccessToken(payload);
+    const newRefreshToken = signRefreshToken(payload);
 
     await supabase.from("refresh_tokens").insert({
       token: newRefreshToken,

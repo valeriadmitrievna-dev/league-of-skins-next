@@ -1,3 +1,4 @@
+"use client"
 import { PlusIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
 import { useState, type ChangeEvent, type FC, type ReactNode } from "react";

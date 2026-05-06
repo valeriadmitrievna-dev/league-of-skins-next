@@ -1,0 +1,89 @@
+import { LockIcon, LockOpenIcon } from "lucide-react";
+import Link from "next/link";
+import { getT } from "next-i18next/server";
+import { FC } from "react";
+
+import { ImageStack } from "@/components/ImageStack";
+import { Typography } from "@/components/Typography";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+import { getLangCookie } from "@/lib/cookies";
+import { DbWishlist } from "@/types/db";
+
+interface WishlistCardProps extends DbWishlist {
+  guest?: boolean;
+}
+
+const WishlistCard: FC<WishlistCardProps> = async ({ guest, ...data }) => {
+  const lng = await getLangCookie();
+  const { t } = await getT("common", { lng });
+
+  return (
+    <Link
+      href={`/wishlists/${guest ? data.link : data.id}`}
+      className="relative flex flex-col justify-between bg-card border border-border rounded-md overflow-hidden group"
+    >
+      {!guest && (
+        <Badge variant={data.private ? "destructive" : "default"} className="absolute z-5 top-2 left-2">
+          {data.private ? <LockIcon /> : <LockOpenIcon />}
+          {t(`wishlist.private_${data.private}`)}
+        </Badge>
+      )}
+
+      <ImageStack images={[].map((i) => i ?? "")} />
+      {/* <ImageStack images={(data.preview ?? []).map((i) => i ?? "")} className="bg-accent" /> */}
+
+      <div className="px-4 py-3 min-h-24 flex flex-col gap-y-2">
+        <Typography.Large className="line-clamp-3">{data.name}</Typography.Large>
+
+        <div className="mt-auto w-full flex items-end gap-2">
+          <div className="flex items-center gap-2 mr-auto">
+            {/* {guest && (
+              <Badge variant="secondary">
+                <UserRoundIcon />
+                {data.user.name}
+              </Badge>
+            )} */}
+            {/* {!data.private && (
+              <Badge variant="ghost" className="bg-foreground/20">
+                <EyeIcon />
+                {data.views > 999 ? "999+" : data.views}
+              </Badge>
+            )} */}
+            <Typography.Muted>
+              {data?.skins?.length > 999 ? "999+" : data?.skins?.length}{" "}
+              {t("shared.skin", { count: data?.skins?.length > 999 ? 999 : data?.skins?.length })}
+            </Typography.Muted>
+            <Separator orientation="vertical" className="h-3!" />
+            <Typography.Muted>
+              {data?.chromas?.length > 999 ? "999+" : data?.chromas?.length}{" "}
+              {t("shared.chroma", { count: data?.chromas?.length > 999 ? 999 : data?.chromas?.length })}
+            </Typography.Muted>
+          </div>
+          {/* {!data.private && !guest && (
+            <Button size="icon" variant="outline" onClick={shareHandler}>
+              <Share2Icon />
+            </Button>
+          )} */}
+          {/* {!guest && (
+            <WishlistDeleteModal
+              wishlistId={data._id}
+              trigger={({ onOpen }) => (
+                <Button
+                  size="icon"
+                  variant="outline"
+                  onClick={onOpen}
+                  className="not-dark:hover:text-background hover:bg-destructive hover:border-destructive dark:hover:border-destructive dark:hover:text-destructive"
+                >
+                  <TrashIcon />
+                </Button>
+              )}
+            />
+          )} */}
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+export default WishlistCard;
