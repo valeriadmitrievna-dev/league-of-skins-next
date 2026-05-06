@@ -1,6 +1,7 @@
 "use client";
 import { FC, useCallback } from "react";
 
+import ScrollTopButton from '@/components/ScrollTopButton';
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
@@ -83,6 +84,7 @@ const SearchChromas: FC = () => {
         {!!data.length && isLoading && <Spinner className="mx-auto mt-4 size-8" />}
         <div ref={loaderRef} />
       </div>
+      <ScrollTopButton />
     </div>
   );
 };
