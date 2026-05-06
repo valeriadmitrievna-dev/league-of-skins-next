@@ -21,7 +21,7 @@ import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/shared/cn";
 import { RARITIES } from "@/shared/constants/rarities";
-import { useUser } from "@/shared/providers/UserProvider";
+import { useAuth } from "@/shared/providers/AuthProvider";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 
 import FilterPanelTitle from "./Filters/FilterPanelTitle";
@@ -40,7 +40,7 @@ interface SearchFiltersProps {
 
 const SearchSkinsFilters: FC<SearchFiltersProps> = ({ getValue, setValue, loading, reset, className, count }) => {
   const { t, i18n } = useT();
-  const { isAuth } = useUser();
+  const { isAuth } = useAuth();
 
   const langCode = getLanguageCode(i18n.language);
 

@@ -5,7 +5,7 @@ import { AppDataSkin } from "@/types/appdata";
 
 const useSkins = (championId: string | null, langCode: string = "en_US") => {
   return useQuery({
-    queryKey: ["skins", langCode],
+    queryKey: ["skins", championId, langCode],
     queryFn: () =>
       fetchClient<{ count: number; data: AppDataSkin[] }>("/api/skins", {
         headers: { Language: langCode },

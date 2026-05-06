@@ -1,35 +1,38 @@
-import { RequestError } from "@/errors";
-import { signAccessToken, verifyRefreshToken } from "@/lib/auth";
+import { cookies } from "next/headers";
+
+import { errorHandler, RequestError } from "@/errors";
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from "@/lib/auth";
+import { setAuthCookies } from "@/lib/cookies";
 import { createClient } from "@/lib/supabase/server";
 
-export const POST = async (req: Request) => {
+export const POST = async () => {
   try {
-    const cookieHeader = req.headers.get("cookie") ?? "";
+    const cookieStore = await cookies();
 
-    const token = cookieHeader
-      .split(";")
-      .find((c) => c.trim().startsWith("refreshToken="))
-      ?.split("=")[1]
-      ?.trim();
+    const refreshToken = cookieStore.get("refreshToken")?.value;
+    if (!refreshToken) throw new RequestError({ code: "ERR_0001", status: 401 });
 
-    if (!token) throw new RequestError({ code: "ERR_0001", status: 401 });
-
-    const payload = verifyRefreshToken(token);
-
+    const payload = verifyRefreshToken(refreshToken);
     if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
 
     const supabase = await createClient();
-    const { data: storedToken } = await supabase.from("refresh_tokens").select("*").eq("token", token).single();
 
+    const { data: storedToken } = await supabase.from("refresh_tokens").select("*").eq("token", refreshToken).single();
     if (!storedToken) throw new RequestError({ code: "ERR_0001", status: 401 });
 
-    const newAccess = signAccessToken(payload.userId);
+    await supabase.from("refresh_tokens").delete().eq("token", refreshToken);
+    const newAccessToken = signAccessToken(payload.userId);
+    const newRefreshToken = signRefreshToken(payload.userId);
 
-    const response = Response.json({ ok: true });
-    response.headers.append("Set-Cookie", `accessToken=${newAccess}; HttpOnly; Secure; Path=/; Max-Age=${60 * 15}`);
+    await supabase.from("refresh_tokens").insert({
+      token: newRefreshToken,
+      user_id: payload.userId,
+    });
 
-    return response;
-  } catch {
-    return Response.json({ error: "Invalid token" }, { status: 401 });
+    await setAuthCookies(newAccessToken, newRefreshToken);
+
+    return Response.json({ ok: true })
+  } catch (error) {
+    return errorHandler(error);
   }
 };

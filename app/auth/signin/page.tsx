@@ -8,6 +8,7 @@ import { MouseEvent, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { errorClientHandler } from '@/errors';
 import { fetchClient } from "@/lib/fetchClient";
 import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
 
@@ -23,22 +24,15 @@ const SignInPage = () => {
   const router = useRouter();
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignInFormInput>();
+  const { register, handleSubmit, formState } = useForm<SignInFormInput>();
 
   const { mutate: signin, isPending: loading } = useMutation({
-    mutationFn: (body: SignInFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signin", { method: "POST", json: body }),
-    onSuccess: () => {
+    mutationFn: (body: SignInFormInput) => fetchClient("/api/auth/signin", { method: "POST", body: JSON.stringify(body) }),
+    onSuccess: async () => {
       const redirect = searchParams.get("redirect") ?? "/";
       router.push(redirect);
     },
-    onError: () => {
-      // error доступен через error из useMutation
-    },
+    onError: errorClientHandler,
   });
 
   const submitHandler: SubmitHandler<SignInFormInput> = (body) => {
@@ -75,8 +69,8 @@ const SignInPage = () => {
           leftIcon={<MailIcon />}
           placeholder={t("auth.email_placeholder")}
           type="email"
-          aria-invalid={errors.email ? "true" : "false"}
-          description={errors.email?.message}
+          aria-invalid={formState.errors.email ? "true" : "false"}
+          description={formState.errors.email?.message}
           disabled={loading}
           {...register("email", {
             required: t("auth.field_required"),
@@ -92,8 +86,8 @@ const SignInPage = () => {
           rightIcon={<PasswordIcon className="cursor-pointer" onClick={togglePasswordVisibilityHandler} />}
           placeholder={t("auth.password_placeholder")}
           type={isPasswordVisible ? "text" : "password"}
-          aria-invalid={errors.password ? "true" : "false"}
-          description={errors.password?.message}
+          aria-invalid={formState.errors.password ? "true" : "false"}
+          description={formState.errors.password?.message}
           disabled={loading}
           {...register("password", {
             required: t("auth.field_required"),

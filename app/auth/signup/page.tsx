@@ -8,6 +8,7 @@ import { MouseEvent, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
+import { errorClientHandler } from "@/errors";
 import { fetchClient } from "@/lib/fetchClient";
 import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
 
@@ -25,18 +26,15 @@ const SignUpPage = () => {
 
   const [isPasswordVisible, setPasswordVisible] = useState(false);
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SignUpFormInput>();
+  const { register, handleSubmit, formState } = useForm<SignUpFormInput>();
 
   const { mutate: signup, isPending: loading } = useMutation({
-    mutationFn: (body: SignUpFormInput) => fetchClient<{ ok: boolean }>("/api/auth/signup", { method: "POST", json: body }),
-    onSuccess: () => {
+    mutationFn: (body: SignUpFormInput) => fetchClient("/api/auth/signup", { method: "POST", body: JSON.stringify(body) }),
+    onSuccess: async () => {
       const redirect = searchParams.get("redirect") ?? "/";
       router.push(redirect);
     },
+    onError: errorClientHandler,
   });
 
   const submitHandler: SubmitHandler<SignUpFormInput> = (body) => {
@@ -72,8 +70,8 @@ const SignUpPage = () => {
           id="name"
           leftIcon={<UserIcon />}
           placeholder={t("auth.name_placeholder")}
-          aria-invalid={errors.name ? "true" : "false"}
-          description={errors.name?.message}
+          aria-invalid={formState.errors.name ? "true" : "false"}
+          description={formState.errors.name?.message}
           {...register("name", {
             disabled: loading,
             required: t("auth.field_required"),
@@ -85,8 +83,8 @@ const SignUpPage = () => {
           leftIcon={<MailIcon />}
           placeholder={t("auth.email_placeholder")}
           type="email"
-          aria-invalid={errors.email ? "true" : "false"}
-          description={errors.email?.message}
+          aria-invalid={formState.errors.email ? "true" : "false"}
+          description={formState.errors.email?.message}
           {...register("email", {
             disabled: loading,
             required: t("auth.field_required"),
@@ -102,8 +100,8 @@ const SignUpPage = () => {
           rightIcon={<PasswordIcon className="cursor-pointer" onClick={togglePasswordVisibilityHandler} />}
           placeholder={t("auth.password_placeholder")}
           type={isPasswordVisible ? "text" : "password"}
-          aria-invalid={errors.password ? "true" : "false"}
-          description={errors.password?.message}
+          aria-invalid={formState.errors.password ? "true" : "false"}
+          description={formState.errors.password?.message}
           {...register("password", {
             disabled: loading,
             required: t("auth.field_required"),

@@ -1,81 +1,91 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createProxy } from "next-i18next/proxy";
 
-import i18nConfig from "./i18n.config";
-import { verifyAccessToken } from "./lib/auth";
+// const i18nProxy = createProxy(i18nConfig);
 
-const i18nProxy = createProxy(i18nConfig);
+// const PROTECTED_ROUTES = ["/collection", "/wishlists"];
+// const AUTH_ROUTES = ["/auth/signin", "/auth/signup"];
 
-const PROTECTED_ROUTES = ["/collection", "/wishlists"];
-const AUTH_ROUTES = ["/auth/signin", "/auth/signup"];
+// const withPathname = (request: NextRequest, response: NextResponse) => {
+//   response.headers.set("x-pathname", request.nextUrl.pathname);
+//   return response;
+// };
 
-const withPathname = (request: NextRequest, response: NextResponse) => {
-  response.headers.set("x-pathname", request.nextUrl.pathname);
-  return response;
-};
+// const tryRefreshToken = async (request: NextRequest): Promise<{ newAccessToken: string } | null> => {
+//   const refreshToken = request.cookies.get("refreshToken")?.value;
+//   if (!refreshToken) return null;
 
-const authProxy = async (request: NextRequest) => {
-  const { pathname } = request.nextUrl;
-  const accessToken = request.cookies.get("accessToken")?.value;
-  const refreshToken = request.cookies.get("refreshToken")?.value;
+//   const payload = verifyRefreshToken(refreshToken);
+//   if (!payload) return null;
 
-  const isAccessValid = accessToken && !!verifyAccessToken(accessToken);
+//   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+//   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!;
 
-  if (!isAccessValid && refreshToken) {
-    const refreshResponse = await fetch(new URL("/api/auth/refresh", request.url), {
-      method: "POST",
-      headers: { cookie: request.headers.get("cookie") ?? "" },
-    });
+//   const res = await fetch(`${supabaseUrl}/rest/v1/refresh_tokens?token=eq.${encodeURIComponent(refreshToken)}&select=id`, {
+//     headers: {
+//       apikey: supabaseKey,
+//       Authorization: `Bearer ${supabaseKey}`,
+//     },
+//     signal: AbortSignal.timeout(3000),
+//   });
 
-    if (refreshResponse.ok) {
-      const response = NextResponse.redirect(request.url);
-      refreshResponse.headers.getSetCookie().forEach((cookie) => {
-        response.headers.append("Set-Cookie", cookie);
-      });
-      return withPathname(request, response);
-    }
+//   if (!res.ok) return null;
+//   const data = await res.json();
+//   if (!data?.length) return null;
 
-    if (PROTECTED_ROUTES.some((r) => pathname.startsWith(r))) {
-      const response = NextResponse.redirect(new URL("/auth/signin", request.url));
-      response.cookies.delete("accessToken");
-      response.cookies.delete("refreshToken");
-      return withPathname(request, response);
-    }
-  }
+//   const newAccessToken = signAccessToken(payload.userId);
+//   return { newAccessToken };
+// };
 
-  const isAuth = isAccessValid;
+// const authProxy = async (request: NextRequest) => {
+//   const { pathname } = request.nextUrl;
+//   const accessToken = request.cookies.get("accessToken")?.value;
+//   const refreshToken = request.cookies.get("refreshToken")?.value;
 
-  if (isAuth && AUTH_ROUTES.some((r) => pathname.startsWith(r))) {
-    return withPathname(request, NextResponse.redirect(new URL("/", request.url)));
-  }
+//   const isAccessValid = accessToken && !!verifyAccessToken(accessToken);
 
-  if (!isAuth && PROTECTED_ROUTES.some((r) => pathname.startsWith(r))) {
-    const url = new URL("/auth/signin", request.url);
-    url.searchParams.set("redirect", pathname);
-    return withPathname(request, NextResponse.redirect(url));
-  }
+//   if (!isAccessValid && refreshToken) {
+//     const refreshResult = await tryRefreshToken(request);
 
-  return null;
-};
+//     if (refreshResult) {
+//       const response = NextResponse.redirect(request.url);
+//       response.headers.append("Set-Cookie", serializeCookie("accessToken", refreshResult.newAccessToken, ACCESS_COOKIE));
+//       return response;
+//     }
+
+//     if (PROTECTED_ROUTES.some((r) => pathname.startsWith(r))) {
+//       const response = NextResponse.redirect(new URL("/auth/signin", request.url));
+//       response.cookies.delete("accessToken");
+//       response.cookies.delete("refreshToken");
+//       return response;
+//     }
+//   }
+
+//   const isAuth = isAccessValid;
+
+//   if (isAuth && AUTH_ROUTES.some((r) => pathname.startsWith(r))) {
+//     return NextResponse.redirect(new URL("/", request.url));
+//   }
+
+//   if (!isAuth && PROTECTED_ROUTES.some((r) => pathname.startsWith(r))) {
+//     const url = new URL("/auth/signin", request.url);
+//     url.searchParams.set("redirect", pathname);
+//     return NextResponse.redirect(url);
+//   }
+
+//   return null;
+// };
 
 export const proxy = async (request: NextRequest) => {
-  const authResponse = await authProxy(request);
-  if (authResponse) return authResponse;
-
-  const i18nResponse = await i18nProxy(request);
-  if (i18nResponse) return withPathname(request, i18nResponse);
-
-  return withPathname(
-    request,
-    NextResponse.next({
-      request: {
-        headers: new Headers({
-          ...Object.fromEntries(request.headers),
-          "x-pathname": request.nextUrl.pathname,
-        }),
-      },
-    }),
-  );
+  request.headers.set("x-pathname", request.nextUrl.pathname);
+  return NextResponse.next({
+    request: {
+      ...request,
+      headers: new Headers({
+        ...Object.fromEntries(request.headers),
+        "x-pathname": request.nextUrl.pathname,
+      }),
+    },
+  });
 };
 
 export const config = {

@@ -1,5 +1,4 @@
-import { cookies } from "next/headers";
-
+import { getLangCookie } from '@/lib/cookies';
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import SkinDetails from "@/widgets/Skin/SkinDetails";
@@ -8,8 +7,7 @@ import SkinInfo from "@/widgets/Skin/SkinInfo";
 const SkinPage = async ({ params }: { params: Promise<{ contentId: string }> }) => {
   const { contentId } = await params;
 
-  const cookieStore = await cookies();
-  const lng = cookieStore.get("i18next")?.value ?? "en";
+  const lng = await getLangCookie();
 
   const appData = await getLangAppData(getLanguageCode(lng));
   const skin = (appData?.skins ?? []).find((skin) => skin.contentId === contentId);

@@ -5,7 +5,8 @@ import { type FC } from "react";
 
 import LogoutButton from "@/components/LogoutButton";
 import { Button } from "@/components/ui/button";
-import { getServerUser } from "@/lib/auth";
+import { verifyAccessToken } from '@/lib/auth';
+import { getLangCookie } from '@/lib/cookies';
 import { cn } from "@/shared/cn";
 
 import AppHeaderLink from "./AppHeaderLink";
@@ -18,14 +19,14 @@ interface AppHeaderNavProps {
 
 const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
   const cookieStore = await cookies();
-  const lng = cookieStore.get("i18next")?.value ?? "en";
-  const { t } = await getT("common", { lng });
-
   const headerStore = await headers();
-  const pathname = headerStore.get("x-pathname") ?? "/";
 
-  const user = await getServerUser();
-  const isAuth = !!user;
+  const accessToken = cookieStore.get("accessToken")?.value;
+  const isAuth = !!(verifyAccessToken(accessToken ?? ''));
+
+  const pathname = headerStore.get("x-pathname") ?? "/";
+  const lng = await getLangCookie();
+  const { t } = await getT("common", { lng });
 
   const authLink = (type: "signin" | "signup") => {
     return `/auth/${type}${pathname === "/" ? "" : "?redirect=" + pathname}`;

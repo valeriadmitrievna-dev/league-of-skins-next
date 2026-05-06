@@ -17,10 +17,12 @@ interface AdminAppDataLanguageProps {
 
 const CATEGORY_LABELS = {
   versions: "Versions",
-  skinlines: "Skinlines",
   champions: "Champions",
   skins: "Skins",
   chromas: "Chromas",
+  skins_pbe: "Skins PBE",
+  chromas_pbe: "Chromas PBE",
+  skinlines: "Skinlines",
 } as const;
 
 const categoryDot = (status: CategoryStatus) =>
@@ -60,8 +62,8 @@ const AdminAppDataLanguage: FC<AdminAppDataLanguageProps> = ({ language, data, o
           </>
         )}
         <span className={langBadge(data.status)}>{data.status}</span>
-        {data.status !== "loading" && onUpdate && (
-          <Button size="icon-xs" variant="outline" onClick={onUpdate}>
+        {onUpdate && (
+          <Button size="icon-xs" variant="outline" onClick={onUpdate} disabled={data.status === 'loading'}>
             <RefreshCwIcon />
           </Button>
         )}
@@ -80,7 +82,7 @@ const AdminAppDataLanguage: FC<AdminAppDataLanguageProps> = ({ language, data, o
               )}
               <span className="text-xs text-muted-foreground">
                 {label}
-                {!!(data.counts as any)?.[category] && ` - ${(data.counts as any)?.[category]}`}
+                {typeof (data.counts as any)?.[category] === 'number' && ` - ${(data.counts as any)?.[category]}`}
               </span>
             </div>
           );

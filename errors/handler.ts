@@ -1,7 +1,9 @@
+import { toast } from "sonner";
+
 import { RequestError } from "./RequestError";
 
 export const errorHandler = (err: unknown) => {
-  console.error("⛔ API ERROR:", err);
+  console.error("⛔ API ERROR:", (err as Error).message);
 
   if (err instanceof RequestError) {
     return Response.json(err.toJSON(), {
@@ -16,4 +18,14 @@ export const errorHandler = (err: unknown) => {
     },
     { status: 500 },
   );
+};
+
+export const errorClientHandler = (err: unknown) => {
+  console.error("⛔ API ERROR:", (err as Error).message);
+
+  if (err instanceof RequestError) {
+    toast.error(err.toJSON().message);
+  }
+
+  toast.error("Internal error");
 };

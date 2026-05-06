@@ -1,7 +1,8 @@
+// app/error.tsx
 "use client";
 
 import { AlertTriangleIcon } from "lucide-react";
-import { type FC } from "react";
+import { useEffect, type FC } from "react";
 
 import { Button } from "@/components/ui/button";
 
@@ -11,15 +12,25 @@ interface ErrorPageProps {
 }
 
 const ErrorPage: FC<ErrorPageProps> = ({ error, reset }) => {
+  useEffect(() => {
+    console.error(error);
+
+    if (error.message?.includes("Failed to load chunk")) {
+      window.location.reload();
+    }
+  }, [error]);
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center gap-6 p-4">
       <div className="flex flex-col items-center gap-3 text-center">
         <AlertTriangleIcon className="size-12 text-destructive" />
         <h1 className="text-2xl font-semibold">Что-то пошло не так</h1>
         <p className="text-muted-foreground max-w-md">
-          {error.message || "Произошла непредвиденная ошибка. Попробуйте обновить страницу."}
+          {error.message || "Произошла непредвиденная ошибка."}
         </p>
-        {error.digest && <p className="text-xs text-muted-foreground font-mono">ID: {error.digest}</p>}
+        {error.digest && (
+          <p className="text-xs text-muted-foreground font-mono">ID: {error.digest}</p>
+        )}
       </div>
       <div className="flex gap-3">
         <Button onClick={reset}>Попробовать снова</Button>

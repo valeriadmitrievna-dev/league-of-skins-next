@@ -82,9 +82,7 @@ const HomePage: FC = () => {
         <div className="max-w-md">
           <SubTitle>Вишлисты</SubTitle>
           <Typography.H2 className="mt-2">Поделись — и друзья поймут намёк</Typography.H2>
-          <Typography.Muted className="mt-4">
-            Создай список желаемых скинов и отправь ссылку. Публичный или приватный — как хочешь.
-          </Typography.Muted>
+          <Typography.Muted className="mt-4">Создай список желаемых скинов и отправь ссылку. Публичный или приватный — как хочешь.</Typography.Muted>
 
           <Link href="/wishlists">
             <Button className="mt-6">Создать вишлист</Button>
@@ -100,9 +98,7 @@ const HomePage: FC = () => {
         <div className="max-w-md">
           <SubTitle>Коллекция</SubTitle>
           <Typography.H2 className="mt-2">Отслеживай всё, что уже есть</Typography.H2>
-          <Typography.Muted className="mt-4">
-            Загрузи инвентарь и смотри, сколько потрачено RP и какие скины ещё хочется добавить.
-          </Typography.Muted>
+          <Typography.Muted className="mt-4">Загрузи инвентарь и смотри, сколько потрачено RP и какие скины ещё хочется добавить.</Typography.Muted>
 
           <Link href="/collection">
             <Button className="mt-6">Перейти к коллекции</Button>
@@ -118,9 +114,7 @@ const HomePage: FC = () => {
         <div className="max-w-4xl mx-auto px-6 py-16 rounded-2xl bg-primary text-primary-foreground text-center shadow-xl">
           <Typography.H2>Начни собирать свою коллекцию</Typography.H2>
 
-          <Typography.Muted className="mt-4 text-primary-foreground/80">
-            Это бесплатно и занимает меньше минуты
-          </Typography.Muted>
+          <Typography.Muted className="mt-4 text-primary-foreground/80">Это бесплатно и занимает меньше минуты</Typography.Muted>
 
           <Link href="/search/skins">
             <Button className="mt-6 bg-white text-black hover:bg-white/90">Открыть каталог</Button>
@@ -131,9 +125,7 @@ const HomePage: FC = () => {
       <footer className="mt-20 border-t border-gray-700/20 flex flex-col md:flex-row gap-3 items-center justify-between py-8">
         <Link href="/">
           <div className="flex items-center gap-3 md:gap-4 relative">
-            <span className="text-lg leading-none xl:text-2xl font-black uppercase tracking-wider text-primary">
-              League of Skins
-            </span>
+            <span className="text-lg leading-none xl:text-2xl font-black uppercase tracking-wider text-primary">League of Skins</span>
             <div className="absolute -inset-1 bg-primary/10 blur-lg"></div>
           </div>
         </Link>

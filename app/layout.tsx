@@ -2,16 +2,17 @@ import type { Metadata } from "next";
 import { Rubik } from "next/font/google";
 import "@/styles/index.css";
 import localFont from "next/font/local";
-import { cookies } from "next/headers";
 import { I18nProvider } from "next-i18next/client";
 import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
 import NextTopLoader from "nextjs-toploader";
 
 import Background from "@/components/Background";
+import { getServerUserId } from "@/lib/auth";
+import { getLangCookie } from "@/lib/cookies";
 import { AppProvider } from "@/shared/providers/AppProvider";
+import { AuthProvider } from "@/shared/providers/AuthProvider";
 import QueryProvider from "@/shared/providers/QueryProvider";
 import ToastsProvider from "@/shared/providers/ToastsProvider";
-import { UserProvider } from "@/shared/providers/UserProvider";
 import { AppHeader } from "@/widgets/AppHeader";
 
 import i18nConfig from "../i18n.config";
@@ -43,8 +44,8 @@ export const metadata: Metadata = {
 };
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
-  const cookieStore = await cookies();
-  const lng = cookieStore.get("i18next")?.value ?? "en";
+  const lng = await getLangCookie();
+  const userId = await getServerUserId();
 
   const { i18n } = await getT();
   const resources = getResources(i18n);
@@ -56,7 +57,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
 
         <I18nProvider language={lng} resources={resources}>
           <QueryProvider>
-            <UserProvider>
+            <AuthProvider initialUserId={userId}>
               <ToastsProvider />
               <AppProvider>
                 <div className="min-h-screen grid grid-rows-[auto_1fr] z-1">
@@ -65,7 +66,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
                   <main className="h-full p-4 md:p-5 my-container">{children}</main>
                 </div>
               </AppProvider>
-            </UserProvider>
+            </AuthProvider>
           </QueryProvider>
         </I18nProvider>
       </body>

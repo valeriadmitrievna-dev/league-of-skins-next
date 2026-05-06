@@ -1,36 +1,40 @@
 import { compare } from "bcrypt";
+import { NextRequest } from "next/server";
 
-import { RequestError } from "@/errors";
+import { errorHandler, RequestError } from "@/errors";
 import { signAccessToken, signRefreshToken } from "@/lib/auth";
 import { setAuthCookies } from "@/lib/cookies";
-import { endpoint } from "@/lib/endpoint";
 import { createClient } from "@/lib/supabase/server";
 
-export const POST = endpoint(async ({ body }) => {
-  const { email, password } = await body<{ email: string; password: string }>();
-  const supabase = await createClient();
+export const POST = async (req: NextRequest) => {
+  try {
+    const { email, password } = (await req.json()) as { email: string; password: string };
+    const supabase = await createClient();
 
-  const emptyFields = Object.entries({ email, password })
-    .filter(([, v]) => !v?.trim().length)
-    .map(([k]) => k);
+    const emptyFields = Object.entries({ email, password })
+      .filter(([, v]) => !v?.trim().length)
+      .map(([k]) => k);
 
-  if (emptyFields.length) throw new RequestError({ code: "ERR_0005", status: 400 });
+    if (emptyFields.length) throw new RequestError({ code: "ERR_0005", status: 400 });
 
-  const { data: user, error } = await supabase.from("users").select("*").eq("email", email).single();
-  if (!user || error) throw new RequestError({ code: "ERR_0007" });
+    const { data: user, error } = await supabase.from("users").select("*").eq("email", email).single();
+    if (!user || error) throw new RequestError({ code: "ERR_0007" });
 
-  const valid = await compare(password, user.password);
-  if (!valid) throw new RequestError({ code: "ERR_0008", status: 400 });
+    const valid = await compare(password, user.password);
+    if (!valid) throw new RequestError({ code: "ERR_0008", status: 400 });
 
-  const access = signAccessToken(user.id);
-  const refresh = signRefreshToken(user.id);
+    const access = signAccessToken(user.id);
+    const refresh = signRefreshToken(user.id);
 
-  await supabase.from("refresh_tokens").insert({
-    token: refresh,
-    user_id: user.id,
-  });
+    await supabase.from("refresh_tokens").insert({
+      token: refresh,
+      user_id: user.id,
+    });
 
-  await setAuthCookies(access, refresh);
+    await setAuthCookies(access, refresh);
 
-  return { ok: true };
-});
+    return Response.json({ ok: true });
+  } catch (error) {
+    return errorHandler(error);
+  }
+};

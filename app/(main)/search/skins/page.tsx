@@ -1,22 +1,16 @@
 "use client";
-import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
 
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
-import { useUser } from "@/shared/providers/UserProvider";
 import { AppDataSkin } from "@/types/appdata";
 import SearchSkinsFilters from "@/widgets/SearchSkinsFilters";
 import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 const SearchSkins: FC = () => {
-  const { i18n } = useT();
-  const locale = i18n.language;
-
-  const { user } = useUser();
   const { get: getSearch, update: updateSearch } = useQueryParams();
   const { get, update, reset, hasActive } = useQueryParams([
     "owned",
@@ -50,25 +44,22 @@ const SearchSkins: FC = () => {
       owned: owned || "all",
       server: server || "all",
     },
-    headers: { Language: locale },
   });
 
-  const renderItem = useCallback(
-    (item: unknown, _index: number) => {
-      const skin = item as AppDataSkin;
-      const ownedSkins = user?.owned_skins ?? [];
-      return (
-        <SkinCard
-          key={skin.id}
-          data={skin}
-          owned={ownedSkins.includes(skin.contentId)}
-          toggleOwnedButton
-          addToWishlistButton
-        />
-      );
-    },
-    [user],
-  );
+  const renderItem = useCallback((item: unknown, _index: number) => {
+    const skin = item as AppDataSkin;
+    // const ownedSkins = user?.owned_skins ?? [];
+    const ownedSkins: string[] = [];
+    return (
+      <SkinCard
+        key={skin.id}
+        data={skin}
+        owned={ownedSkins.includes(skin.contentId)}
+        toggleOwnedButton
+        addToWishlistButton
+      />
+    );
+  }, []);
 
   return (
     <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">

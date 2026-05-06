@@ -1,22 +1,16 @@
 "use client";
-import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
 
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
-import { useUser } from "@/shared/providers/UserProvider";
 import { AppDataChroma } from "@/types/appdata";
 import ChromaCard from "@/widgets/ChromaCard";
 import SearchChromasFilters from "@/widgets/SearchChromasFilters";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 const SearchChromas: FC = () => {
-  const { i18n } = useT();
-  const locale = i18n.language;
-
-  const { user } = useUser();
   const { get: getSearch, update: updateSearch } = useQueryParams();
   const { get, update, updateMany, reset, hasActive } = useQueryParams([
     "owned",
@@ -44,13 +38,13 @@ const SearchChromas: FC = () => {
       owned: owned || "all",
       server: server || "all",
     },
-    headers: { Language: locale },
   });
 
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
       const chroma = item as AppDataChroma;
-      const ownedChromas = user?.owned_chromas ?? [];
+      // const ownedChromas = user?.owned_chromas ?? [];
+      const ownedChromas: string[] = [];
       return (
         <ChromaCard
           key={chroma.id}
@@ -61,7 +55,7 @@ const SearchChromas: FC = () => {
         />
       );
     },
-    [user],
+    [],
   );
 
   return (

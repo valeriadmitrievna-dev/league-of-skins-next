@@ -48,7 +48,7 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
     if (intersection?.isIntersecting && query.hasNextPage && !query.isFetchingNextPage) {
       query.fetchNextPage();
     }
-  }, [intersection?.isIntersecting]);
+  }, [intersection?.isIntersecting, query.hasNextPage, query.isFetchingNextPage]);
 
   return {
     data: query.data?.pages.flatMap((p) => p.data) ?? [],

@@ -1,10 +1,9 @@
 type RequestOptions = RequestInit & {
-  json?: unknown;
   query?: Record<string, string | number | boolean | undefined>;
 };
 
 export const fetchClient = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
-  const { json, query, headers, ...rest } = options;
+  const { query, headers, ...rest } = options;
 
   const queryString = query
     ? "?" +
@@ -17,10 +16,10 @@ export const fetchClient = async <T>(url: string, options: RequestOptions = {}):
   const res = await fetch(url + queryString, {
     ...rest,
     headers: {
-      ...(json ? { "Content-Type": "application/json" } : {}),
+      ...(options.body ? { "Content-Type": "application/json" } : {}),
       ...headers,
     },
-    body: json ? JSON.stringify(json) : undefined,
+    credentials: "include",
   });
 
   const data = await res.json().catch(() => null);

@@ -15,6 +15,7 @@ export class RequestError extends Error {
     return {
       code: this.code,
       message: this.message,
+      status: this.status,
     };
   }
 }
