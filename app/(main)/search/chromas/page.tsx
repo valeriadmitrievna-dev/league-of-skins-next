@@ -1,7 +1,8 @@
 "use client";
 import { FC, useCallback } from "react";
 
-import ScrollTopButton from '@/components/ScrollTopButton';
+import useUser from "@/api/useUser";
+import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
@@ -13,13 +14,7 @@ import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 const SearchChromas: FC = () => {
   const { get: getSearch, update: updateSearch } = useQueryParams();
-  const { get, update, updateMany, reset, hasActive } = useQueryParams([
-    "owned",
-    "skin",
-    "championId",
-    "skinContentId",
-    "server",
-  ]);
+  const { get, update, updateMany, reset, hasActive } = useQueryParams(["owned", "skin", "championId", "skinContentId", "server"]);
 
   const search = getSearch("search");
   const championId = get("championId");
@@ -28,6 +23,7 @@ const SearchChromas: FC = () => {
   const owned = get("owned");
   const server = get("server");
 
+  const { data: user } = useUser();
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/chromas",
     queryKey: ["chromas"],
@@ -44,19 +40,10 @@ const SearchChromas: FC = () => {
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
       const chroma = item as AppDataChroma;
-      // const ownedChromas = user?.owned_chromas ?? [];
-      const ownedChromas: string[] = [];
-      return (
-        <ChromaCard
-          key={chroma.id}
-          data={chroma}
-          owned={ownedChromas.includes(chroma.contentId)}
-          toggleOwnedButton
-          addToWishlistButton
-        />
-      );
+      const ownedChromas = user?.owned_chromas ?? [];
+      return <ChromaCard key={chroma.id} data={chroma} owned={ownedChromas.includes(chroma.contentId)} toggleOwnedButton addToWishlistButton />;
     },
-    [],
+    [user],
   );
 
   return (

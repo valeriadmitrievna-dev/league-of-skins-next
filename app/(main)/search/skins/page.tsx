@@ -1,7 +1,8 @@
 "use client";
 import { FC, useCallback } from "react";
 
-import ScrollTopButton from '@/components/ScrollTopButton';
+import useUser from "@/api/useUser";
+import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
@@ -13,15 +14,7 @@ import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 const SearchSkins: FC = () => {
   const { get: getSearch, update: updateSearch } = useQueryParams();
-  const { get, update, reset, hasActive } = useQueryParams([
-    "owned",
-    "legacy",
-    "championId",
-    "rarity",
-    "skinlineId",
-    "chromaId",
-    "server",
-  ]);
+  const { get, update, reset, hasActive } = useQueryParams(["owned", "legacy", "championId", "rarity", "skinlineId", "chromaId", "server"]);
 
   const search = getSearch("search");
   const championId = get("championId");
@@ -32,6 +25,7 @@ const SearchSkins: FC = () => {
   const owned = get("owned");
   const server = get("server");
 
+  const { data: user } = useUser();
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/skins",
     queryKey: ["skins"],
@@ -47,30 +41,18 @@ const SearchSkins: FC = () => {
     },
   });
 
-  const renderItem = useCallback((item: unknown, _index: number) => {
-    const skin = item as AppDataSkin;
-    // const ownedSkins = user?.owned_skins ?? [];
-    const ownedSkins: string[] = [];
-    return (
-      <SkinCard
-        key={skin.id}
-        data={skin}
-        owned={ownedSkins.includes(skin.contentId)}
-        toggleOwnedButton
-        addToWishlistButton
-      />
-    );
-  }, []);
+  const renderItem = useCallback(
+    (item: unknown, _index: number) => {
+      const skin = item as AppDataSkin;
+      const ownedSkins = user?.owned_skins ?? [];
+      return <SkinCard key={skin.id} data={skin} owned={ownedSkins.includes(skin.contentId)} toggleOwnedButton addToWishlistButton />;
+    },
+    [user],
+  );
 
   return (
     <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">
-      <SearchSkinsFilters
-        getValue={get}
-        setValue={update}
-        {...(hasActive ? { reset } : {})}
-        loading={isLoading || isFetching}
-        count={count}
-      />
+      <SearchSkinsFilters getValue={get} setValue={update} {...(hasActive ? { reset } : {})} loading={isLoading || isFetching} count={count} />
       <div className="pb-10">
         <Search value={search ?? ""} onSearch={(value) => updateSearch("search", value)} className="mb-4" />
         {initialized && !isLoading && !data.length && "No items"}
