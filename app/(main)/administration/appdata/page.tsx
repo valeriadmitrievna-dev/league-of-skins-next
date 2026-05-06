@@ -7,7 +7,7 @@ import LogLine from "@/components/LogLine";
 import Skeleton from "@/components/Skeleton";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Spinner } from '@/components/ui/spinner';
+import { Spinner } from "@/components/ui/spinner";
 import { fetchClient } from "@/lib/fetchClient";
 import { Log } from "@/lib/logger";
 import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
@@ -16,6 +16,31 @@ import { getCDragonPath } from "@/shared/utils/getCDragonPath";
 import { AppDataChampion, AppDataChroma, AppDataLang, AppDataSkin, AppDataSkinline } from "@/types/appdata";
 import { RiotChampion, RiotChampionItem, RiotSkinline } from "@/types/riot";
 import AdminAppDataLanguage from "@/widgets/Admin/AdminAppDataLanguage";
+
+// const getFileSize = async (url: string | null): Promise<number> => {
+//   if (!url) return 0;
+//   try {
+//     const res = await fetch(url, { method: "HEAD" });
+//     return parseInt(res.headers.get("content-length") ?? "0");
+//   } catch {
+//     return 0;
+//   }
+// };
+
+// const formatBytes = (bytes: number) => {
+//   if (bytes === 0) return "0 B";
+//   const k = 1024;
+//   const sizes = ["B", "KB", "MB", "GB"];
+//   const i = Math.floor(Math.log(bytes) / Math.log(k));
+//   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
+// };
+
+const toLocalUrl = (url: string | null): string | null => {
+  if (!url) return null;
+  const filename = url.split("/").pop();
+  if (!filename) return null;
+  return `${process.env.NEXT_PUBLIC_S3_URL}/${process.env.NEXT_PUBLIC_S3_BUCKET}/${filename}`;
+};
 
 const AdministrationAppData = () => {
   const [logs, setLogs] = useState<Omit<Log, "source">[]>([]);
@@ -83,9 +108,7 @@ const AdministrationAppData = () => {
     if (typeof langs === "string") {
       setLanguages((prev) => ({
         ...prev,
-        [langs]: {
-          status: "idle",
-        },
+        [langs]: { status: "idle" },
       }));
     }
 
@@ -95,6 +118,20 @@ const AdministrationAppData = () => {
       const cDragonLang = lang === "en_US" ? "default" : lang.toLowerCase();
       logger.log(`[${lang}] Start updating`);
       updateLanguageState(lang, { status: "loading" });
+
+      // const mediaSize = {
+      //   championIcons: 0,
+      //   skinsCentered: 0,
+      //   skinsUncentered: 0,
+      //   skinsLoading: 0,
+      //   skinsChromaPath: 0,
+      //   chromas: 0,
+      //   videoCentered: 0,
+      //   videoUncentered: 0,
+      //   videoCard: 0,
+      // };
+
+      const allMediaUrls = new Set<string>();
 
       // Get versions
       logger.log(`[${lang}] Get versions...`);
@@ -120,9 +157,7 @@ const AdministrationAppData = () => {
       } catch (error) {
         logger.error(`[${lang}] Skinlines: ERROR`);
         logger.error(`[${lang}] ${(error as Error).message}`);
-        updateLanguageState(lang, { categories: { skinlines: "error" } });
-
-        updateLanguageState(lang, { status: "error" });
+        updateLanguageState(lang, { categories: { skinlines: "error" }, status: "error" });
         setGlobalLoading(false);
         break;
       }
@@ -134,12 +169,16 @@ const AdministrationAppData = () => {
         const skinlinesPbeRes = await fetch(skinlinesPbeUrl);
         const riot_skinlinesPbe: RiotSkinline[] = ((await skinlinesPbeRes.json()) ?? []).filter((s: RiotSkinline) => s.name);
         skinlinesPbe.push(...riot_skinlinesPbe);
-        const skinlinesLogPart = skinlinesPbe.slice(0, 3).map((s) => s.name);
-        logger.success(`[${lang}] Skinlines PBE: [${skinlinesLogPart.join(", ")}, ...]`, true);
+        logger.success(
+          `[${lang}] Skinlines PBE: [${skinlinesPbe
+            .slice(0, 3)
+            .map((s) => s.name)
+            .join(", ")}, ...]`,
+          true,
+        );
       } catch (error) {
         logger.error(`[${lang}] Skinlines PBE: ERROR`);
         logger.error(`[${lang}] ${(error as Error).message}`);
-
         updateLanguageState(lang, { status: "error" });
         setGlobalLoading(false);
         break;
@@ -163,19 +202,30 @@ const AdministrationAppData = () => {
             image: {
               full: `${dDragonUrl}/cdn/img/champion/splash/${c.id}_0.jpg`,
               loading: `${dDragonUrl}/cdn/img/champion/loading/${c.id}_0.jpg`,
-              icon: `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`,
+              icon: toLocalUrl(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`)!,
             },
           })),
         );
-        const championsLogPart = riot_champions.slice(0, 3).map((c) => c.name);
-        logger.success(`[${lang}] Champions: [${championsLogPart.join(", ")}, ...]`, true);
-        updateLanguageState(lang, { categories: { champions: "done" }, counts: { champions: riot_champions.length } });
+
+        for (const c of riot_champions) {
+          allMediaUrls.add(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`);
+        }
+
+        logger.success(
+          `[${lang}] Champions: [${riot_champions
+            .slice(0, 3)
+            .map((c) => c.name)
+            .join(", ")}, ...]`,
+          true,
+        );
+        updateLanguageState(lang, {
+          categories: { champions: "done" },
+          counts: { champions: riot_champions.length },
+        });
       } catch (error) {
         logger.error(`[${lang}] Champions: ERROR`);
         logger.error(`[${lang}] ${(error as Error).message}`);
-        updateLanguageState(lang, { categories: { champions: "error" } });
-
-        updateLanguageState(lang, { status: "error" });
+        updateLanguageState(lang, { categories: { champions: "error" }, status: "error" });
         setGlobalLoading(false);
         break;
       }
@@ -186,7 +236,9 @@ const AdministrationAppData = () => {
 
       // Get skins and chromas
       logger.log(`[${lang}] Get skins and chromas for each champion...`);
-      updateLanguageState(lang, { categories: { skins: "loading", skins_pbe: "loading", chromas: "loading", chromas_pbe: "loading" } });
+      updateLanguageState(lang, {
+        categories: { skins: "loading", skins_pbe: "loading", chromas: "loading", chromas_pbe: "loading" },
+      });
 
       try {
         for await (const champion of champions) {
@@ -194,25 +246,61 @@ const AdministrationAppData = () => {
           const championLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/champions/${champion.key}.json`;
           const championPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/champions/${champion.key}.json`;
 
-          const championLtsRes = await fetch(championLtsUrl);
-          const championPbeRes = await fetch(championPbeUrl);
-
-          const championLts: RiotChampion = await championLtsRes.json();
-          const championPbe: RiotChampion = await championPbeRes.json();
+          const [championLtsRes, championPbeRes] = await Promise.all([fetch(championLtsUrl), fetch(championPbeUrl)]);
+          const [championLts, championPbe]: [RiotChampion, RiotChampion] = await Promise.all([championLtsRes.json(), championPbeRes.json()]);
 
           const championSkinsLts = championLts.skins.filter((s) => !s.isBase).map((s) => s.contentId);
           const championSkins = championPbe.skins.filter((s) => !s.isBase);
 
-          for (const skin of championSkins) {
+          for await (const skin of championSkins) {
             const pbe = !championSkinsLts.includes(skin.contentId);
+            const server = pbe ? "pbe" : "latest";
 
-            const skinChromas = (skin.chromas ?? []).map((chroma) => {
+            const centeredUrl = getCDragonPath(skin.splashPath, server);
+            const uncenteredUrl = getCDragonPath(skin.uncenteredSplashPath, server);
+            const loadingUrl = getCDragonPath(skin.loadScreenPath, server);
+            const chromaPathUrl = getCDragonPath(skin.chromaPath, server);
+            const videoCenteredUrl = getCDragonPath(skin.splashVideoPath, server);
+            const videoUncenteredUrl = getCDragonPath(skin.collectionSplashVideoPath, server);
+            const videoCardUrl = getCDragonPath(skin.collectionCardHoverVideoPath, server);
+
+            [centeredUrl, uncenteredUrl, loadingUrl, chromaPathUrl, videoCenteredUrl, videoUncenteredUrl, videoCardUrl]
+              .filter(Boolean)
+              .forEach((u) => allMediaUrls.add(u!));
+
+            // const [centeredSize, uncenteredSize, loadingSize, chromaPathSize, videoCenteredSize, videoUncenteredSize, videoCardSize] =
+            //   await Promise.all([
+            //     getFileSize(centeredUrl),
+            //     getFileSize(uncenteredUrl),
+            //     getFileSize(loadingUrl),
+            //     getFileSize(chromaPathUrl),
+            //     getFileSize(videoCenteredUrl),
+            //     getFileSize(videoUncenteredUrl),
+            //     getFileSize(videoCardUrl),
+            //   ]);
+
+            // mediaSize.skinsCentered += centeredSize;
+            // mediaSize.skinsUncentered += uncenteredSize;
+            // mediaSize.skinsLoading += loadingSize;
+            // mediaSize.skinsChromaPath += chromaPathSize;
+            // mediaSize.videoCentered += videoCenteredSize;
+            // mediaSize.videoUncentered += videoUncenteredSize;
+            // mediaSize.videoCard += videoCardSize;
+
+            const skinChromas = [];
+            for (const chroma of skin.chromas ?? []) {
               const regex = /.*\(([^)]+)\)/;
               const match = chroma.name.match(regex);
               const chromaRuName = chroma.name.split("'")[chroma.name.split("'").length - 3];
               const chromaName = lang === "ru_RU" ? chromaRuName : (match?.[1] ?? chroma.name);
 
-              return {
+              const path = getCDragonPath(chroma.chromaPath, server);
+              if (path) allMediaUrls.add(path);
+
+              // const size = await getFileSize(path);
+              // mediaSize.chromas += size;
+
+              skinChromas.push({
                 id: String(chroma.id),
                 name: chromaName,
                 fullName: chroma.name,
@@ -220,11 +308,11 @@ const AdministrationAppData = () => {
                 skinName: skin.name,
                 skinContentId: skin.contentId,
                 championId: championLts.alias,
-                path: getCDragonPath(chroma.chromaPath, pbe ? "pbe" : "latest"),
+                path: toLocalUrl(path),
                 colors: [...new Set(chroma.colors)],
                 pbe,
-              };
-            });
+              });
+            }
 
             chromas.push(...skinChromas);
 
@@ -239,12 +327,21 @@ const AdministrationAppData = () => {
               description: skin.description,
               pbe,
               image: {
-                centered: getCDragonPath(skin.splashPath, pbe ? "pbe" : "latest"),
-                uncentered: getCDragonPath(skin.uncenteredSplashPath, pbe ? "pbe" : "latest"),
-                loading: getCDragonPath(skin.loadScreenPath, pbe ? "pbe" : "latest"),
+                centered: toLocalUrl(centeredUrl),
+                uncentered: toLocalUrl(uncenteredUrl),
+                loading: toLocalUrl(loadingUrl),
               },
+              ...(skin.splashVideoPath || skin.collectionSplashVideoPath || skin.collectionCardHoverVideoPath
+                ? {
+                    video: {
+                      centered: toLocalUrl(videoCenteredUrl),
+                      uncentered: toLocalUrl(videoUncenteredUrl),
+                      card: toLocalUrl(videoCardUrl),
+                    },
+                  }
+                : {}),
               rarity: skin.rarity,
-              chromaPath: getCDragonPath(skin.chromaPath, pbe ? "pbe" : "latest"),
+              chromaPath: toLocalUrl(chromaPathUrl),
               chromas: skinChromas,
               skinlines: (skin.skinLines ?? [])
                 .map((sl) => {
@@ -255,7 +352,34 @@ const AdministrationAppData = () => {
             });
           }
 
-          logger.success(`[${lang}] ${champion.name} - ${championSkins.length} skins`, true);
+          // const total = Object.values(mediaSize).reduce((a, b) => a + b, 0);
+          // logger.success(
+          //   `[${lang}] ${champion.name} — ${championSkins.length} skins | total so far: ${formatBytes(total)}`,
+          //   true,
+          // );
+          logger.success(`[${lang}] ${champion.name} — ${championSkins.length} skins`, true);
+        }
+
+        // const total = Object.values(mediaSize).reduce((a, b) => a + b, 0);
+        // logger.success(`[${lang}] ✅ Media size breakdown:`);
+        // logger.log(`[${lang}]   Champion icons:     ${formatBytes(mediaSize.championIcons)}`);
+        // logger.log(`[${lang}]   Skins centered:     ${formatBytes(mediaSize.skinsCentered)}`);
+        // logger.log(`[${lang}]   Skins uncentered:   ${formatBytes(mediaSize.skinsUncentered)}`);
+        // logger.log(`[${lang}]   Skins loading:      ${formatBytes(mediaSize.skinsLoading)}`);
+        // logger.log(`[${lang}]   Skins chroma path:  ${formatBytes(mediaSize.skinsChromaPath)}`);
+        // logger.log(`[${lang}]   Chromas:            ${formatBytes(mediaSize.chromas)}`);
+        // logger.log(`[${lang}]   Videos centered:    ${formatBytes(mediaSize.videoCentered)}`);
+        // logger.log(`[${lang}]   Videos uncentered:  ${formatBytes(mediaSize.videoUncentered)}`);
+        // logger.log(`[${lang}]   Videos card:        ${formatBytes(mediaSize.videoCard)}`);
+        // logger.success(`[${lang}]   TOTAL:              ${formatBytes(total)}`);
+
+        if (lang === "en_US") {
+          const urls = [...allMediaUrls];
+          const blob = new Blob([urls.join("\n")], { type: "text/plain" });
+          const a = document.createElement("a");
+          a.href = URL.createObjectURL(blob);
+          a.download = `urls.txt`;
+          a.click();
         }
 
         updateLanguageState(lang, {
@@ -263,17 +387,30 @@ const AdministrationAppData = () => {
           counts: {
             skins: skins.filter((i) => !i.pbe).length,
             skins_pbe: skins.filter((i) => i.pbe).length,
-            chromas: skins.filter((i) => !i.pbe).length,
-            chromas_pbe: skins.filter((i) => i.pbe).length,
+            chromas: chromas.filter((i) => !i.pbe).length,
+            chromas_pbe: chromas.filter((i) => i.pbe).length,
           },
         });
       } catch (error) {
-        logger.error(`[${lang}] Error loadings skins and chromas`);
+        logger.error(`[${lang}] Error loading skins and chromas`);
         logger.error(`[${lang}] ${(error as Error).message}`);
-        updateLanguageState(lang, { status: "error", categories: { skins: "error", skins_pbe: "error", chromas: "error", chromas_pbe: "error" } });
+        updateLanguageState(lang, {
+          status: "error",
+          categories: { skins: "error", skins_pbe: "error", chromas: "error", chromas_pbe: "error" },
+        });
         setGlobalLoading(false);
         break;
       }
+
+      // if (lang === "en_US") {
+      //   // Скачиваем медиа
+      //   logger.log(`[${lang}] Downloading ${allMediaUrls.size} media files...`);
+      //   await fetchClient("/api/media-save", {
+      //     method: "POST",
+      //     body: JSON.stringify({ urls: [...allMediaUrls] }),
+      //   });
+      //   logger.success(`[${lang}] Media downloaded!`);
+      // }
 
       await saveAppData({ lang, champions, skinlines, skins, chromas });
     }
@@ -282,9 +419,7 @@ const AdministrationAppData = () => {
   };
 
   useEffect(() => {
-    if (data) {
-      setLanguages(data);
-    }
+    if (data) setLanguages(data);
   }, [data]);
 
   return (

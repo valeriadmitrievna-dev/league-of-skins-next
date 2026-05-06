@@ -8,7 +8,7 @@ import { AppDataLang } from '@/types/appdata';
 
 export const GET = async (_: NextRequest) => {
   try {
-    const languagesDataRaw = await readDirectory(baseFolder);
+    const languagesDataRaw = await readDirectory(`${baseFolder}`);
     const languagesData: AppDataLang[] = Object.values(languagesDataRaw).map((raw) => JSON.parse(raw));
 
     const result: Record<string, LangProgress> = Object.fromEntries(

@@ -1,7 +1,7 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, FC, PropsWithChildren, useEffect } from "react";
+import { createContext, useContext, FC, PropsWithChildren, useEffect, useRef } from "react";
 
 import { RequestError } from "@/errors";
 import { fetchClient } from "@/lib/fetchClient";
@@ -20,6 +20,7 @@ interface AuthProviderProps extends PropsWithChildren {
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = null }) => {
   const router = useRouter();
+  const isRefreshing = useRef(false);
 
   const {
     data: { userId } = { userId: initialUserId },
@@ -42,15 +43,17 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = 
 
   useEffect(() => {
     if (error && (error as RequestError).status === 401) {
-      refresh();
+      if (isRefreshing.current) return;
+      isRefreshing.current = true;
+      refresh(undefined, {
+        onSettled: () => {
+          isRefreshing.current = false;
+        },
+      });
     }
   }, [error]);
 
-  return (
-    <AuthContext.Provider value={{ isAuth: !!userId, userId: userId ?? null, isLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={{ isAuth: !!userId, userId: userId ?? null, isLoading }}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

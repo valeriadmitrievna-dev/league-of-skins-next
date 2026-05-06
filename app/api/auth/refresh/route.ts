@@ -10,17 +10,19 @@ export const POST = async () => {
     const cookieStore = await cookies();
 
     const refreshToken = cookieStore.get("refreshToken")?.value;
-    if (!refreshToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+    if (!refreshToken) throw new RequestError({ code: "ERR_0001", status: 401, message: "No refresh token" });
 
     const payload = verifyRefreshToken(refreshToken);
-    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
+    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401, message: "Refresh token invalid" });
 
     const supabase = await createClient();
 
-    const { data: storedToken } = await supabase.from("refresh_tokens").select("*").eq("token", refreshToken).single();
-    if (!storedToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+    const { data: consumed, error } = await supabase.rpc("consume_refresh_token", { p_token: refreshToken });
 
-    await supabase.from("refresh_tokens").delete().eq("token", refreshToken);
+    if (error || !consumed?.length) {
+      throw new RequestError({ code: "ERR_0001", status: 401, message: "No stored token" });
+    }
+
     const newAccessToken = signAccessToken(payload.userId);
     const newRefreshToken = signRefreshToken(payload.userId);
 
@@ -31,7 +33,7 @@ export const POST = async () => {
 
     await setAuthCookies(newAccessToken, newRefreshToken);
 
-    return Response.json({ ok: true })
+    return Response.json({ ok: true });
   } catch (error) {
     return errorHandler(error);
   }
