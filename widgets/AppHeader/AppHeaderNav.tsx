@@ -64,15 +64,16 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
 
       <NavigationMenu>
         <NavigationMenuList>
-          <AppHeaderNavGroup
-            group="/search"
-            links={[
-              { href: "/search/skins", title: t("header.skins"), text: "Lorem" },
-              { href: "/search/chromas", title: t("header.chromas"), text: "Lorem" },
-            ]}
-          >
-            {t("header.search")}
-          </AppHeaderNavGroup>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link href="/search/skins">{t("header.skins")}</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link href="/search/chromas">{t("header.chromas")}</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
           {isAuth && (
             <>
               <AppHeaderNavGroup
