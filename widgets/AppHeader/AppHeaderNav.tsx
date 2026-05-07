@@ -40,7 +40,7 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
   };
 
   return (
-    <nav className={cn("flex items-center gap-2 lg:gap-4 h-full", className)}>
+    <nav className={cn("flex items-center gap-2 h-full", className)}>
       {/* <div className="flex flex-col md:flex-row items-center gap-8 shrink-0 h-full">
         <AppHeaderLink to="/search/skins" text={t("header.skins")} className="py-2" />
         <AppHeaderLink to="/search/chromas" text={t("header.chromas")} className="py-2" />

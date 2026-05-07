@@ -1,4 +1,5 @@
 "use client";
+import { useT } from 'next-i18next/client';
 import { FC, useCallback } from "react";
 
 import useUser from "@/api/useUser";
@@ -13,6 +14,7 @@ import SearchChromasFilters from "@/widgets/SearchChromasFilters";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 const SearchChromas: FC = () => {
+  const { i18n } = useT();
   const { get: getSearch, update: updateSearch } = useQueryParams();
   const { get, update, updateMany, reset, hasActive } = useQueryParams(["owned", "skin", "championId", "skinContentId", "server"]);
 
@@ -26,7 +28,7 @@ const SearchChromas: FC = () => {
   const { data: user } = useUser();
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/chromas",
-    queryKey: ["chromas"],
+    queryKey: ["chromas", i18n.language],
     params: {
       ...(search ? { search } : {}),
       ...(championId ? { championId } : {}),

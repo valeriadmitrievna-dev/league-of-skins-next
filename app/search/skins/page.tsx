@@ -1,4 +1,5 @@
 "use client";
+import { useT } from 'next-i18next/client';
 import { FC, useCallback } from "react";
 
 import useUser from "@/api/useUser";
@@ -13,6 +14,7 @@ import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
 const SearchSkins: FC = () => {
+  const { i18n } = useT();
   const { get: getSearch, update: updateSearch } = useQueryParams();
   const { get, update, reset, hasActive } = useQueryParams(["owned", "legacy", "championId", "rarity", "skinlineId", "chromaId", "server"]);
 
@@ -28,7 +30,7 @@ const SearchSkins: FC = () => {
   const { data: user } = useUser();
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/skins",
-    queryKey: ["skins"],
+    queryKey: ["skins", i18n.language],
     params: {
       ...(search ? { search } : {}),
       ...(championId ? { championId } : {}),
