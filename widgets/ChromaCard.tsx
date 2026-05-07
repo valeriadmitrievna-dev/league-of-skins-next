@@ -73,8 +73,8 @@ const ChromaCard: FC<ChromaCardProps> = ({
       <Card
         className={cn(
           "block relative group aspect-90/101 rounded-md overflow-hidden p-0",
-          "transition-colors duration-700 group-data-state-on:bg-primary/10",
-          "group-data-state-on:border-primary/50!",
+          "transition-none duration-700 group-data-state-on:bg-primary/10",
+          "group-data-state-on:border-primary/50! focus-within:border-ring",
         )}
       >
         {plain ? <div>{ImageContent}</div> : <Link href={`/skins/${data.skinContentId}`}>{ImageContent}</Link>}
@@ -122,7 +122,7 @@ const ChromaCard: FC<ChromaCardProps> = ({
       {plain ? (
         <p className="mb-2 font-medium line-clamp-2">{data.name}</p>
       ) : (
-        <Link href={`/skins/${data.skinContentId}`} className="mb-2 font-medium line-clamp-2 hover:underline w-fit">
+        <Link href={`/skins/${data.skinContentId}`} className="mb-2 font-medium line-clamp-2 hover:underline w-fit" tabIndex={-1}>
           {data.name}
         </Link>
       )}
