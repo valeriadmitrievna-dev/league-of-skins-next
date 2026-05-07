@@ -1,0 +1,46 @@
+{
+  "hero": {
+    "for-lol-players": "For League of Legends players",
+    "all-skins": "All skins.",
+    "one-wishlist": "One wishlist.",
+    "section-description": "Browse skins, mark your favorites, and share your list — so your friends don’t have to guess what to gift you.",
+    "my-wishlist": "My Wishlist"
+  },
+  "functionality": {
+    "subtitle": "Features",
+    "title": "Everything you need for your collection",
+    "description": "No unnecessary features — only what you actually use",
+    "search-and-filters": "Search and filters",
+    "search-and-filters-description": "By champion, rarity, skin line, or color scheme. Finding a specific skin takes seconds.",
+    "wishlists": "Wishlists",
+    "wishlists-description": "Collect skins into lists and share them with friends. Perfect for birthdays or just so you don’t forget.",
+    "collection": "Collection",
+    "collection-description": "Upload your inventory and track what you’ve already bought, how much RP you’ve spent, and what you still want."
+  },
+  "benefits": {
+    "title": "Everything you need — in one place",
+    "skins-in-catalog": "Skins in the catalog",
+    "free-access": "Free access",
+    "min": "min",
+    "to-collect-wishlist": "To create a wishlist"
+  },
+  "catalog": {
+    "subtitle": "Catalog",
+    "title": "Find your next skin",
+    "description": "Filter by champion, rarity, skin line, or color scheme"
+  },
+  "wishlists": {
+    "title": "Share it — and your friends will get the hint",
+    "description": "Create a list of desired skins and send a link. Public or private — your choice.",
+    "create-wishlist": "Create Wishlist"
+  },
+  "collection": {
+    "title": "Track everything you already own",
+    "description": "Upload your inventory and see how much RP you’ve spent and which skins you still want to add.",
+    "open-collection": "Go to Collection"
+  },
+  "start-to-collect": "Start building your collection",
+  "it-is-free": "It’s free and takes less than a minute",
+  "open-catalog": "Open Catalog",
+  "not-affiliated": "Not affiliated with Riot Games"
+}
