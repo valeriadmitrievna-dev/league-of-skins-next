@@ -1,5 +1,5 @@
 "use client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon, UserIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -20,6 +20,7 @@ interface SignUpFormInput {
 
 const SignUpPage = () => {
   const { t } = useT();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
@@ -31,6 +32,7 @@ const SignUpPage = () => {
   const { mutate: signup, isPending: loading } = useMutation({
     mutationFn: (body: SignUpFormInput) => fetchClient("/api/auth/signup", { method: "POST", body: JSON.stringify(body) }),
     onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
       const redirect = searchParams.get("redirect") ?? "/";
       router.push(redirect);
       router.refresh();

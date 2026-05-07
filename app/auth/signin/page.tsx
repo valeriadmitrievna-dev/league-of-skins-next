@@ -1,5 +1,5 @@
 "use client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { EyeIcon, EyeOffIcon, LockIcon, MailIcon } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -8,7 +8,7 @@ import { MouseEvent, useState } from "react";
 import { useForm, type SubmitHandler } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
-import { errorClientHandler } from '@/errors';
+import { errorClientHandler } from "@/errors";
 import { fetchClient } from "@/lib/fetchClient";
 import { AuthFormContainer, AuthFormTextInput, AuthFormWrapper } from "@/widgets/AuthForm";
 
@@ -19,6 +19,7 @@ interface SignInFormInput {
 
 const SignInPage = () => {
   const { t } = useT();
+  const queryClient = useQueryClient();
   const searchParams = useSearchParams();
   const query = searchParams.toString();
   const router = useRouter();
@@ -29,6 +30,7 @@ const SignInPage = () => {
   const { mutate: signin, isPending: loading } = useMutation({
     mutationFn: (body: SignInFormInput) => fetchClient("/api/auth/signin", { method: "POST", body: JSON.stringify(body) }),
     onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
       const redirect = searchParams.get("redirect") ?? "/";
       router.push(redirect);
       router.refresh();

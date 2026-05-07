@@ -43,6 +43,8 @@ const SearchSkins: FC = () => {
     },
   });
 
+  console.log('[DEV]', user);
+
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
       const skin = item as AppDataSkin;
