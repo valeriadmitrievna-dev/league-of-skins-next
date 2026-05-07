@@ -33,6 +33,7 @@ const SignUpPage = () => {
     onSuccess: async () => {
       const redirect = searchParams.get("redirect") ?? "/";
       router.push(redirect);
+      router.refresh();
     },
     onError: errorClientHandler,
   });

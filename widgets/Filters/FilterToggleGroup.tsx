@@ -35,6 +35,7 @@ const FilterToggleGroup: FC<FilterToggleGroupProps> = ({ value, onChange, option
             key={option.value}
             className={cn("grow text-[14px]! font-normal", option.className)}
             value={option.value}
+            tabIndex={0}
           >
             {option.label}
           </ToggleGroupItem>

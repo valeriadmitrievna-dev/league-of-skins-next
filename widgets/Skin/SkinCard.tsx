@@ -55,10 +55,13 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
         className,
       )}
     >
-      <Link href={`/skins/${data.contentId}`} className="block relative group aspect-[1/1.2] rounded-md overflow-hidden">
+      <Link
+        href={`/skins/${data.contentId}`}
+        className="block relative group aspect-[1/1.2] rounded-md overflow-hidden focus:border-2 focus:border-ring"
+      >
         <Image
           src={data.questSkinInfo?.splashPath ?? data.image.centered ?? ""}
-          className="object-cover size-full transition-all group-hover:scale-[1.1]"
+          className="object-cover size-full transition-all group-hover:scale-[1.1] group-focus:scale-[1.1]"
         />
 
         {/* Video preview */}
@@ -74,10 +77,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
         )}
 
         {data.rarity !== "kNoRarity" && (
-          <Badge
-            className="absolute z-2 top-1.5 left-1.5 text-neutral-800"
-            style={{ background: RARITIES[data.rarity]?.color }}
-          >
+          <Badge className="absolute z-2 top-1.5 left-1.5 text-neutral-800" style={{ background: RARITIES[data.rarity]?.color }}>
             {t(`rarity.${data.rarity}`)}
           </Badge>
         )}
@@ -144,7 +144,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
             />
           ))} */}
       </div>
-      <Link href={`/skins/${data.contentId}`} className="font-medium line-clamp-2 hover:underline w-fit">
+      <Link href={`/skins/${data.contentId}`} className="font-medium line-clamp-2 hover:underline w-fit" tabIndex={-1}>
         {data.name}
       </Link>
     </div>

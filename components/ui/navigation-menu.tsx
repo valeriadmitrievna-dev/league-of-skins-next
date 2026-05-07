@@ -40,9 +40,11 @@ function NavigationMenuItem({ className, ...props }: React.ComponentProps<typeof
   return <NavigationMenuPrimitive.Item data-slot="navigation-menu-item" className={cn("relative", className)} {...props} />;
 }
 
-const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-9 w-max items-center gap-x-1.5 justify-center rounded-md px-4 py-2 text-base font-medium transition-[color,box-shadow] outline-none hover:bg-secondary disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-secondary",
-);
+const navigationMenuTriggerStyle = cva(cn(
+  "group inline-flex h-9 w-max items-center gap-x-1.5 justify-center rounded-md px-4 py-2 text-base font-medium transition-[color,box-shadow] outline-none",
+  "hover:bg-secondary disabled:pointer-events-none disabled:opacity-50 data-[state=open]:bg-secondary",
+  "focus-within:bg-primary/10! focus-within:text-primary!"
+));
 
 function NavigationMenuTrigger({ className, children, ...props }: React.ComponentProps<typeof NavigationMenuPrimitive.Trigger>) {
   return (
