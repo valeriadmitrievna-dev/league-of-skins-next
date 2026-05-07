@@ -5,13 +5,20 @@ import { type FC } from "react";
 
 import LogoutButton from "@/components/LogoutButton";
 import { Button } from "@/components/ui/button";
-import { verifyAccessToken } from '@/lib/auth';
-import { getLangCookie } from '@/lib/cookies';
+import {
+  NavigationMenu,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  navigationMenuTriggerStyle,
+} from "@/components/ui/navigation-menu";
+import { verifyAccessToken } from "@/lib/auth";
+import { getLangCookie } from "@/lib/cookies";
 import { cn } from "@/shared/cn";
 
-import AppHeaderLink from "./AppHeaderLink";
 import AdminNavLink from "../Admin/AdminNavLink";
 import LanguageSwitcher from "../LanguageSwitcher";
+import AppHeaderNavGroup from "./AppHeaderNavGroup";
 
 interface AppHeaderNavProps {
   className?: string;
@@ -22,7 +29,7 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
   const headerStore = await headers();
 
   const accessToken = cookieStore.get("accessToken")?.value;
-  const isAuth = !!(verifyAccessToken(accessToken ?? ''));
+  const isAuth = !!verifyAccessToken(accessToken ?? "");
 
   const pathname = headerStore.get("x-pathname") ?? "/";
   const lng = await getLangCookie();
@@ -34,9 +41,18 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
 
   return (
     <nav className={cn("flex items-center gap-2 lg:gap-4 h-full", className)}>
-      <div className="flex flex-col md:flex-row items-center gap-8 shrink-0 h-full">
+      {/* <div className="flex flex-col md:flex-row items-center gap-8 shrink-0 h-full">
         <AppHeaderLink to="/search/skins" text={t("header.skins")} className="py-2" />
         <AppHeaderLink to="/search/chromas" text={t("header.chromas")} className="py-2" />
+        <HoverCard openDelay={0} closeDelay={100}>
+          <HoverCardTrigger className="h-full flex items-center">
+            <AppHeaderItem>{t("header.search")}</AppHeaderItem>
+          </HoverCardTrigger>
+          <HoverCardContent className="flex flex-col items-start py-3 px-5">
+            <AppHeaderLink to="/search/skins" text={t("header.skins")} className="py-2" />
+            <AppHeaderLink to="/search/chromas" text={t("header.chromas")} className="py-2" />
+          </HoverCardContent>
+        </HoverCard>
         {isAuth && (
           <>
             <AppHeaderLink to="/wishlists" text={t("header.wishlists")} className="w-full md:w-fit" />
@@ -44,7 +60,45 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
           </>
         )}
         <AppHeaderLink to="/about" text={t("header.about")} className="w-full md:w-fit" />
-      </div>
+      </div> */}
+
+      <NavigationMenu>
+        <NavigationMenuList>
+          <AppHeaderNavGroup
+            group="/search"
+            links={[
+              { href: "/search/skins", title: t("header.skins"), text: "Lorem" },
+              { href: "/search/chromas", title: t("header.chromas"), text: "Lorem" },
+            ]}
+          >
+            {t("header.search")}
+          </AppHeaderNavGroup>
+          {isAuth && (
+            <>
+              <AppHeaderNavGroup
+                group="/wishlists"
+                links={[
+                  { href: "/wishlists", title: "My Wishlists", text: "Lorem" },
+                  { href: "/wishlists/subsriptions", title: "Subscribed Wishlists", text: "Lorem" },
+                  { href: "/wishlists/search", title: "Wishlists Search", text: "Lorem" },
+                ]}
+              >
+                {t("header.wishlists")}
+              </AppHeaderNavGroup>
+              <NavigationMenuItem>
+                <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+                  <Link href="/collection">{t("header.collection")}</Link>
+                </NavigationMenuLink>
+              </NavigationMenuItem>
+            </>
+          )}
+          <NavigationMenuItem>
+            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
+              <Link href="/about">{t("header.about")}</Link>
+            </NavigationMenuLink>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
 
       <div className="flex flex-col md:flex-row w-full gap-2">
         <div className="flex gap-2 items-center justify-center md:ml-4">

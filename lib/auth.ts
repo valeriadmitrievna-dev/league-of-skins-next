@@ -6,6 +6,7 @@ import { config } from "./config";
 
 export type TokenPayload = {
   userId: string;
+  userName: string;
   role: DbUser['role']
 }
 

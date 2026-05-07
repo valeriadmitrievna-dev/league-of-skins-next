@@ -1,4 +1,4 @@
-import { LockIcon, LockOpenIcon } from "lucide-react";
+import { EyeIcon, LockIcon, LockOpenIcon, UserRoundIcon } from "lucide-react";
 import Link from "next/link";
 import { getT } from "next-i18next/server";
 import { FC } from "react";
@@ -8,13 +8,16 @@ import { Typography } from "@/components/Typography";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { getLangCookie } from "@/lib/cookies";
+import { CDragonAsset } from "@/shared/types";
 import { DbWishlist } from "@/types/db";
 
 interface WishlistCardProps extends DbWishlist {
+  preview: CDragonAsset[];
+  userName?: string;
   guest?: boolean;
 }
 
-const WishlistCard: FC<WishlistCardProps> = async ({ guest, ...data }) => {
+const WishlistCard: FC<WishlistCardProps> = async ({ guest, userName, ...data }) => {
   const lng = await getLangCookie();
   const { t } = await getT("common", { lng });
 
@@ -30,35 +33,36 @@ const WishlistCard: FC<WishlistCardProps> = async ({ guest, ...data }) => {
         </Badge>
       )}
 
-      <ImageStack images={[].map((i) => i ?? "")} />
-      {/* <ImageStack images={(data.preview ?? []).map((i) => i ?? "")} className="bg-accent" /> */}
+      <ImageStack images={(data.preview ?? []).map((i) => i ?? "")} className="bg-accent" />
 
       <div className="px-4 py-3 min-h-24 flex flex-col gap-y-2">
         <Typography.Large className="line-clamp-3">{data.name}</Typography.Large>
 
         <div className="mt-auto w-full flex items-end gap-2">
-          <div className="flex items-center gap-2 mr-auto">
-            {/* {guest && (
+          <div className="flex items-center gap-2 mr-auto flex-wrap">
+            {guest && userName && (
               <Badge variant="secondary">
                 <UserRoundIcon />
-                {data.user.name}
+                {userName}
               </Badge>
-            )} */}
-            {/* {!data.private && (
+            )}
+            {!data.private && (
               <Badge variant="ghost" className="bg-foreground/20">
                 <EyeIcon />
                 {data.views > 999 ? "999+" : data.views}
               </Badge>
-            )} */}
-            <Typography.Muted>
-              {data?.skins?.length > 999 ? "999+" : data?.skins?.length}{" "}
-              {t("shared.skin", { count: data?.skins?.length > 999 ? 999 : data?.skins?.length })}
-            </Typography.Muted>
-            <Separator orientation="vertical" className="h-3!" />
-            <Typography.Muted>
-              {data?.chromas?.length > 999 ? "999+" : data?.chromas?.length}{" "}
-              {t("shared.chroma", { count: data?.chromas?.length > 999 ? 999 : data?.chromas?.length })}
-            </Typography.Muted>
+            )}
+            <div className="flex items-center gap-2 mr-auto">
+              <Typography.Muted>
+                {data?.skins?.length > 999 ? "999+" : data?.skins?.length}{" "}
+                {t("shared.skin", { count: data?.skins?.length > 999 ? 999 : data?.skins?.length })}
+              </Typography.Muted>
+              <Separator orientation="vertical" className="h-3!" />
+              <Typography.Muted>
+                {data?.chromas?.length > 999 ? "999+" : data?.chromas?.length}{" "}
+                {t("shared.chroma", { count: data?.chromas?.length > 999 ? 999 : data?.chromas?.length })}
+              </Typography.Muted>
+            </div>
           </div>
           {/* {!data.private && !guest && (
             <Button size="icon" variant="outline" onClick={shareHandler}>

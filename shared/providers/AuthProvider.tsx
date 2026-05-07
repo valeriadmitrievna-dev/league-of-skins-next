@@ -1,5 +1,5 @@
 "use client";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { createContext, useContext, FC, PropsWithChildren, useEffect, useRef } from "react";
 
@@ -20,6 +20,7 @@ interface AuthProviderProps extends PropsWithChildren {
 
 export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = null }) => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const isRefreshing = useRef(false);
 
   const {
@@ -37,7 +38,11 @@ export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = 
   const { mutate: refresh } = useMutation({
     mutationFn: () => fetchClient("/api/auth/refresh", { method: "POST" }),
     onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
       router.refresh();
+    },
+    onError: () => {
+      queryClient.setQueryData(["me"], { userId: null });
     },
   });
 
