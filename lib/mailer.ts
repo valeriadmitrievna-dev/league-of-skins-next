@@ -1,5 +1,7 @@
-import { getT } from 'next-i18next/server';
+import { getT, initServerI18next } from 'next-i18next/server';
 import nodemailer from "nodemailer";
+
+import i18nConfig from '@/i18n.config';
 
 const transporter = nodemailer.createTransport({
   host: "smtp.timeweb.ru",
@@ -10,6 +12,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.SMTP_PASS!,
   },
 });
+
+initServerI18next(i18nConfig);
 
 export const sendVerificationEmail = async (to: string, token: string, from?: string) => {
   const { t } = await getT('email-verification')
@@ -25,22 +29,21 @@ export const sendVerificationEmail = async (to: string, token: string, from?: st
         <style>
           * { margin: 0; padding: 0; box-sizing: border-box; }
           h2 { margin-bottom: 8px; }
-          a {
-            display: inline-block;
-            margin-top: 16px;
-            padding: 12px 20px;
-            background: oklch(0.72 0.13 75);
-            color: white;
-            border-radius: 4px;
-            text-decoration: none;
-            font-weight: bold;
-            line-height: 1;
-          }
         </style>
         <h2>${t('title')}</h2>
         <p style="margin-bottom: 8px">${t('email-body')}</p>
         <p style="margin-bottom: 8px">${t('email-action')}</p>
-        <a href="${link}">${t('email-button')}</a>
+        <a href="${link}" style="
+          display: inline-block;
+          margin-top: 16px;
+          padding: 12px 20px;
+          background: oklch(0.72 0.13 75);
+          color: white;
+          border-radius: 4px;
+          text-decoration: none;
+          font-weight: bold;
+          line-height: 1;
+        ">${t('email-button')}</a>
         <p style="margin-top: 24px; color: #888; font-size: 13px;">
           ${t('email-ignore')}
         </p>

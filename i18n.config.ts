@@ -5,7 +5,7 @@ const i18nConfig: I18nConfig = {
   fallbackLng: "en",
   localeInPath: false,
   defaultNS: "common",
-  ns: ["common", "errors"],
+  ns: ["common", "errors", "email-verification"],
   resourceLoader: (language, namespace) => import(`./public/locales/${language}/${namespace}.json`),
 };
 
