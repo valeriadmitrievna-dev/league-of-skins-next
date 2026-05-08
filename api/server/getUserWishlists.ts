@@ -17,7 +17,7 @@ export const getUserWishlists = async () => {
       credentials: "include",
     });
     const wishlists: (DbWishlist & { preview: CDragonAsset[] })[] = await res.json();
-    return wishlists;
+    return wishlists ?? [];
   } catch (error) {
     return [];
   }

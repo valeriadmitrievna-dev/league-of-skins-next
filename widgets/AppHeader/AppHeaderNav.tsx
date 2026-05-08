@@ -72,9 +72,9 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
               <AppHeaderNavGroup
                 group="/wishlists"
                 links={[
-                  { href: "/wishlists", title: "My Wishlists", text: "Lorem" },
-                  { href: "/wishlists/subsriptions", title: "Subscribed Wishlists", text: "Lorem" },
-                  { href: "/wishlists/search", title: "Wishlists Search", text: "Lorem" },
+                  { href: "/wishlists", title: "Мои вишлисты", text: "Управляйте своими вишлистами и делитесь ими." },
+                  { href: "/wishlists/subsriptions", title: "Подписки", text: "Вишлисты других пользователей, за которыми вы следите." },
+                  { href: "/wishlists/search", title: "Поиск вишлистов", text: "Найдите публичный вишлист по названию или имени автора." },
                 ]}
               >
                 {t("header.wishlists")}

@@ -17,7 +17,7 @@ export const GET = async () => {
     if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
 
     const { data: user, error } = await supabase.from("users").select("*").eq("id", payload.userId).single();
-    if (!user || error) throw new RequestError({ code: "ERR_0001", status: 401, message: 'No user' });
+    if (!user || error) throw new RequestError({ code: "ERR_0001", status: 401, message: error.message ?? 'No user' });
 
     return Response.json(omit(user, 'password'));
   } catch (error) {
