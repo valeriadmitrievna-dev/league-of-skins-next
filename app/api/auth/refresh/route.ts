@@ -3,35 +3,34 @@ import { cookies } from "next/headers";
 import { errorHandler, RequestError } from "@/errors";
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from "@/lib/auth";
 import { setAuthCookies } from "@/lib/cookies";
-import { createClient } from "@/lib/supabase/server";
 
+/**
+ * Stateless refresh: токен верифицируется криптографически через JWT-подпись.
+ * Никаких запросов в БД — нет race condition при параллельных запросах.
+ *
+ * Компромисс: отозвать конкретный refresh-токен (например, при смене пароля)
+ * нельзя без отдельного blocklist. Если это нужно — добавляй отдельно,
+ * не возвращая таблицу refresh_tokens в основной флоу.
+ */
 export const POST = async () => {
   try {
     const cookieStore = await cookies();
-
     const refreshToken = cookieStore.get("refreshToken")?.value;
-    if (!refreshToken) throw new RequestError({ code: "ERR_0001", status: 401, message: "No refresh token" });
 
-    const payload = verifyRefreshToken(refreshToken);
-    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401, message: "Refresh token invalid" });
-
-    const supabase = await createClient();
-
-    const { data: consumed, error } = await supabase.rpc("consume_refresh_token", { p_token: refreshToken });
-
-    if (error || !consumed?.length) {
-      throw new RequestError({ code: "ERR_0001", status: 401, message: "No stored token" });
+    if (!refreshToken) {
+      throw new RequestError({ code: "ERR_0001", status: 401, message: "No refresh token" });
     }
 
-    const newAccessToken = signAccessToken(payload);
-    const newRefreshToken = signRefreshToken(payload);
+    const payload = verifyRefreshToken(refreshToken);
+    if (!payload) {
+      throw new RequestError({ code: "ERR_0001", status: 401, message: "Refresh token invalid or expired" });
+    }
 
-    await supabase.from("refresh_tokens").insert({
-      token: newRefreshToken,
-      user_id: payload.userId,
-    });
+    const { userId, userName, role } = payload;
+    const newAccess = signAccessToken({ userId, userName, role });
+    const newRefresh = signRefreshToken({ userId, userName, role });
 
-    await setAuthCookies(newAccessToken, newRefreshToken);
+    await setAuthCookies(newAccess, newRefresh);
 
     return Response.json({ ok: true });
   } catch (error) {

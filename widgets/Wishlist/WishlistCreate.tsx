@@ -14,6 +14,7 @@ interface WishlistCreateProps {
   skinContentIds?: string[];
   chromaContentIds?: string[];
   children?: ReactNode;
+  disabled?: boolean;
 }
 
 const WishlistCreate: FC<WishlistCreateProps> = ({
@@ -21,6 +22,7 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
   // skinContentIds = [],
   // chromaContentIds = [],
   children,
+  disabled,
 }) => {
   const { t } = useT();
 
@@ -47,7 +49,7 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
     <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
         {children ?? (
-          <Button className={cn("", buttonClassName)}>
+          <Button className={cn("", buttonClassName)} disabled={disabled}>
             <PlusIcon />
             {t("wishlist.create")}
           </Button>

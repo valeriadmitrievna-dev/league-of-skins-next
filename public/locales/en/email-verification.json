@@ -1,0 +1,17 @@
+{
+    "pending": "Verifying your email...",
+    "success": "Email confirmed!",
+    "success-redirect": "Redirecting...",
+    "error": "Link is no longer valid",
+    "error-text": "The link has expired or has already been used.",
+    "title": "Confirm your email",
+    "banner": "Confirm your email address to save owned skins, create wishlists and share them. The email is on its way — check your Spam folder if you can't find it in your inbox.",
+    "resend": "Send email again",
+    "resend-success": "Email sent — check your inbox or Spam folder.",
+    "resend-error": "Couldn't send the email. Please try again later.",
+    "resend-pending": "Sending...",
+    "email-body": "Confirm your email address to unlock all features: mark skins as owned, create wishlists and manage them.",
+    "email-action": "Click the button below to confirm your email. The link is valid for 24 hours.",
+    "email-ignore": "If you didn't create an account, you can safely ignore this email.",
+    "email-button": "Confirm email"
+}

@@ -4,7 +4,6 @@ import "@/styles/index.css";
 import localFont from "next/font/local";
 import { I18nProvider } from "next-i18next/client";
 import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
-import NextTopLoader from "nextjs-toploader";
 
 import Background from "@/components/Background";
 import { getServerUserId } from "@/lib/auth";
@@ -13,7 +12,6 @@ import { AppProvider } from "@/shared/providers/AppProvider";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
 import QueryProvider from "@/shared/providers/QueryProvider";
 import ToastsProvider from "@/shared/providers/ToastsProvider";
-import { AppHeader } from "@/widgets/AppHeader";
 
 import i18nConfig from "../i18n.config";
 
@@ -51,8 +49,8 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const resources = getResources(i18n);
 
   return (
-    <html className={`${font.variable} ${mono.variable} h-full antialiased light`} lang={lng}>
-      <body className="min-h-full flex flex-col">
+    <html className={`${font.variable} ${mono.variable} h-full antialiased light`} lang={lng} suppressHydrationWarning>
+      <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Background />
 
         <I18nProvider language={lng} resources={resources}>
@@ -60,10 +58,8 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             <AuthProvider initialUserId={userId}>
               <ToastsProvider />
               <AppProvider>
-                <div className="min-h-screen grid grid-rows-[auto_1fr] z-1">
-                  <AppHeader />
-                  <NextTopLoader color="var(--color-primary)" showSpinner={false} />
-                  <main className="h-full p-4 md:p-5 my-container">{children}</main>
+                <div className="z-1">
+                  {children}
                 </div>
               </AppProvider>
             </AuthProvider>

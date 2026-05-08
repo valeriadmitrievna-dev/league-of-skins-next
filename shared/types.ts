@@ -43,3 +43,5 @@ export type CDragonAsset = string | null | undefined;
 export type SearchParams = {
   [key: string]: string | undefined;
 };
+
+export type WithClassName<T = Record<string, string>> = T & { className?: string };

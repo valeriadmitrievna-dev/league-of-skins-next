@@ -10,6 +10,7 @@ const useLogout = () => {
 
   const logout = async () => {
     await fetchClient("/api/auth/logout", { method: "POST" });
+    queryClient.setQueryData(["me"], null);
     queryClient.setQueryData(["user"], null);
     router.refresh();
   };

@@ -1,5 +1,5 @@
 "use client";
-import { useT } from 'next-i18next/client';
+import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
 
 import useUser from "@/api/useUser";
@@ -8,32 +8,37 @@ import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
-import { AppDataChroma } from "@/types/appdata";
-import ChromaCard from "@/widgets/ChromaCard";
-import SearchChromasFilters from "@/widgets/SearchChromasFilters";
+import { AppDataSkin } from "@/types/appdata";
+import EmailVerificationBanner from "@/widgets/EmailVerificationBanner";
+import SearchSkinsFilters from "@/widgets/SearchSkinsFilters";
+import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 
-const SearchChromas: FC = () => {
+const SearchSkins: FC = () => {
   const { i18n } = useT();
   const { get: getSearch, update: updateSearch } = useQueryParams();
-  const { get, update, updateMany, reset, hasActive } = useQueryParams(["owned", "skin", "championId", "skinContentId", "server"]);
+  const { get, update, reset, hasActive } = useQueryParams(["owned", "legacy", "championId", "rarity", "skinlineId", "chromaId", "server"]);
 
   const search = getSearch("search");
   const championId = get("championId");
-  const skinContentId = get("skinContentId");
-  const skin = get("skin");
+  const skinlineId = get("skinlineId");
+  const rarity = get("rarity");
+  const chromaId = get("chromaId");
+  const legacy = get("legacy");
   const owned = get("owned");
   const server = get("server");
 
   const { data: user } = useUser();
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
-    url: "/api/chromas",
-    queryKey: ["chromas", i18n.language],
+    url: "/api/skins",
+    queryKey: ["skins", i18n.language],
     params: {
       ...(search ? { search } : {}),
       ...(championId ? { championId } : {}),
-      ...(skinContentId ? { skinContentId } : {}),
-      skin: skin || "all",
+      ...(skinlineId ? { skinlineId } : {}),
+      ...(rarity ? { rarity } : {}),
+      ...(chromaId ? { chromaId } : {}),
+      legacy: legacy || "all",
       owned: owned || "all",
       server: server || "all",
     },
@@ -41,24 +46,26 @@ const SearchChromas: FC = () => {
 
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
-      const chroma = item as AppDataChroma;
-      const ownedChromas = user?.owned_chromas ?? [];
-      return <ChromaCard key={chroma.id} data={chroma} owned={ownedChromas.includes(chroma.contentId)} toggleOwnedButton addToWishlistButton />;
+      const skin = item as AppDataSkin;
+      const ownedSkins = user?.owned_skins ?? [];
+      return (
+        <SkinCard
+          key={skin.id}
+          data={skin}
+          owned={ownedSkins.includes(skin.contentId)}
+          toggleOwnedButton={user?.is_verified}
+          addToWishlistButton={user?.is_verified}
+        />
+      );
     },
     [user],
   );
 
   return (
     <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">
-      <SearchChromasFilters
-        getValue={get}
-        setValue={update}
-        setValueMany={updateMany}
-        {...(hasActive ? { reset } : {})}
-        loading={isLoading || isFetching}
-        count={count}
-      />
+      <SearchSkinsFilters getValue={get} setValue={update} {...(hasActive ? { reset } : {})} loading={isLoading || isFetching} count={count} />
       <div className="pb-10">
+        {!!user && !user.is_verified && <EmailVerificationBanner className="mb-3" />}
         <Search value={search ?? ""} onSearch={(value) => updateSearch("search", value)} className="mb-4" />
         {initialized && !isLoading && !data.length && "No items"}
         <VirtualizedGrid
@@ -78,4 +85,4 @@ const SearchChromas: FC = () => {
   );
 };
 
-export default SearchChromas;
+export default SearchSkins;

@@ -103,7 +103,7 @@ const SkinCard: FC<SkinCardProps> = ({ className, data, owned, addToWishlistButt
           </div>
         )}
       </Link>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between min-h-7">
         <span className="text-sm text-muted-foreground font-medium mr-auto">{data.championName}</span>
         {toggleOwnedButton &&
           !data.pbe &&

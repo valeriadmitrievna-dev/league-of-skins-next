@@ -1,24 +1,26 @@
 import jwt from "jsonwebtoken";
 
-import { DbUser } from '@/types/db';
+import { DbUser } from "@/types/db";
 
 import { config } from "./config";
 
 export type TokenPayload = {
   userId: string;
   userName: string;
-  role: DbUser['role']
-}
+  role: DbUser["role"];
+};
 
 export const signAccessToken = (data: TokenPayload) => {
-  return jwt.sign(data, config.jwtAccessSecret, { expiresIn: `${config.accessTokenLiveInMinutes}m` });
+  return jwt.sign(data, config.jwtAccessSecret, {
+    expiresIn: `${config.accessTokenLiveInMinutes}m`,
+  });
 };
 
 export const signRefreshToken = (data: TokenPayload) => {
   return jwt.sign(data, config.jwtRefreshSecret, { expiresIn: "7d" });
 };
 
-export const verifyRefreshToken = (token: string) => {
+export const verifyRefreshToken = (token: string): TokenPayload | null => {
   try {
     return jwt.verify(token, config.jwtRefreshSecret) as TokenPayload;
   } catch {
@@ -26,7 +28,7 @@ export const verifyRefreshToken = (token: string) => {
   }
 };
 
-export const verifyAccessToken = (token: string) => {
+export const verifyAccessToken = (token: string): TokenPayload | null => {
   try {
     return jwt.verify(token, config.jwtAccessSecret) as TokenPayload;
   } catch {
@@ -34,6 +36,10 @@ export const verifyAccessToken = (token: string) => {
   }
 };
 
+/**
+ * Читает userId из accessToken куки на сервере (Server Component / Route Handler).
+ * Не делает запросов в БД — токен верифицируется криптографически.
+ */
 export const getServerUserId = async (): Promise<string | null> => {
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();

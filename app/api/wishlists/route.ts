@@ -19,7 +19,7 @@ export const GET = async () => {
 
     const { userId } = payload;
     const { data: wishlists, error } = await supabase.from("wishlists").select("*").eq("user_id", userId).order("created_at", { ascending: true });
-    if (!wishlists || error) throw new RequestError({ code: "ERR_0000", status: 500 });
+    if (!wishlists || error) throw new RequestError({ code: "ERR_0000", status: 500, message: error.message });
 
     const appData = await getLangAppData();
     const skins = appData?.skins ?? [];

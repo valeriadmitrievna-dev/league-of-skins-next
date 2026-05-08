@@ -1,15 +1,16 @@
 "use client";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { createContext, useContext, FC, PropsWithChildren, useEffect, useRef } from "react";
+import { createContext, useContext, FC, PropsWithChildren, useCallback } from "react";
 
-import { RequestError } from "@/errors";
+import { TokenPayload } from "@/lib/auth";
 import { fetchClient } from "@/lib/fetchClient";
 
 interface AuthContext {
   userId: string | null;
   isAuth: boolean;
   isLoading: boolean;
+  refresh: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContext | null>(null);
@@ -21,44 +22,52 @@ interface AuthProviderProps extends PropsWithChildren {
 export const AuthProvider: FC<AuthProviderProps> = ({ children, initialUserId = null }) => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const isRefreshing = useRef(false);
 
   const {
-    data: { userId } = { userId: initialUserId },
+    data,
     isLoading,
-    error,
-  } = useQuery({
+  } = useQuery<TokenPayload | null>({
     queryKey: ["me"],
-    queryFn: () => fetchClient<{ userId: string | null }>("/api/auth/me"),
-    initialData: initialUserId !== null ? { userId: initialUserId } : undefined,
-    staleTime: 0,
-    refetchOnMount: true,
+    queryFn: async () => {
+      try {
+        return await fetchClient<TokenPayload>("/api/auth/me");
+      } catch {
+        // accessToken отсутствует или протух — пробуем refresh
+        try {
+          await fetchClient("/api/auth/refresh", { method: "POST" });
+          return await fetchClient<TokenPayload>("/api/auth/me");
+        } catch {
+          return null;
+        }
+      }
+    },
+    initialData: initialUserId !== null ? ({ userId: initialUserId } as TokenPayload) : undefined,
+    staleTime: 1000 * 60 * 5, // 5 минут — не долбим /me на каждый ремаунт
+    retry: false,
   });
 
-  const { mutate: refresh } = useMutation({
+  const { mutateAsync: doRefresh } = useMutation({
     mutationFn: () => fetchClient("/api/auth/refresh", { method: "POST" }),
     onSuccess: async () => {
-      await queryClient.invalidateQueries({ queryKey: ["me"] });
       router.refresh();
+      await queryClient.invalidateQueries({ queryKey: ["me"] });
     },
     onError: () => {
-      queryClient.setQueryData(["me"], { userId: null });
+      queryClient.setQueryData(["me"], null);
     },
   });
 
-  useEffect(() => {
-    if (error && (error as RequestError).status === 401) {
-      if (isRefreshing.current) return;
-      isRefreshing.current = true;
-      refresh(undefined, {
-        onSettled: () => {
-          isRefreshing.current = false;
-        },
-      });
-    }
-  }, [error]);
+  const refresh = useCallback(async () => {
+    await doRefresh();
+  }, [doRefresh]);
 
-  return <AuthContext.Provider value={{ isAuth: !!userId, userId: userId ?? null, isLoading }}>{children}</AuthContext.Provider>;
+  const userId = data?.userId ?? null;
+
+  return (
+    <AuthContext.Provider value={{ isAuth: !!userId, userId, isLoading, refresh }}>
+      {children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

@@ -19,6 +19,7 @@ import { cn } from "@/shared/cn";
 import AdminNavLink from "../Admin/AdminNavLink";
 import LanguageSwitcher from "../LanguageSwitcher";
 import AppHeaderNavGroup from "./AppHeaderNavGroup";
+import AppHeaderNavLink from "./AppHeaderNavLink";
 
 interface AppHeaderNavProps {
   className?: string;
@@ -64,16 +65,8 @@ const AppHeaderNav: FC<AppHeaderNavProps> = async ({ className }) => {
 
       <NavigationMenu>
         <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/search/skins">{t("header.skins")}</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
-          <NavigationMenuItem>
-            <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-              <Link href="/search/chromas">{t("header.chromas")}</Link>
-            </NavigationMenuLink>
-          </NavigationMenuItem>
+          <AppHeaderNavLink href="/search/skins">{t("header.skins")}</AppHeaderNavLink>
+          <AppHeaderNavLink href="/search/chromas">{t("header.chromas")}</AppHeaderNavLink>
           {isAuth && (
             <>
               <AppHeaderNavGroup

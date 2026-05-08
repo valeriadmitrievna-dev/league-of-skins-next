@@ -80,7 +80,7 @@ const ChromaCard: FC<ChromaCardProps> = ({
         {plain ? <div>{ImageContent}</div> : <Link href={`/skins/${data.skinContentId}`}>{ImageContent}</Link>}
         {data.pbe && <Badge className="absolute z-2 top-1.5 right-1.5">PBE</Badge>}
       </Card>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between min-h-7">
         <span className="text-sm text-muted-foreground font-medium line-clamp-1 mr-auto">{data.skinName}</span>
         {toggleOwnedButton &&
           (false ? (

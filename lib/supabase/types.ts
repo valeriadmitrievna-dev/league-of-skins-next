@@ -8,18 +8,53 @@ export type Database = {
   };
   public: {
     Tables: {
-      refresh_tokens: {
+      email_verifications: {
         Row: {
+          created_at: string;
+          expires_at: string;
           id: string;
           token: string;
           user_id: string;
         };
         Insert: {
+          created_at?: string;
+          expires_at: string;
           id?: string;
           token: string;
           user_id: string;
         };
         Update: {
+          created_at?: string;
+          expires_at?: string;
+          id?: string;
+          token?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "email_verifications_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: false;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      refresh_tokens: {
+        Row: {
+          created_at: string;
+          id: string;
+          token: string;
+          user_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          id?: string;
+          token: string;
+          user_id: string;
+        };
+        Update: {
+          created_at?: string;
           id?: string;
           token?: string;
           user_id?: string;
@@ -69,6 +104,7 @@ export type Database = {
           created_at: string;
           email: string;
           id: string;
+          is_verified: boolean;
           name: string;
           owned_chromas: string[];
           owned_skins: string[];
@@ -77,9 +113,10 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
-          created_at?: string;
+          created_at: string;
           email: string;
           id?: string;
+          is_verified?: boolean;
           name: string;
           owned_chromas?: string[];
           owned_skins?: string[];
@@ -91,6 +128,7 @@ export type Database = {
           created_at?: string;
           email?: string;
           id?: string;
+          is_verified?: boolean;
           name?: string;
           owned_chromas?: string[];
           owned_skins?: string[];
@@ -156,12 +194,10 @@ export type Database = {
     };
     Functions: {
       consume_refresh_token: {
-        Args: {
-          p_token: string;
-        };
+        Args: { p_token: string };
         Returns: {
-          user_id: string;
           token: string;
+          user_id: string;
         }[];
       };
     };
