@@ -54,7 +54,7 @@ export const POST = async (req: NextRequest) => {
       console.error("Failed to send verification email:", err),
     );
 
-    const payload = { userId: user.id, userName: user.name, role: user.role };
+    const payload = { userId: user.id, userName: user.name, role: user.role, verified: user.is_verified };
     const access = signAccessToken(payload);
     const refresh = signRefreshToken(payload);
 

@@ -8,6 +8,7 @@ export type TokenPayload = {
   userId: string;
   userName: string;
   role: DbUser["role"];
+  verified: boolean;
 };
 
 export const signAccessToken = (data: TokenPayload) => {
@@ -36,15 +37,11 @@ export const verifyAccessToken = (token: string): TokenPayload | null => {
   }
 };
 
-/**
- * Читает userId из accessToken куки на сервере (Server Component / Route Handler).
- * Не делает запросов в БД — токен верифицируется криптографически.
- */
-export const getServerUserId = async (): Promise<string | null> => {
+export const getServerUserPayload = async (): Promise<TokenPayload | null> => {
   const { cookies } = await import("next/headers");
   const cookieStore = await cookies();
   const token = cookieStore.get("accessToken")?.value;
   if (!token) return null;
   const payload = verifyAccessToken(token);
-  return payload?.userId ?? null;
+  return payload ?? null;
 };

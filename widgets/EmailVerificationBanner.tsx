@@ -6,7 +6,7 @@ import { useT } from "next-i18next/client";
 import { FC, useState } from "react";
 import { toast } from "sonner";
 
-import { Alert, AlertAction, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Typography } from "@/components/Typography";
 import { Button } from "@/components/ui/button";
 import { fetchClient } from "@/lib/fetchClient";
 import { cn } from "@/shared/cn";
@@ -30,25 +30,21 @@ const EmailVerificationBanner: FC<WithClassName> = ({ className }) => {
   if (dismissed) return null;
 
   return (
-    <Alert className={cn("w-full  bg-amber-500/10 border-amber-500/50", className)}>
-      <AlertTitle className="text-amber-600">{t("title")}</AlertTitle>
-      <AlertDescription>
-        {t("banner")}
-        <Button
-          variant="ghost"
-          onClick={() => resend()}
-          disabled={isPending}
-          className="flex px-0! pt-1! bg-transparent! h-fit! -mb-2 text-foreground hover:underline"
-        >
-          {!data?.ok && (isPending ? t("resend-pending") : t("resend"))}
-        </Button>
-      </AlertDescription>
-      <AlertAction>
-        <Button size="icon-sm" variant="ghost" onClick={() => setDismissed(true)}>
-          <XIcon />
-        </Button>
-      </AlertAction>
-    </Alert>
+    <div className={cn("px-5 py-4 bg-warning/10 rounded-lg border border-warning/30 relative", className)}>
+      <Button size="icon-sm" variant="ghost" onClick={() => setDismissed(true)} className="absolute top-3.25 right-4">
+        <XIcon />
+      </Button>
+      <Typography.P className="font-medium mb-1">{t("title")}</Typography.P>
+      <Typography.Muted className="font-normal max-w-200 mb-2">{t("banner")}</Typography.Muted>
+      <Button
+        variant="ghost"
+        onClick={() => resend()}
+        disabled={isPending}
+        className="flex p-0! bg-transparent! h-fit! text-foreground hover:underline"
+      >
+        {!data?.ok && (isPending ? t("resend-pending") : t("resend"))}
+      </Button>
+    </div>
   );
 };
 

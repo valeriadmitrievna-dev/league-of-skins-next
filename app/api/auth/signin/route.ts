@@ -28,7 +28,7 @@ export const POST = async (req: NextRequest) => {
     const valid = await compare(password, user.password);
     if (!valid) throw new RequestError({ code: "ERR_0008", status: 401 });
 
-    const payload = { userId: user.id, userName: user.name, role: user.role };
+    const payload = { userId: user.id, userName: user.name, role: user.role, verified: user.is_verified };
     const access = signAccessToken(payload);
     const refresh = signRefreshToken(payload);
 

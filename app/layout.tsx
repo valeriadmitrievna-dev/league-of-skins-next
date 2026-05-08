@@ -7,7 +7,7 @@ import { initServerI18next, getT, getResources, generateI18nStaticParams } from 
 
 import Background from "@/components/Background";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getServerUserId } from "@/lib/auth";
+import { getServerUserPayload } from "@/lib/auth";
 import { getLangCookie } from "@/lib/cookies";
 import { cn } from "@/shared/cn";
 import { AppProvider } from "@/shared/providers/AppProvider";
@@ -47,7 +47,8 @@ export const metadata: Metadata = {
 
 const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const lng = await getLangCookie();
-  const userId = await getServerUserId();
+  const userPayload = await getServerUserPayload();
+  const { userId } = userPayload ?? {};
 
   const { i18n } = await getT();
   const resources = getResources(i18n);
