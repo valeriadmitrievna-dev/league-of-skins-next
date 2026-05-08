@@ -76,7 +76,7 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({
 
   return (
     <div className={cn("h-fit", className)}>
-      <FilterPanelTitle onReset={reset} className="h-10 mb-5" />
+      <FilterPanelTitle onReset={reset} className="h-11 mb-5" />
       <div className="flex flex-col gap-5">
         {isAuth && (
           <div className="flex flex-col gap-3">

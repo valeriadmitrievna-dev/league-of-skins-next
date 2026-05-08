@@ -1,7 +1,6 @@
 import { HeartOffIcon } from "lucide-react";
 import { getT } from "next-i18next/server";
 
-import { Button } from '@/components/ui/button';
 import {
   Empty,
   EmptyContent,
@@ -25,9 +24,7 @@ const EmptyWishlists = async () => {
         <EmptyDescription>{t("noWishlists.description")}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <WishlistCreate>
-          <Button size="md">{t("wishlist.create")}</Button>
-        </WishlistCreate>
+        <WishlistCreate />
       </EmptyContent>
     </Empty>
   );

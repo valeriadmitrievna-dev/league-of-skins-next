@@ -1,27 +1,27 @@
-import { PackageOpenIcon, SearchIcon } from "lucide-react";
+import { BookmarkXIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
 import { getT } from "next-i18next/server";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
-const EmptyCollectionSkins = async () => {
+const EmptyWishlistsSubscriptions = async () => {
   const { t } = await getT("emptystate");
 
   return (
     <Empty>
       <EmptyHeader>
         <EmptyMedia variant="icon">
-          <PackageOpenIcon />
+          <BookmarkXIcon />
         </EmptyMedia>
-        <EmptyTitle>{t("collectionNoSkins.title")}</EmptyTitle>
-        <EmptyDescription>{t("collectionNoSkins.description")}</EmptyDescription>
+        <EmptyTitle>{t("subscribedWishlistsNotFound.title")}</EmptyTitle>
+        <EmptyDescription>{t("subscribedWishlistsNotFound.description")}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
         <Button asChild>
-          <Link href="/search/skins">
+          <Link href="/wishlists/search">
             <SearchIcon />
-            {t("collectionNoSkins.goToSkins")}
+            {t("subscribedWishlistsNotFound.goToWishlists")}
           </Link>
         </Button>
       </EmptyContent>
@@ -29,4 +29,4 @@ const EmptyCollectionSkins = async () => {
   );
 };
 
-export default EmptyCollectionSkins;
+export default EmptyWishlistsSubscriptions;

@@ -1,5 +1,5 @@
 import { XIcon,SearchXIcon } from "lucide-react";
-import { useT } from "next-i18next/client";
+import { getT } from "next-i18next/server";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
@@ -8,8 +8,8 @@ interface EmptyWishlistsSearchNotFoundProps {
   onClearSearch?: () => void;
 }
 
-const EmptyWishlistsSearch = ({ onClearSearch }: EmptyWishlistsSearchNotFoundProps) => {
-  const { t } = useT("emptystate");
+const EmptyWishlistsSearch = async ({ onClearSearch }: EmptyWishlistsSearchNotFoundProps) => {
+  const { t } = await getT("emptystate");
 
   return (
     <Empty>

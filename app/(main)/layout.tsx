@@ -8,7 +8,7 @@ const MainLayout = async ({ children }: { children: React.ReactNode }) => {
       <AppNavigation />
       {/* <AppHeader /> */}
       <NextTopLoader color="var(--color-primary)" showSpinner={false} />
-      <main className="h-full min-h-screen p-5 pl-[calc(var(--navigation-size)+20px)]">{children}</main>
+      <main className="h-full min-h-screen p-5 pl-[calc(var(--navigation-size)+20px)] flex flex-col">{children}</main>
     </>
   );
 };

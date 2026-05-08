@@ -8,11 +8,14 @@
     "go-back": "Go Back"
   },
   "header": {
-    "wishlists": "Wishlists",
+    "wishlists-my": "My wishlists",
+    "wishlists-subscriptions": "Subscriptions",
+    "wishlists-search": "Wishlists search",
     "about": "About project",
     "signin": "Sign In",
     "signup": "Sign Up",
     "collection": "Collection",
+    "dashboard": "Statistics",
     "skins": "Skins",
     "chromas": "Chromas",
     "search": "Search"

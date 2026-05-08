@@ -56,5 +56,10 @@
         "description": "Statistics will appear once you add skins or color schemes.",
         "goToSkins": "Browse skins",
         "goToColorSchemes": "Browse color schemes"
+    },
+    "subscribedWishlistsNotFound": {
+        "title": "No wishlists followed",
+        "description": "You haven't followed any wishlists yet. Browse wishlists and follow the ones you like.",
+        "goToWishlists": "Browse wishlists"
     }
 }

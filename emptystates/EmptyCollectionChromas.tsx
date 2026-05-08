@@ -5,7 +5,7 @@ import { useT } from "next-i18next/client";
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
-const EmptyCollectionNoColorSchemes = () => {
+const EmptyCollectionChromas = () => {
   const { t } = useT("emptystate");
 
   return (
@@ -29,4 +29,4 @@ const EmptyCollectionNoColorSchemes = () => {
   );
 };
 
-export default EmptyCollectionNoColorSchemes;
+export default EmptyCollectionChromas;

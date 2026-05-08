@@ -1,5 +1,7 @@
+import EmptyCollectionSkins from '@/emptystates/EmptyCollectionSkins';
+
 const CollectionPage = () => {
-  return <div>collection</div>;
+  return <EmptyCollectionSkins />
 };
 
 export default CollectionPage;

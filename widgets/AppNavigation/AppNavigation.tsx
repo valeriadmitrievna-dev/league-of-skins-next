@@ -44,17 +44,16 @@ const AppNavigation: FC = async () => {
               icon={<Package2Icon />}
               title={t("header.collection")}
               group={[
-                { href: "/collection/dashboard", title: "Dashboard" },
+                { href: "/collection/dashboard", title: t("header.dashboard") },
                 { href: "/collection", title: t("header.collection") },
               ]}
             />
             <AppNavigationLink
               icon={<HeartIcon />}
-              title={t("header.wishlists")}
               group={[
-                { href: "/wishlists", title: t("header.wishlists") },
-                { href: "/wishlists/subscriptions", title: t("header.wishlists") },
-                { href: "/wishlists/search", title: t("header.wishlists") },
+                { href: "/wishlists", title: t("header.wishlists-my") },
+                { href: "/wishlists/subscriptions", title: t("header.wishlists-subscriptions") },
+                { href: "/wishlists/search", title: t("header.wishlists-search") },
               ]}
             />
           </>

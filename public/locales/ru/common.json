@@ -8,11 +8,14 @@
     "go-back": "Назад"
   },
   "header": {
-    "wishlists": "Вишлисты",
+    "wishlists-my": "Мои вишлисты",
+    "wishlists-subscriptions": "Подписки",
+    "wishlists-search": "Поиск вишлистов",
     "about": "О проекте",
     "signin": "Вход",
     "signup": "Регистрация",
     "collection": "Коллекция",
+    "dashboard": "Статистика",
     "skins": "Образы",
     "chromas": "Цветовые схемы",
     "search": "Поиск"
