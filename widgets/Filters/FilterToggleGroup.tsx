@@ -22,8 +22,6 @@ const FilterToggleGroup: FC<FilterToggleGroupProps> = ({ value, onChange, option
     <WrapperComponent {...(label ? { className: "gap-y-2" } : {})}>
       {label && <Label className="text-primary/80">{label}</Label>}
       <ToggleGroup
-        variant="outline"
-        // spacing={2}
         type="single"
         value={value}
         onValueChange={onChange}

@@ -1,14 +1,15 @@
 import NextTopLoader from "nextjs-toploader";
 
-import { AppHeader } from "@/widgets/AppHeader";
+import AppNavigation from '@/widgets/AppNavigation/AppNavigation';
 
 const MainLayout = async ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="min-h-screen grid grid-rows-[auto_1fr]">
-      <AppHeader />
+    <>
+      <AppNavigation />
+      {/* <AppHeader /> */}
       <NextTopLoader color="var(--color-primary)" showSpinner={false} />
-      <main className="h-full p-4 md:p-5 my-container">{children}</main>
-    </div>
+      <main className="h-full p-5 pl-[calc(var(--navigation-size)+20px)]">{children}</main>
+    </>
   );
 };
 

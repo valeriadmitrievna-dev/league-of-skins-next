@@ -33,7 +33,7 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ..
   const getGroupClassName = (size?: SearchSize) => {
     if (size === "lg") return "h-12 px-1";
     if (size === "sm") return "h-8";
-    else return "h-10";
+    else return "h-11 px-1 gap-x-1";
   };
 
   const changeHandler = (event: ChangeEvent<HTMLInputElement>) => {
@@ -46,16 +46,15 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ..
   };
 
   return (
-    <InputGroup className={cn(getGroupClassName(size), "group border-foreground/15", className)}>
+    <InputGroup className={cn(getGroupClassName(size), "group border-0", className)}>
       <InputGroupInput
         placeholder={t("shared.search")}
-        className="focus:placeholder:text-primary/50!"
         {...inputProps}
         value={searchInput}
         onChange={changeHandler}
       />
       <InputGroupAddon>
-        <SearchIcon className="group-focus-within:text-primary transition-colors" />
+        <SearchIcon />
       </InputGroupAddon>
       {value && (
         <InputGroupAddon align="inline-end">

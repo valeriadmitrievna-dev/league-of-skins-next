@@ -12,7 +12,7 @@ const NotFound = () => {
         <p className="text-muted-foreground max-w-md">Страница, которую вы ищете, не существует или была перемещена.</p>
       </div>
       <Button asChild>
-        <Link href="/">На главную</Link>
+        <Link href="/search">На главную</Link>
       </Button>
     </div>
   );

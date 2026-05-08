@@ -1,7 +1,8 @@
+"use client";
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchClient } from "@/lib/fetchClient";
-import { DbUser } from '@/types/db';
+import { DbUser } from "@/types/db";
 
 const useUser = () => {
   return useQuery({

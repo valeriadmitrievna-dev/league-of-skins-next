@@ -75,11 +75,11 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({
   };
 
   return (
-    <div className={cn("h-fit sticky top-4", className)}>
-      <FilterPanelTitle onReset={reset} className="mb-4" />
+    <div className={cn("h-fit", className)}>
+      <FilterPanelTitle onReset={reset} className="h-10 mb-5" />
       <div className="flex flex-col gap-5">
         {isAuth && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-3">
             <FilterToggleGroup
               value={getValue("owned") ?? "all"}
               onChange={(value) => setValue("owned", value)}

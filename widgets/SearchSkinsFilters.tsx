@@ -9,14 +9,7 @@ import useRarities from "@/api/useRarities";
 import useSkinlines from "@/api/useSkinlines";
 import ChromaColor from "@/components/ChromaColor";
 import Skeleton from "@/components/Skeleton";
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxInput,
-  ComboboxItem,
-  ComboboxList,
-} from "@/components/ui/combobox";
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from "@/components/ui/combobox";
 import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/shared/cn";
@@ -68,10 +61,10 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ getValue, setValue, loadin
   ];
 
   return (
-    <div className={cn("h-fit sticky top-4", className)}>
-      <FilterPanelTitle onReset={reset} className="mb-4" />
+    <div className={cn("h-fit", className)}>
+      <FilterPanelTitle onReset={reset} className="h-10 mb-5" />
       <div className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
+        <div className="flex flex-col gap-3">
           {isAuth && (
             <FilterToggleGroup
               value={getValue("owned") ?? "all"}

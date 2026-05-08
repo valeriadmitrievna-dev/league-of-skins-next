@@ -1,19 +1,23 @@
 import type { Metadata } from "next";
-import { Rubik } from "next/font/google";
+import { Rubik, Geist } from "next/font/google";
 import "@/styles/index.css";
 import localFont from "next/font/local";
 import { I18nProvider } from "next-i18next/client";
 import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
 
 import Background from "@/components/Background";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import { getServerUserId } from "@/lib/auth";
 import { getLangCookie } from "@/lib/cookies";
+import { cn } from "@/shared/cn";
 import { AppProvider } from "@/shared/providers/AppProvider";
 import { AuthProvider } from "@/shared/providers/AuthProvider";
 import QueryProvider from "@/shared/providers/QueryProvider";
 import ToastsProvider from "@/shared/providers/ToastsProvider";
 
 import i18nConfig from "../i18n.config";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 initServerI18next(i18nConfig);
 
@@ -49,7 +53,11 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
   const resources = getResources(i18n);
 
   return (
-    <html className={`${font.variable} ${mono.variable} h-full antialiased light`} lang={lng} suppressHydrationWarning>
+    <html
+      className={cn("h-full", "antialiased", "dark", font.variable, mono.variable, "font-sans", geist.variable)}
+      lang={lng}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col" suppressHydrationWarning>
         <Background />
 
@@ -58,9 +66,9 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
             <AuthProvider initialUserId={userId}>
               <ToastsProvider />
               <AppProvider>
-                <div className="z-1">
-                  {children}
-                </div>
+                <TooltipProvider>
+                  <div className="z-1">{children}</div>
+                </TooltipProvider>
               </AppProvider>
             </AuthProvider>
           </QueryProvider>

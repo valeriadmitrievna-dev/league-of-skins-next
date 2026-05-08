@@ -66,6 +66,7 @@ const SearchChromas: FC = () => {
         {...(hasActive ? { reset } : {})}
         loading={isLoading || isFetching}
         count={count}
+        className="sticky top-5"
       />
       <div className="pb-10">
         {!!user && !user.is_verified && <EmailVerificationBanner className="mb-3" />}

@@ -63,7 +63,14 @@ const SearchSkins: FC = () => {
 
   return (
     <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">
-      <SearchSkinsFilters getValue={get} setValue={update} {...(hasActive ? { reset } : {})} loading={isLoading || isFetching} count={count} />
+      <SearchSkinsFilters
+        getValue={get}
+        setValue={update}
+        {...(hasActive ? { reset } : {})}
+        loading={isLoading || isFetching}
+        count={count}
+        className="sticky top-5"
+      />
       <div className="pb-10">
         {!!user && !user.is_verified && <EmailVerificationBanner className="mb-3" />}
         <Search value={search ?? ""} onSearch={(value) => updateSearch("search", value)} className="mb-4" />
