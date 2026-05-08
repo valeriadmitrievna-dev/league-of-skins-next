@@ -6,6 +6,7 @@ import useUser from "@/api/useUser";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
+import EmptySearchChromas from "@/emptystates/EmptySearchChromas";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { AppDataChroma } from "@/types/appdata";
@@ -71,7 +72,9 @@ const SearchChromas: FC = () => {
       <div className="pb-10">
         {!!user && !user.is_verified && <EmailVerificationBanner className="mb-3" />}
         <Search value={search ?? ""} onSearch={(value) => updateSearch("search", value)} className="mb-4" />
-        {initialized && !isLoading && !data.length && "No items"}
+        {initialized && !isLoading && !data.length && (
+          <EmptySearchChromas onClearFilters={hasActive && reset} onClearSearch={!!search && (() => updateSearch("search"))} />
+        )}
         <VirtualizedGrid
           items={data}
           loading={!initialized && isLoading}

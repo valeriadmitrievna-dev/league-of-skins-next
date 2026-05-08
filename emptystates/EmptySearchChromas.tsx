@@ -1,12 +1,12 @@
-import { SearchXIcon, XIcon } from "lucide-react";
+import { SearchXIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
 interface EmptyColorSchemesNotFoundProps {
-  onClearFilters?: () => void;
-  onClearSearch?: () => void;
+  onClearFilters?: (() => void) | false;
+  onClearSearch?: (() => void) | false;
 }
 
 const EmptySearchChromas = ({ onClearFilters, onClearSearch }: EmptyColorSchemesNotFoundProps) => {
@@ -23,14 +23,12 @@ const EmptySearchChromas = ({ onClearFilters, onClearSearch }: EmptyColorSchemes
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
         {onClearFilters && (
-          <Button variant="outline" onClick={onClearFilters}>
-            <XIcon />
+          <Button variant="outline" size="md" onClick={onClearFilters}>
             {t("colorSchemesNotFound.clearFilters")}
           </Button>
         )}
         {onClearSearch && (
-          <Button variant="outline" onClick={onClearSearch}>
-            <XIcon />
+          <Button variant="outline" size="md" onClick={onClearSearch}>
             {t("colorSchemesNotFound.clearSearch")}
           </Button>
         )}
