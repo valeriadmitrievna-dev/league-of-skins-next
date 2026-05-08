@@ -6,6 +6,7 @@ import useUser from "@/api/useUser";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
+import EmptySearchSkins from "@/emptystates/EmptySearchSkins";
 import useInfiniteLoad from "@/hooks/useInfiniteLoad";
 import { useQueryParams } from "@/hooks/useQueryParams";
 import { AppDataSkin } from "@/types/appdata";
@@ -74,7 +75,9 @@ const SearchSkins: FC = () => {
       <div className="pb-10">
         {!!user && !user.is_verified && <EmailVerificationBanner className="mb-3" />}
         <Search value={search ?? ""} onSearch={(value) => updateSearch("search", value)} className="mb-4" />
-        {initialized && !isLoading && !data.length && "No items"}
+        {initialized && !isLoading && !data.length && (
+          <EmptySearchSkins onClearFilters={hasActive && reset} onClearSearch={!!search && (() => updateSearch("search"))} />
+        )}
         <VirtualizedGrid
           items={data}
           loading={!initialized && isLoading}

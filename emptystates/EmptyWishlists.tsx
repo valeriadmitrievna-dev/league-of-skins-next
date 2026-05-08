@@ -26,7 +26,7 @@ const EmptyWishlists = async () => {
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
         <WishlistCreate>
-          <Button>{t("wishlist.create")}</Button>
+          <Button size="md">{t("wishlist.create")}</Button>
         </WishlistCreate>
       </EmptyContent>
     </Empty>

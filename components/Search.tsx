@@ -1,7 +1,7 @@
 "use client";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
-import { useState, type ChangeEvent, type ComponentProps, type FC } from "react";
+import { useEffect, useState, type ChangeEvent, type ComponentProps, type FC } from "react";
 import { useDebounce } from "react-use";
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
@@ -45,14 +45,13 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ..
     onClear?.();
   };
 
+  useEffect(() => {
+    setSearchInput(String(value ?? ""));
+  }, [value]);
+
   return (
     <InputGroup className={cn(getGroupClassName(size), "group border-0", className)}>
-      <InputGroupInput
-        placeholder={t("shared.search")}
-        {...inputProps}
-        value={searchInput}
-        onChange={changeHandler}
-      />
+      <InputGroupInput placeholder={t("shared.search")} {...inputProps} value={searchInput} onChange={changeHandler} />
       <InputGroupAddon>
         <SearchIcon />
       </InputGroupAddon>
