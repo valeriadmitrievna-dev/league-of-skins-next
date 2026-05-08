@@ -16,7 +16,7 @@ export const fetchClient = async <T>(url: string, options: RequestOptions = {}):
   const res = await fetch(url + queryString, {
     ...rest,
     headers: {
-      ...(options.body ? { "Content-Type": "application/json" } : {}),
+      ...(options.body && !(options.body instanceof FormData) ? { "Content-Type": "application/json" } : {}),
       ...headers,
     },
     credentials: "include",

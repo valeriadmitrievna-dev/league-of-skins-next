@@ -4,6 +4,7 @@ import { getT } from "next-i18next/server";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import UploadInventory from '@/widgets/UploadInventory/UploadInventory';
 
 const EmptyCollectionSkins = async () => {
   const { t } = await getT("emptystate");
@@ -18,7 +19,8 @@ const EmptyCollectionSkins = async () => {
         <EmptyDescription>{t("collectionNoSkins.description")}</EmptyDescription>
       </EmptyHeader>
       <EmptyContent className="flex-row justify-center gap-2">
-        <Button asChild>
+        <UploadInventory />
+        <Button variant="outline" asChild>
           <Link href="/search/skins">
             <SearchIcon />
             {t("collectionNoSkins.goToSkins")}

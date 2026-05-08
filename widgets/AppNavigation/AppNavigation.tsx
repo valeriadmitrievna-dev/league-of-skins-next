@@ -1,10 +1,9 @@
-import { SearchIcon, CircleQuestionMarkIcon, HeartIcon, PanelRightCloseIcon, Package2Icon, InfoIcon, UserRoundIcon } from "lucide-react";
+import { SearchIcon, CircleQuestionMarkIcon, HeartIcon, PanelRightCloseIcon, Package2Icon, InfoIcon, UserRoundIcon, BoltIcon } from "lucide-react";
 import { cookies, headers } from "next/headers";
 import Link from "next/link";
 import { getT } from "next-i18next/server";
 import { FC } from "react";
 
-import LogoutButton from "@/components/LogoutButton";
 import { Button } from "@/components/ui/button";
 import { verifyAccessToken } from "@/lib/auth";
 
@@ -27,7 +26,7 @@ const AppNavigation: FC = async () => {
   return (
     <aside className="fixed top-0 bottom-0 w-(--navigation-size) bg-background border-r flex flex-col items-center gap-8 py-5 overflow-hidden">
       <Link href="/">
-        <CircleQuestionMarkIcon className="size-8" />
+        <CircleQuestionMarkIcon className="size-8 text-primary" />
       </Link>
       <div className="flex flex-col items-center gap-2">
         <AppNavigationLink
@@ -70,8 +69,12 @@ const AppNavigation: FC = async () => {
       </div>
       <div className="flex flex-col items-center gap-2 mt-auto">
         <AppNavigationLink icon={<InfoIcon />} title={t("header.about")} href="/about" />
-        {isAuth && <LogoutButton />}
-        <Button size="icon-xl" variant="ghost" className="text-muted-foreground">
+        {isAuth && (
+          <Button size="icon-xl" variant="ghost">
+            <BoltIcon />
+          </Button>
+        )}
+        <Button size="icon-xl" variant="ghost" className="text-muted-foreground mt-4">
           <PanelRightCloseIcon />
         </Button>
       </div>

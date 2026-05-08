@@ -43,12 +43,12 @@
     },
     "collectionNoSkins": {
         "title": "No skins in collection",
-        "description": "Your skin collection is empty. Find skins and add them to your collection.",
+        "description": "Your skin collection is empty. Find skins and add them to your collection or use inventory upload.",
         "goToSkins": "Browse skins"
     },
     "collectionNoColorSchemes": {
         "title": "No color schemes in collection",
-        "description": "Your color scheme collection is empty. Find schemes and add them to your collection.",
+        "description": "Your color scheme collection is empty. Find schemes and add them to your collection or use inventory upload.",
         "goToColorSchemes": "Browse color schemes"
     },
     "statsEmpty": {

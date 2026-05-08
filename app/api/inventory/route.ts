@@ -1,0 +1,58 @@
+import { cookies } from 'next/headers';
+import { NextRequest } from "next/server";
+
+import { errorHandler, RequestError } from "@/errors";
+import { verifyAccessToken } from '@/lib/auth';
+import { createClient } from '@/lib/supabase/server';
+import { getLangAppData } from "@/shared/utils/getLangAppData";
+
+interface InventoryItem {
+  expirationDate: string;
+  f2p: boolean;
+  inventoryType: "CHAMPION_SKIN";
+  itemId: number;
+  loyalty: boolean;
+  loyaltySources: unknown[];
+  ownershipType: "OWNED";
+  purchaseDate: string;
+  quantity: number;
+  rental: boolean;
+  usedInGameDate: string;
+  uuid: string;
+  wins: number;
+}
+
+export const POST = async (req: NextRequest) => {
+  try {
+    const supabase = await createClient();
+    const cookieStore = await cookies();
+
+    const accessToken = cookieStore.get("accessToken")?.value;
+    if (!accessToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+
+    const payload = verifyAccessToken(accessToken);
+    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
+
+    const formData = await req.formData();
+    const file = formData.get("file");
+
+    if (!file || !(file instanceof File)) {
+      return Response.json({ ok: false, error: "No file provided" }, { status: 400 });
+    }
+
+    const text = await file.text();
+    const inventory = (JSON.parse(text) as InventoryItem[]).sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime());
+
+    const appData = await getLangAppData();
+    const skins = appData?.skins ?? [];
+    const chromas = appData?.chromas ?? [];
+    const userSkins = inventory.filter((item) => skins.find((skin) => skin.contentId === item.uuid)).map(i => i.uuid);
+    const userChromas = inventory.filter((item) => chromas.find((chroma) => chroma.contentId === item.uuid)).map(i => i.uuid);
+
+    await supabase.from("users").update({ owned_skins: userSkins, owned_chromas: userChromas }).eq("id", payload.userId);
+
+    return Response.json({ ok: true });
+  } catch (error) {
+    return errorHandler(error);
+  }
+};

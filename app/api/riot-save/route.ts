@@ -12,6 +12,6 @@ export const POST = async (req: NextRequest) => {
     clearAppDataCache();
     return Response.json({ ok: true });
   } catch (error) {
-    errorHandler(error)
+    return errorHandler(error)
   }
 };
