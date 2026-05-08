@@ -55,11 +55,11 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
 
   return (
     <html
-      className={cn("h-full", "antialiased", "dark", font.variable, mono.variable, "font-sans", geist.variable)}
+      className={cn("h-full min-h-screen", "antialiased", "dark", font.variable, mono.variable, "font-sans", geist.variable)}
       lang={lng}
       suppressHydrationWarning
     >
-      <body className="min-h-full flex flex-col" suppressHydrationWarning>
+      <body className="min-h-screen flex flex-col" suppressHydrationWarning>
         <Background />
 
         <I18nProvider language={lng} resources={resources}>
@@ -68,7 +68,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
               <ToastsProvider />
               <AppProvider>
                 <TooltipProvider>
-                  <div className="z-1">{children}</div>
+                  <div className="z-1 min-h-screen">{children}</div>
                 </TooltipProvider>
               </AppProvider>
             </AuthProvider>

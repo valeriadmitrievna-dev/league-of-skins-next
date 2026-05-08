@@ -1,5 +1,6 @@
 import { getUserWishlists } from "@/api/server/getUserWishlists";
 import { Typography } from "@/components/Typography";
+import EmptyWishlists from '@/emptystates/EmptyWishlists';
 import { getServerUserPayload } from '@/lib/auth';
 import { cn } from "@/shared/cn";
 import EmailVerificationBanner from "@/widgets/EmailVerificationBanner";
@@ -9,6 +10,10 @@ import WishlistCreate from "@/widgets/Wishlist/WishlistCreate";
 const WishlistsPage = async () => {
   const wishlists = await getUserWishlists();
   const user = await getServerUserPayload();
+  
+  if (!wishlists.length) {
+    return <EmptyWishlists />
+  }
 
   return (
     <section>

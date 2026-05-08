@@ -120,7 +120,6 @@
     "edit_name_title": "Название вишлиста",
     "edit_name_placeholder": "Введите название вишлиста",
     "edit_public_title": "Публичный вишлист",
-    "create_title": "Создать вишлист",
     "create_placeholder": "Название вишлиста",
     "show_owned_skins": "Показывать купленные",
     "complete": "Завершено",
@@ -129,7 +128,18 @@
     "subscribe": "Подписаться",
     "unsubscribe": "Отписаться",
     "private_true": "Приватный",
-    "private_false": "Публичный"
+    "private_false": "Публичный",
+    "create_title": "Новый вишлист",
+    "create_description": "Задайте название и выберите видимость вишлиста.",
+    "create_nameLabel": "Название",
+    "create_namePlaceholder": "Например, «Мои любимые скины»",
+    "create_visibilityLabel": "Видимость",
+    "create_visibilityPublicLabel": "Публичный",
+    "create_visibilityPublicDescription": "Любой может найти и просмотреть этот вишлист",
+    "create_visibilityPrivateLabel": "Приватный",
+    "create_visibilityPrivateDescription": "Только вы видите этот вишлист",
+    "create_cancel": "Отмена",
+    "create_submit": "Создать"
   },
   "auth": {
     "signin_title": "Вход",

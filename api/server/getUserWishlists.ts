@@ -1,6 +1,6 @@
 import { cookies, headers } from "next/headers";
 
-import { CDragonAsset } from '@/shared/types';
+import { CDragonAsset } from "@/shared/types";
 import { DbWishlist } from "@/types/db";
 
 export const getUserWishlists = async () => {
@@ -16,9 +16,15 @@ export const getUserWishlists = async () => {
       },
       credentials: "include",
     });
-    const wishlists: (DbWishlist & { preview: CDragonAsset[] })[] = await res.json();
-    return wishlists ?? [];
+
+    if (res.ok) {
+      const wishlists: (DbWishlist & { preview: CDragonAsset[] })[] = await res.json();
+      return wishlists ?? [];
+    }
+
+    return [];
   } catch (error) {
+    console.log("[DEV]", "IN ERROR");
     return [];
   }
 };

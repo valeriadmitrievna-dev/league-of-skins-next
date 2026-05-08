@@ -1,0 +1,60 @@
+{
+    "skinsNotFound": {
+        "title": "No skins found",
+        "description": "Nothing matched your search. Try clearing the filters or changing your search query.",
+        "clearFilters": "Clear filters",
+        "clearSearch": "Clear search"
+    },
+    "colorSchemesNotFound": {
+        "title": "No color schemes found",
+        "description": "Nothing matched your search. Try clearing the filters or changing your search query.",
+        "clearFilters": "Clear filters",
+        "clearSearch": "Clear search"
+    },
+    "skinNotFound": {
+        "title": "Skin not found",
+        "description": "The requested skin doesn't exist or has been removed. Go back to search and try again.",
+        "goToSearch": "Go to search"
+    },
+    "noWishlists": {
+        "title": "No wishlists yet",
+        "description": "You don't have any wishlists yet. Create your first one to start saving your favorite skins.",
+        "createNew": "Create wishlist"
+    },
+    "guestWishlistNotFound": {
+        "title": "Wishlist not found",
+        "description": "The wishlist at this link doesn't exist or has been removed. Try searching for other wishlists.",
+        "goToWishlists": "Browse wishlists"
+    },
+    "wishlistNoSkins": {
+        "title": "No skins in wishlist",
+        "description": "This wishlist is empty. Find skins you like and add them here.",
+        "goToSkins": "Browse skins"
+    },
+    "wishlistNoColorSchemes": {
+        "title": "No color schemes in wishlist",
+        "description": "This wishlist is empty. Find color schemes you like and add them here.",
+        "goToColorSchemes": "Browse color schemes"
+    },
+    "wishlistsSearchNotFound": {
+        "title": "No wishlists found",
+        "description": "No wishlists matched your search. Try changing or clearing your search query.",
+        "clearSearch": "Clear search"
+    },
+    "collectionNoSkins": {
+        "title": "No skins in collection",
+        "description": "Your skin collection is empty. Find skins and add them to your collection.",
+        "goToSkins": "Browse skins"
+    },
+    "collectionNoColorSchemes": {
+        "title": "No color schemes in collection",
+        "description": "Your color scheme collection is empty. Find schemes and add them to your collection.",
+        "goToColorSchemes": "Browse color schemes"
+    },
+    "statsEmpty": {
+        "title": "Nothing to show yet",
+        "description": "Statistics will appear once you add skins or color schemes.",
+        "goToSkins": "Browse skins",
+        "goToColorSchemes": "Browse color schemes"
+    }
+}

@@ -13,7 +13,7 @@ interface ErrorPageProps {
 
 const ErrorPage: FC<ErrorPageProps> = ({ error, reset }) => {
   useEffect(() => {
-    console.error(error);
+    console.error(error.message);
 
     if (error.message?.includes("Failed to load chunk")) {
       window.location.reload();
