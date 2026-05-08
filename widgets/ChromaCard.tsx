@@ -72,9 +72,10 @@ const ChromaCard: FC<ChromaCardProps> = ({
     >
       <Card
         className={cn(
-          "block relative group aspect-90/101 rounded-md overflow-hidden p-0",
+          "block relative group aspect-90/101 rounded-md overflow-hidden p-0 ring-0",
           "transition-none duration-700 group-data-state-on:bg-primary/10",
-          "group-data-state-on:border-primary/50! focus-within:border-ring",
+          "group-data-state-on:ring-1 group-data-state-on:ring-primary/50!",
+          "focus-within:ring-1 focus-within:ring-primary"
         )}
       >
         {plain ? <div>{ImageContent}</div> : <Link href={`/skins/${data.skinContentId}`}>{ImageContent}</Link>}
