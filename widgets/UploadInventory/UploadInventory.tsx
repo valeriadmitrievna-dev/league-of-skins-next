@@ -1,8 +1,8 @@
 "use client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AlertCircleIcon, CheckIcon, CloudUploadIcon, FileJsonIcon, UploadIcon } from "lucide-react";
 import { Trans, useT } from "next-i18next/client";
-import { ChangeEvent, FC, PropsWithChildren, useRef, useState } from "react";
+import { ChangeEvent, CSSProperties, FC, PropsWithChildren, useRef, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -15,11 +15,13 @@ const FEEDBACK_FORM_URL = "https://forms.gle/WpiGodbBcs9cRV7M7";
 const DIRECT_MESSAGE_URL = "https://t.me/+nBzwgyuff9pkMjUy";
 
 interface UploadInventoryProps extends PropsWithChildren {
-  //
+  className?: string;
+  style?: CSSProperties;
 }
 
-const UploadInventory: FC<UploadInventoryProps> = ({ children }) => {
-  const { t } = useT();
+const UploadInventory: FC<UploadInventoryProps> = ({ children, className, style }) => {
+  const { t, i18n } = useT();
+  const queryClient = useQueryClient();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [open, setOpen] = useState(false);
@@ -34,6 +36,9 @@ const UploadInventory: FC<UploadInventoryProps> = ({ children }) => {
         method: "POST",
         body: formData,
       });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["collectionSkins", i18n.language] });
     },
   });
 
@@ -59,7 +64,7 @@ const UploadInventory: FC<UploadInventoryProps> = ({ children }) => {
     <Dialog open={open} onOpenChange={openChangeHandler}>
       <DialogTrigger asChild>
         {children ?? (
-          <Button>
+          <Button className={className} style={style}>
             <CloudUploadIcon />
             {t("uploadInventory.button")}
           </Button>

@@ -1,10 +1,11 @@
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers";
 import { NextRequest } from "next/server";
 
 import { errorHandler, RequestError } from "@/errors";
-import { verifyAccessToken } from '@/lib/auth';
-import { createClient } from '@/lib/supabase/server';
+import { verifyAccessToken } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { parseRiotDate } from "@/shared/utils/parseRiotDate";
 
 interface InventoryItem {
   expirationDate: string;
@@ -41,13 +42,18 @@ export const POST = async (req: NextRequest) => {
     }
 
     const text = await file.text();
-    const inventory = (JSON.parse(text) as InventoryItem[]).sort((a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime());
+    const inventory = (JSON.parse(text) as InventoryItem[]).sort((a, b) => {
+      const dateA = parseRiotDate(a.purchaseDate).getTime();
+      const dateB = parseRiotDate(b.purchaseDate).getTime();
+
+      return dateB - dateA;
+    });
 
     const appData = await getLangAppData();
     const skins = appData?.skins ?? [];
     const chromas = appData?.chromas ?? [];
-    const userSkins = inventory.filter((item) => skins.find((skin) => skin.contentId === item.uuid)).map(i => i.uuid);
-    const userChromas = inventory.filter((item) => chromas.find((chroma) => chroma.contentId === item.uuid)).map(i => i.uuid);
+    const userSkins = inventory.filter((item) => skins.find((skin) => skin.contentId === item.uuid)).map((i) => i.uuid);
+    const userChromas = inventory.filter((item) => chromas.find((chroma) => chroma.contentId === item.uuid)).map((i) => i.uuid);
 
     await supabase.from("users").update({ owned_skins: userSkins, owned_chromas: userChromas }).eq("id", payload.userId);
 

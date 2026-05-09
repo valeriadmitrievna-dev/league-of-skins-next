@@ -1,14 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
+import { useT } from 'next-i18next/client';
 
 import { fetchClient } from "@/lib/fetchClient";
+import { getLanguageCode } from '@/shared/utils/getLanguageCode';
 import { AppDataSkinline } from "@/types/appdata";
 
-const useSkinlines = (langCode: string = "en_US") => {
+const useSkinlines = (inventory?: boolean) => {
+  const { i18n } = useT();
+
   return useQuery({
-    queryKey: ["skinlines", langCode],
+    queryKey: ["skinlines", getLanguageCode(i18n.language)],
     queryFn: () =>
       fetchClient<{ count: number; data: AppDataSkinline[] }>("/api/skinlines", {
-        headers: { Language: langCode },
+        query: inventory ? { inventory } : {},
       }).then((res) => res.data ?? []),
   });
 };

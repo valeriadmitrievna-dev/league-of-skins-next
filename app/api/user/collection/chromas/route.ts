@@ -4,9 +4,9 @@ import { NextRequest } from "next/server";
 import { errorHandler, RequestError } from "@/errors";
 import { verifyAccessToken } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { createSkinPredicate } from "@/shared/utils/createSkinPredicate";
+import { createChromaPredicate } from "@/shared/utils/createChromaPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getLanguageCode } from '@/shared/utils/getLanguageCode';
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 
 export const GET = async (req: NextRequest) => {
@@ -28,13 +28,13 @@ export const GET = async (req: NextRequest) => {
     if (!user || error) throw new RequestError({ code: "ERR_0001", status: 401, message: error.message ?? "No user" });
 
     const appData = await getLangAppData(getLanguageCode(lng));
-    const skins = appData?.skins ?? [];
+    const chromas = appData?.chromas ?? [];
 
-    const predicate = await createSkinPredicate({ ...params, legacy: 'all', owned: 'all' }, user, lng);
-    const result = skins.filter((skin) => user.owned_skins.includes(skin.contentId)).filter(predicate);
+    const predicate = createChromaPredicate({ ...params, skin: "all", owned: "all" }, user);
+    const result = chromas.filter((skin) => user.owned_chromas.includes(skin.contentId)).filter(predicate);
 
     const sorted = result.sort((a, b) => {
-      return user.owned_skins.indexOf(a.contentId) - user.owned_skins.indexOf(b.contentId);
+      return user.owned_chromas.indexOf(a.contentId) - user.owned_chromas.indexOf(b.contentId);
     });
 
     return Response.json({ count: result.length, data: getPaginatedSlice(sorted, page, size) });

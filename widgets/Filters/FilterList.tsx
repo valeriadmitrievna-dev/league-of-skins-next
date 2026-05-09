@@ -15,15 +15,16 @@ interface FilterListProps {
   disabled?: boolean;
   loading?: boolean;
   label?: string;
+  placeholder?: string;
   className?: string;
 }
 
-const FilterList: FC<FilterListProps> = ({ options, value, onChange, disabled, loading, label, className }) => {
+const FilterList: FC<FilterListProps> = ({ options, value, onChange, disabled, loading, label, placeholder, className }) => {
   const { t } = useT();
 
   return (
     <Field className={cn("gap-2", className)}>
-      <Label className="text-primary/80">{label}</Label>
+      {label && <Label className="text-primary/80">{label}</Label>}
       {loading ? (
         <Skeleton className="h-9" />
       ) : (
@@ -34,7 +35,7 @@ const FilterList: FC<FilterListProps> = ({ options, value, onChange, disabled, l
           onValueChange={onChange}
           disabled={disabled}
         >
-          <ComboboxInput placeholder={t("shared.search")} showClear disabled={disabled} />
+          <ComboboxInput placeholder={placeholder ?? t("shared.search")} showClear disabled={disabled} />
           <ComboboxContent className="p-1 py-2">
             <ComboboxEmpty>{t("shared.no-items-found")}</ComboboxEmpty>
             <ComboboxList className="scrollbar p-0 px-1">

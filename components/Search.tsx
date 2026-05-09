@@ -1,7 +1,7 @@
 "use client";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
-import { useEffect, useState, type ChangeEvent, type ComponentProps, type FC } from "react";
+import { ReactNode, useEffect, useState, type ChangeEvent, type ComponentProps, type FC } from "react";
 import { useDebounce } from "react-use";
 
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
@@ -13,9 +13,10 @@ interface SearchProps extends Omit<ComponentProps<"input">, "size"> {
   size?: SearchSize;
   onSearch?: (value: string) => void;
   onClear?: () => void;
+  addon?: ReactNode;
 }
 
-const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ...inputProps }) => {
+const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, addon, ...inputProps }) => {
   const { t } = useT();
 
   const [searchInput, setSearchInput] = useState(String(value ?? ""));
@@ -55,11 +56,16 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ..
       <InputGroupAddon>
         <SearchIcon />
       </InputGroupAddon>
-      {value && (
+      {value && !addon && (
         <InputGroupAddon align="inline-end">
           <InputGroupButton size="icon-xs" onClick={clearHandler}>
             <XIcon />
           </InputGroupButton>
+        </InputGroupAddon>
+      )}
+      {!!addon && (
+        <InputGroupAddon align="inline-end" className='pr-1.5'>
+          {addon}
         </InputGroupAddon>
       )}
     </InputGroup>

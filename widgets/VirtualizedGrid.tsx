@@ -1,9 +1,10 @@
 "use client";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState, type FC, type JSX, type ReactNode } from "react";
+import { useLayoutEffect, useMemo, useRef, useState, type FC, type JSX, type ReactNode } from "react";
 import { useWindowSize } from "react-use";
 
 import Skeleton from "@/components/Skeleton";
+import useMounted from '@/hooks/useMounted';
 import { cn } from "@/shared/cn";
 import { BREAKPOINTS } from "@/shared/constants/styles";
 
@@ -59,7 +60,7 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [, setContainerWidth] = useState(0);
 
-  const [isMounted, setIsMounted] = useState(false);
+  const isMounted = useMounted();
   const { width: windowWidth } = useWindowSize();
 
   useLayoutEffect(() => {
@@ -73,12 +74,8 @@ const VirtualizedGrid: FC<VirtualizedGridProps> = ({
     return () => obs.disconnect();
   }, []);
 
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const columns = useMemo(() => {
-    if (!isMounted) return defaultBreakpoints.at(-1)?.columns ?? 5;
+    if (!isMounted) return responsiveColumns.at(-1)?.columns ?? 5;
     const sorted = [...responsiveColumns].sort((a, b) => b.minWidth - a.minWidth);
     const bp = sorted.find((b) => windowWidth >= b.minWidth);
     return bp?.columns ?? 4;
