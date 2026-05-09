@@ -4,8 +4,9 @@ import { NextRequest } from "next/server";
 import { errorHandler, RequestError } from "@/errors";
 import { verifyAccessToken } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { createSkinPredicate } from '@/shared/utils/createSkinPredicate';
+import { createSkinPredicate } from "@/shared/utils/createSkinPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { getLanguageCode } from '@/shared/utils/getLanguageCode';
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 
 export const GET = async (req: NextRequest) => {
@@ -26,15 +27,19 @@ export const GET = async (req: NextRequest) => {
     const { data: user, error } = await supabase.from("users").select("*").eq("id", payload.userId).single();
     if (!user || error) throw new RequestError({ code: "ERR_0001", status: 401, message: error.message ?? "No user" });
 
-    const appData = await getLangAppData(lng);
+    const appData = await getLangAppData(getLanguageCode(lng));
     const skins = appData?.skins ?? [];
 
-    const result = user.owned_skins.map((u) => skins.find((s) => s.contentId === u)).filter((s) => !!s);
-
     const predicate = await createSkinPredicate(params, user, lng);
-    const filteredSkins = appData.skins.filter(predicate);
+    const result = skins.filter((skin) => user.owned_skins.includes(skin.contentId)).filter(predicate);
 
-    return Response.json({ count: result.length, data: getPaginatedSlice(filteredSkins, page, size) });
+    const sorted = result.sort((a, b) => {
+      return user.owned_skins.indexOf(a.contentId) - user.owned_skins.indexOf(b.contentId);
+    });
+
+    console.log('[DEV]', sorted);
+
+    return Response.json({ count: result.length, data: getPaginatedSlice(sorted, page, size) });
   } catch (error) {
     return errorHandler(error);
   }
