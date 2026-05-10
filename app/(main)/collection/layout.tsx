@@ -8,7 +8,7 @@ const CollectionLayout: FC<PropsWithChildren> = async ({ children }) => {
   const { t } = await getT();
 
   return (
-    <div className="flex flex-col h-full gap-y-4">
+    <div className="flex flex-col h-full grow gap-y-4">
       <div className="flex items-center justify-between">
         <Typography.H2>{t("header.collection")}</Typography.H2>
         <UploadInventory />

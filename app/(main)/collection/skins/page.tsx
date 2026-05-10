@@ -5,6 +5,7 @@ import { FC, useCallback } from "react";
 
 import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from '@/components/Search';
+import EmptyCollectionSkins from '@/emptystates/EmptyCollectionSkins';
 import { fetchClient } from "@/lib/fetchClient";
 import { BREAKPOINTS } from "@/shared/constants/styles";
 import { ODataResponse } from "@/shared/types";
@@ -33,6 +34,7 @@ const CollectionSkinsPage: FC = () => {
         <CollectionTabs className="w-75 p-1" />
         <Search />
       </div>
+      {!data?.data.length && !isLoading && <EmptyCollectionSkins className='h-full' />}
       <VirtualizedGrid
         items={data?.data ?? []}
         overscan={4}

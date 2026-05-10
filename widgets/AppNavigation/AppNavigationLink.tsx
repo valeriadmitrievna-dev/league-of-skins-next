@@ -41,7 +41,7 @@ const AppNavigationLink: FC<AppNavigationLinkProps> = ({ icon, title, href, grou
         </Button>
       </HoverCardTrigger>
       <HoverCardContent side="right" align="start" sideOffset={0} alignOffset={-10} className="pl-2 border-none! bg-transparent! shadow-none ring-0">
-        <div className="p-2 rounded-lg bg-popover flex flex-col">
+        <div className="p-2 rounded-lg bg-popover flex flex-col shadow-lg/80">
           {group.map((link) => (
             <Button
               key={link.href}
