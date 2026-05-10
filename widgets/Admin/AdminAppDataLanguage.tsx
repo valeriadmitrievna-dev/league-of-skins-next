@@ -51,7 +51,7 @@ const AdminAppDataLanguage: FC<AdminAppDataLanguageProps> = ({ language, data, o
     });
 
   return (
-    <div className="rounded-lg border border-border bg-card p-4 flex flex-col gap-3">
+    <div className="rounded-lg bg-card p-4 flex flex-col gap-3">
       <div className="flex items-center justify-between gap-x-2">
         <span className="font-mono text-sm font-medium">{language}</span>
         {data.lastUpdate && (

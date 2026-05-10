@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { verifyAccessToken } from "@/lib/auth";
 
 import AppNavigationLink from "./AppNavigationLink";
+import AdminNavLink from '../Admin/AdminNavLink';
 import LanguageSwitcher from '../LanguageSwitcher';
 
 const AppNavigation: FC = async () => {
@@ -76,6 +77,7 @@ const AppNavigation: FC = async () => {
             <BoltIcon />
           </Button>
         )}
+        <AdminNavLink />
         <Button size="icon-xl" variant="ghost" className="text-muted-foreground mt-4">
           <PanelRightCloseIcon />
         </Button>

@@ -1,9 +1,10 @@
 import { ChartNoAxesColumnIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
-import { getT } from 'next-i18next/server';
+import { getT } from "next-i18next/server";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
+import UploadInventory from "@/widgets/UploadInventory/UploadInventory";
 
 const EmptyCollectionDashboard = async () => {
   const { t } = await getT("emptystate");
@@ -17,19 +18,22 @@ const EmptyCollectionDashboard = async () => {
         <EmptyTitle>{t("statsEmpty.title")}</EmptyTitle>
         <EmptyDescription>{t("statsEmpty.description")}</EmptyDescription>
       </EmptyHeader>
-      <EmptyContent className="flex-row justify-center gap-2">
-        <Button variant="outline" asChild>
-          <Link href="/search/skins">
-            <SearchIcon />
-            {t("statsEmpty.goToSkins")}
-          </Link>
-        </Button>
-        <Button variant="outline" asChild>
-          <Link href="/search/chromas">
-            <SearchIcon />
-            {t("statsEmpty.goToColorSchemes")}
-          </Link>
-        </Button>
+      <EmptyContent className="flex-col align-center gap-2">
+        <div className="flex flex-row justify-center gap-2">
+          <Button variant="outline" asChild>
+            <Link href="/search/skins">
+              <SearchIcon />
+              {t("statsEmpty.goToSkins")}
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href="/search/chromas">
+              <SearchIcon />
+              {t("statsEmpty.goToColorSchemes")}
+            </Link>
+          </Button>
+        </div>
+        <UploadInventory />
       </EmptyContent>
     </Empty>
   );

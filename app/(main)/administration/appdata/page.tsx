@@ -17,24 +17,6 @@ import { AppDataChampion, AppDataChroma, AppDataLang, AppDataSkin, AppDataSkinli
 import { RiotChampion, RiotChampionItem, RiotSkinline } from "@/types/riot";
 import AdminAppDataLanguage from "@/widgets/Admin/AdminAppDataLanguage";
 
-// const getFileSize = async (url: string | null): Promise<number> => {
-//   if (!url) return 0;
-//   try {
-//     const res = await fetch(url, { method: "HEAD" });
-//     return parseInt(res.headers.get("content-length") ?? "0");
-//   } catch {
-//     return 0;
-//   }
-// };
-
-// const formatBytes = (bytes: number) => {
-//   if (bytes === 0) return "0 B";
-//   const k = 1024;
-//   const sizes = ["B", "KB", "MB", "GB"];
-//   const i = Math.floor(Math.log(bytes) / Math.log(k));
-//   return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`;
-// };
-
 const toLocalUrl = (url: string | null): string | null => {
   if (!url) return null;
   const filename = url.split("/").pop();
@@ -421,16 +403,9 @@ const AdministrationAppData = () => {
   }, [data]);
 
   return (
-    <div className="grid grid-rows-[auto_1fr_360px] gap-2 h-full overflow-hidden">
-      <div className="w-full bg-muted/50 overflow-hidden rounded-md p-2 flex justify-between g-x-10">
-        <p className="max-w-180 font-mono">Use only with VPN</p>
-        <Button onClick={() => updateHandler(["en_US", "ru_RU"])} disabled={globalLoading}>
-          {globalLoading && <Spinner />}
-          Update all data
-        </Button>
-      </div>
-      <ScrollArea className="size-full bg-muted/50 overflow-hidden rounded-md p-2">
-        <div className="grid grid-cols-3 gap-2">
+    <div className="grid grid-rows-[1fr_360px] gap-2 h-full overflow-hidden grow">
+      <ScrollArea className="size-full overflow-hidden rounded-md">
+        <div className="grid grid-cols-4 gap-2">
           {loading && <Skeleton count={4} asChild />}
           {!loading &&
             languages &&
@@ -439,7 +414,11 @@ const AdministrationAppData = () => {
             ))}
         </div>
       </ScrollArea>
-      <ScrollArea className="size-full bg-muted/50 overflow-hidden rounded-md p-2">
+      <ScrollArea className="size-full bg-muted/50 overflow-hidden rounded-md p-2 relative">
+        <Button onClick={() => updateHandler(["en_US", "ru_RU"])} disabled={globalLoading} className='absolute top-2 right-2 z-1'>
+          {globalLoading && <Spinner />}
+          Update all data
+        </Button>
         {logs.map((log, i) => (
           <LogLine key={i} {...log} className="text-xs" />
         ))}
