@@ -1,7 +1,7 @@
-import { cookies } from 'next/headers';
+import { cookies } from "next/headers";
 
-import { RequestError } from '@/errors';
-import { verifyAccessToken } from '@/lib/auth';
+import { RequestError } from "@/errors";
+import { verifyAccessToken } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
 interface UserOwned {
@@ -21,8 +21,8 @@ export const getServerUserOwned = async (): Promise<UserOwned> => {
   if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
 
   const [{ data: skinRows, error: skinError }, { data: chromaRows, error: chromaError }] = await Promise.all([
-    supabase.from("user_skins").select("contentId").eq("userId", payload.userId),
-    supabase.from("user_chromas").select("contentId").eq("userId", payload.userId),
+    supabase.from("user_skins").select("contentId").eq("user_id", payload.userId),
+    supabase.from("user_chromas").select("contentId").eq("user_id", payload.userId),
   ]);
 
   if (skinError) throw skinError;

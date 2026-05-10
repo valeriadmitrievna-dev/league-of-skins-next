@@ -7,7 +7,7 @@ import { fetchClient } from "@/lib/fetchClient";
 const DashboardPage = () => {
   const { data: dashboardActivity } = useQuery({
     queryKey: ["dashboard_activity"],
-    queryFn: () => fetchClient("/api/user/collection/dashboard/activity"),
+    queryFn: () => fetchClient("/api/user/collection/dashboard/collections"),
   });
 
   console.log('[DEV]', dashboardActivity);
