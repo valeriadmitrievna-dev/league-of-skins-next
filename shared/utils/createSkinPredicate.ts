@@ -1,13 +1,11 @@
-import { isEqual } from "lodash";
+import { isEqual } from 'lodash';
 
-import { SearchSkinsRequest } from "@/api/types";
-import { AppDataSkin } from "@/types/appdata";
-import { DbUser } from "@/types/db";
+import { SearchSkinsRequest } from '@/api/types';
+import { checkSearch } from "@/shared/utils/checkSearch";
+import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { AppDataSkin } from '@/types/appdata';
 
-import { checkSearch } from "./checkSearch";
-import { getLangAppData } from "./getLangAppData";
-
-export const createSkinPredicate = async (query: SearchSkinsRequest, user: DbUser | null, lang: string) => {
+export const createSkinPredicate = async (query: SearchSkinsRequest, ownedSkinIds: Set<string> | null, lang: string) => {
   const chromas = (await getLangAppData(lang))?.chromas || [];
   const chroma = chromas?.find((chroma) => chroma.id.toString() === query.chromaId?.toString());
 
@@ -29,8 +27,8 @@ export const createSkinPredicate = async (query: SearchSkinsRequest, user: DbUse
       return query.legacy === "on" ? skin.isLegacy : !skin.isLegacy;
     },
     byOwned: (skin: AppDataSkin) => {
-      if (!user || query.owned === "all") return true;
-      return query.owned === "on" ? user.owned_skins.includes(skin.contentId) : !user.owned_skins.includes(skin.contentId);
+      if (!ownedSkinIds || query.owned === "all") return true;
+      return query.owned === "on" ? ownedSkinIds.has(skin.contentId) : !ownedSkinIds.has(skin.contentId);
     },
     byServer: (skin: AppDataSkin) => {
       if (query.server === "latest") return skin.pbe === false;

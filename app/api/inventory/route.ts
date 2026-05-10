@@ -45,17 +45,50 @@ export const POST = async (req: NextRequest) => {
     const inventory = (JSON.parse(text) as InventoryItem[]).sort((a, b) => {
       const dateA = parseRiotDate(a.purchaseDate).getTime();
       const dateB = parseRiotDate(b.purchaseDate).getTime();
-
       return dateB - dateA;
     });
 
     const appData = await getLangAppData();
     const skins = appData?.skins ?? [];
     const chromas = appData?.chromas ?? [];
-    const userSkins = inventory.filter((item) => skins.find((skin) => skin.contentId === item.uuid)).map((i) => i.uuid);
-    const userChromas = inventory.filter((item) => chromas.find((chroma) => chroma.contentId === item.uuid)).map((i) => i.uuid);
 
-    await supabase.from("users").update({ owned_skins: userSkins, owned_chromas: userChromas }).eq("id", payload.userId);
+    const skinContentIds = new Set(skins.map((s) => s.contentId));
+    const chromaContentIds = new Set(chromas.map((c) => c.contentId));
+
+    const skinRows = inventory
+      .filter((item) => skinContentIds.has(item.uuid))
+      .map((item) => ({
+        userId: payload.userId,
+        contentId: item.uuid,
+        purchased_date: parseRiotDate(item.purchaseDate).toISOString(),
+      }));
+
+    const chromaRows = inventory
+      .filter((item) => chromaContentIds.has(item.uuid))
+      .map((item) => ({
+        userId: payload.userId,
+        contentId: item.uuid,
+        purchased_date: parseRiotDate(item.purchaseDate).toISOString(),
+      }));
+
+    // Удаляем старые записи пользователя и вставляем новые
+    const [{ error: deleteSkinError }, { error: deleteChromaError }] = await Promise.all([
+      supabase.from("user_skins").delete().eq("userId", payload.userId),
+      supabase.from("user_chromas").delete().eq("userId", payload.userId),
+    ]);
+
+    if (deleteSkinError) throw deleteSkinError;
+    if (deleteChromaError) throw deleteChromaError;
+
+    if (skinRows.length > 0) {
+      const { error: insertSkinError } = await supabase.from("user_skins").insert(skinRows);
+      if (insertSkinError) throw insertSkinError;
+    }
+
+    if (chromaRows.length > 0) {
+      const { error: insertChromaError } = await supabase.from("user_chromas").insert(chromaRows);
+      if (insertChromaError) throw insertChromaError;
+    }
 
     return Response.json({ ok: true });
   } catch (error) {

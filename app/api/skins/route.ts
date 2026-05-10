@@ -24,7 +24,6 @@ export const GET = async (req: NextRequest) => {
     const skins: AppDataSkin[] = filteredSkins.map((skin) => {
       const originSkin = originAppData.skins.find((originSkin) => originSkin.contentId === skin.contentId);
       return { ...skin, originName: originSkin?.name };
-      // return { ...skin, ...(user ? { owned: user.owned_skins.includes(skin.contentId) } : {}), originName: originSkin?.name };
     });
 
     return Response.json({

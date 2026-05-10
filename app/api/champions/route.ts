@@ -4,7 +4,7 @@ import { getLangCookie } from "@/lib/cookies";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
-import { getServerUser } from "@/shared/utils/getServerUser";
+import { getServerUserOwned } from "@/shared/utils/getServerUserOwned";
 
 export const GET = async (req: NextRequest) => {
   const searchParams = req.nextUrl.searchParams;
@@ -15,9 +15,10 @@ export const GET = async (req: NextRequest) => {
 
   if (inventory === "true") {
     const skins = appData?.skins ?? [];
-    const user = await getServerUser();
-    const ownedSkins = skins.filter((skin) => user.owned_skins.includes(skin.contentId));
-    const result = champions.filter(c => ownedSkins.find(s => c.id === s.championId))
+    const { ownedSkinIds } = await getServerUserOwned();
+    const result = champions.filter((c) =>
+      skins.some((s) => s.championId === c.id && ownedSkinIds.has(s.contentId))
+    );
 
     return Response.json({
       count: result.length,

@@ -3,6 +3,7 @@ import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
 
 import useUser from "@/api/useUser";
+import useUserOwned from "@/api/useUserOwned";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
@@ -30,6 +31,8 @@ const SearchSkins: FC = () => {
   const server = get("server");
 
   const { data: user } = useUser();
+  const { data: userOwned } = useUserOwned();
+
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/skins",
     queryKey: ["skins", i18n.language],
@@ -48,18 +51,18 @@ const SearchSkins: FC = () => {
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
       const skin = item as AppDataSkin;
-      const ownedSkins = user?.owned_skins ?? [];
+      const ownedSkinIds = userOwned?.ownedSkinIds ?? [];
       return (
         <SkinCard
           key={skin.id}
           data={skin}
-          owned={ownedSkins.includes(skin.contentId)}
+          owned={ownedSkinIds.includes(skin.contentId)}
           toggleOwnedButton={user?.is_verified}
           addToWishlistButton={user?.is_verified}
         />
       );
     },
-    [user],
+    [user, userOwned],
   );
 
   return (

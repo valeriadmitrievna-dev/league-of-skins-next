@@ -14,7 +14,7 @@ export const proxy = async (request: NextRequest) => {
   const isAuthRoute = AUTH_ROUTES.some((path) => pathname.startsWith(path));
 
   if (isProtected && !isAuth) {
-    return NextResponse.redirect(new URL("/auth/signin", request.url));
+    return NextResponse.redirect(new URL("/auth/signin?redirect=" + pathname, request.url));
   }
 
   if (isAuthRoute && isAuth) {

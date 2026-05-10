@@ -14,7 +14,7 @@ export const GET = async (req: NextRequest) => {
     const lang = await getLangCookie();
 
     const appData = await getLangAppData(getLanguageCode(lang));
-    const predicate = createChromaPredicate(params, null);
+    const predicate = createChromaPredicate({ ...params, skin: "all", owned: "all" }, null, null);
     const filteredChromas = appData.chromas.filter(predicate);
 
     return Response.json({

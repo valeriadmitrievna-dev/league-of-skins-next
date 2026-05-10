@@ -3,6 +3,7 @@ import { useT } from "next-i18next/client";
 import { FC, useCallback } from "react";
 
 import useUser from "@/api/useUser";
+import useUserOwned from "@/api/useUserOwned";
 import ScrollTopButton from "@/components/ScrollTopButton";
 import Search from "@/components/Search";
 import { Spinner } from "@/components/ui/spinner";
@@ -28,6 +29,8 @@ const SearchChromas: FC = () => {
   const server = get("server");
 
   const { data: user } = useUser();
+  const { data: userOwned } = useUserOwned();
+
   const { data, isLoading, isFetching, loaderRef, count, initialized } = useInfiniteLoad({
     url: "/api/chromas",
     queryKey: ["chromas", i18n.language],
@@ -44,18 +47,18 @@ const SearchChromas: FC = () => {
   const renderItem = useCallback(
     (item: unknown, _index: number) => {
       const chroma = item as AppDataChroma;
-      const ownedChromas = user?.owned_chromas ?? [];
+      const ownedChromaIds = userOwned?.ownedChromaIds ?? [];
       return (
         <ChromaCard
           key={chroma.id}
           data={chroma}
-          owned={ownedChromas.includes(chroma.contentId)}
+          owned={ownedChromaIds.includes(chroma.contentId)}
           toggleOwnedButton={user?.is_verified}
           addToWishlistButton={user?.is_verified}
         />
       );
     },
-    [user],
+    [user, userOwned],
   );
 
   return (

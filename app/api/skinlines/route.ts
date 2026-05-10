@@ -6,7 +6,7 @@ import { getLangCookie } from "@/lib/cookies";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
-import { getServerUser } from "@/shared/utils/getServerUser";
+import { getServerUserOwned } from "@/shared/utils/getServerUserOwned";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -18,11 +18,10 @@ export const GET = async (req: NextRequest) => {
 
     if (inventory === "true") {
       const skins = appData?.skins ?? [];
-      const user = await getServerUser();
+      const { ownedSkinIds } = await getServerUserOwned();
       const ownedSkinlines = skins
-        .filter((skin) => user.owned_skins.includes(skin.contentId))
-        .map((s) => s.skinlines)
-        .flat();
+        .filter((skin) => ownedSkinIds.has(skin.contentId))
+        .flatMap((s) => s.skinlines);
       const result = uniqBy(ownedSkinlines, "id");
 
       return Response.json({

@@ -40,34 +40,41 @@ export type Database = {
           },
         ];
       };
-      refresh_tokens: {
+      user_chromas: {
         Row: {
-          created_at: string;
-          id: string;
-          token: string;
-          user_id: string;
+          contentId: string;
+          purchased_date: string | null;
+          userId: string;
         };
         Insert: {
-          created_at?: string;
-          id?: string;
-          token: string;
-          user_id: string;
+          contentId: string;
+          purchased_date?: string | null;
+          userId: string;
         };
         Update: {
-          created_at?: string;
-          id?: string;
-          token?: string;
-          user_id?: string;
+          contentId?: string;
+          purchased_date?: string | null;
+          userId?: string;
         };
-        Relationships: [
-          {
-            foreignKeyName: "refresh_tokens_user_id_users_id_fk";
-            columns: ["user_id"];
-            isOneToOne: false;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          },
-        ];
+        Relationships: [];
+      };
+      user_skins: {
+        Row: {
+          contentId: string;
+          purchased_date: string;
+          userId: string;
+        };
+        Insert: {
+          contentId: string;
+          purchased_date: string;
+          userId: string;
+        };
+        Update: {
+          contentId?: string;
+          purchased_date?: string;
+          userId?: string;
+        };
+        Relationships: [];
       };
       user_subscriptions: {
         Row: {
@@ -106,8 +113,6 @@ export type Database = {
           id: string;
           is_verified: boolean;
           name: string;
-          owned_chromas: string[];
-          owned_skins: string[];
           password: string;
           role: Database["public"]["Enums"]["role"];
           updated_at: string;
@@ -118,8 +123,6 @@ export type Database = {
           id?: string;
           is_verified?: boolean;
           name: string;
-          owned_chromas?: string[];
-          owned_skins?: string[];
           password: string;
           role?: Database["public"]["Enums"]["role"];
           updated_at: string;
@@ -130,8 +133,6 @@ export type Database = {
           id?: string;
           is_verified?: boolean;
           name?: string;
-          owned_chromas?: string[];
-          owned_skins?: string[];
           password?: string;
           role?: Database["public"]["Enums"]["role"];
           updated_at?: string;
@@ -199,6 +200,10 @@ export type Database = {
           token: string;
           user_id: string;
         }[];
+      };
+      get_skin_social_stats: {
+        Args: { p_owned_skin_ids: string[]; p_user_id: string };
+        Returns: Json;
       };
     };
     Enums: {

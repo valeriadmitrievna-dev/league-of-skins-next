@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 
 import { errorHandler } from "@/errors";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getServerUser } from "@/shared/utils/getServerUser";
+import { getServerUserOwned } from "@/shared/utils/getServerUserOwned";
 
 export const GET = async (req: NextRequest) => {
   try {
@@ -14,9 +14,8 @@ export const GET = async (req: NextRequest) => {
 
     if (inventory === "true") {
       const skins = appData?.skins ?? [];
-      const user = await getServerUser();
-      const ownedSkins = skins.filter((skin) => user.owned_skins.includes(skin.contentId));
-      const result = new Set(ownedSkins.map((s) => s.rarity));
+      const { ownedSkinIds } = await getServerUserOwned();
+      const result = new Set(skins.filter((skin) => ownedSkinIds.has(skin.contentId)).map((s) => s.rarity));
 
       return Response.json([...result]);
     }
