@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { parseRiotDate } from "@/shared/utils/parseRiotDate";
 
+const BATCH_SIZE = 200;
+
 interface InventoryItem {
   expirationDate: string;
   f2p: boolean;
@@ -22,6 +24,20 @@ interface InventoryItem {
   uuid: string;
   wins: number;
 }
+
+interface OwnedRow {
+  userId: string;
+  contentId: string;
+  purchased_date: string;
+}
+
+const insertInBatches = async (supabase: Awaited<ReturnType<typeof createClient>>, table: "user_skins" | "user_chromas", rows: OwnedRow[]) => {
+  for (let i = 0; i < rows.length; i += BATCH_SIZE) {
+    const batch = rows.slice(i, i + BATCH_SIZE);
+    const { error } = await supabase.from(table).insert(batch);
+    if (error) throw error;
+  }
+};
 
 export const POST = async (req: NextRequest) => {
   try {
@@ -71,24 +87,37 @@ export const POST = async (req: NextRequest) => {
         purchased_date: parseRiotDate(item.purchaseDate).toISOString(),
       }));
 
-    // Удаляем старые записи пользователя и вставляем новые
-    const [{ error: deleteSkinError }, { error: deleteChromaError }] = await Promise.all([
-      supabase.from("user_skins").delete().eq("userId", payload.userId),
-      supabase.from("user_chromas").delete().eq("userId", payload.userId),
-    ]);
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SUPABASE_URL}/rest/v1/rpc/sync_user_inventory`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+        Authorization: `Bearer ${process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!}`,
+      },
+      body: JSON.stringify({
+        p_user_id: payload.userId,
+        p_skins: skinRows,
+        p_chromas: chromaRows,
+      }),
+    });
 
-    if (deleteSkinError) throw deleteSkinError;
-    if (deleteChromaError) throw deleteChromaError;
+    console.log("status:", res.status);
+    const body = await res.text();
+    console.log("body:", body);
 
-    if (skinRows.length > 0) {
-      const { error: insertSkinError } = await supabase.from("user_skins").insert(skinRows);
-      if (insertSkinError) throw insertSkinError;
-    }
+    // console.log("calling rpc, skins:", skinRows.length, "chromas:", chromaRows.length);
+    // const { error } = await supabase.rpc("sync_user_inventory", {
+    //   p_user_id: payload.userId,
+    //   p_skins: skinRows,
+    //   p_chromas: chromaRows,
+    // });
 
-    if (chromaRows.length > 0) {
-      const { error: insertChromaError } = await supabase.from("user_chromas").insert(chromaRows);
-      if (insertChromaError) throw insertChromaError;
-    }
+    // console.log("rpc done, error:", error);
+
+    // if (error) throw error;
+
+    await insertInBatches(supabase, "user_skins", skinRows);
+    await insertInBatches(supabase, "user_chromas", chromaRows);
 
     return Response.json({ ok: true });
   } catch (error) {

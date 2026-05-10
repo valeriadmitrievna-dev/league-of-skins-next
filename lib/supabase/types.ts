@@ -205,6 +205,10 @@ export type Database = {
         Args: { p_owned_skin_ids: string[]; p_user_id: string };
         Returns: Json;
       };
+      sync_user_inventory: {
+        Args: { p_chromas: Json; p_skins: Json; p_user_id: string };
+        Returns: undefined;
+      };
     };
     Enums: {
       role: "user" | "admin";
