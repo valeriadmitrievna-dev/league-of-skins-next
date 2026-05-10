@@ -34,8 +34,8 @@ const SearchSkinsFilters: FC<SearchFiltersProps> = ({ getValue, setValue, loadin
 
   const langCode = getLanguageCode(i18n.language);
 
-  const { data: champions = [], isLoading: isChampionsLoading } = useChampions(langCode);
-  const { data: skinlines = [], isLoading: isSkinlinesLoading } = useSkinlines(langCode);
+  const { data: champions = [], isLoading: isChampionsLoading } = useChampions();
+  const { data: skinlines = [], isLoading: isSkinlinesLoading } = useSkinlines();
   const { data: rarities = [], isLoading: isRaritiesLoading } = useRarities();
   const { data: chromas = [], isLoading: isChromasLoading } = useChromasUnique(langCode);
 

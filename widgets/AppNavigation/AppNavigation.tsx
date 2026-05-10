@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { verifyAccessToken } from "@/lib/auth";
 
 import AppNavigationLink from "./AppNavigationLink";
+import LanguageSwitcher from '../LanguageSwitcher';
 
 const AppNavigation: FC = async () => {
   const cookieStore = await cookies();
@@ -68,6 +69,7 @@ const AppNavigation: FC = async () => {
         )}
       </div>
       <div className="flex flex-col items-center gap-2 mt-auto">
+        <LanguageSwitcher />
         <AppNavigationLink icon={<InfoIcon />} title={t("header.about")} href="/about" />
         {isAuth && (
           <Button size="icon-xl" variant="ghost">

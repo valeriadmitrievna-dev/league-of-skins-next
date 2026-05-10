@@ -6,7 +6,7 @@ import { verifyAccessToken } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { createSkinPredicate } from "@/shared/utils/createSkinPredicate";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
-import { getLanguageCode } from '@/shared/utils/getLanguageCode';
+import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getPaginatedSlice } from "@/shared/utils/getPaginatedSlice";
 
 export const GET = async (req: NextRequest) => {
@@ -30,12 +30,11 @@ export const GET = async (req: NextRequest) => {
     const appData = await getLangAppData(getLanguageCode(lng));
     const skins = appData?.skins ?? [];
 
-    const predicate = await createSkinPredicate({ ...params, legacy: 'all', owned: 'all' }, user, lng);
+    const predicate = await createSkinPredicate({ ...params, legacy: "all", owned: "all" }, user, lng);
     const result = skins.filter((skin) => user.owned_skins.includes(skin.contentId)).filter(predicate);
 
-    const sorted = result.sort((a, b) => {
-      return user.owned_skins.indexOf(a.contentId) - user.owned_skins.indexOf(b.contentId);
-    });
+    const indexMap = new Map(user.owned_skins.map((id: string, i: number) => [id, i]));
+    const sorted = result.sort((a, b) => (indexMap.get(a.contentId) ?? 0) - (indexMap.get(b.contentId) ?? 0));
 
     return Response.json({ count: result.length, data: getPaginatedSlice(sorted, page, size) });
   } catch (error) {

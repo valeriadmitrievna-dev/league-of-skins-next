@@ -36,11 +36,11 @@ const AppNavigationLink: FC<AppNavigationLinkProps> = ({ icon, title, href, grou
   return (
     <HoverCard openDelay={100} closeDelay={0}>
       <HoverCardTrigger asChild>
-        <Button size="icon-xl" variant="ghost" className={cn({ 'text-primary!': group.some((link) => pathname.startsWith(link.href)) })}>
+        <Button size="icon-xl" variant="ghost" className={cn({ "text-primary!": group.some((link) => pathname.startsWith(link.href)) })}>
           {icon}
         </Button>
       </HoverCardTrigger>
-      <HoverCardContent side="right" sideOffset={0} className="pl-2 border-none! bg-transparent! shadow-none ring-0">
+      <HoverCardContent side="right" align="start" sideOffset={0} alignOffset={-10} className="pl-2 border-none! bg-transparent! shadow-none ring-0">
         <div className="p-2 rounded-lg bg-popover flex flex-col">
           {group.map((link) => (
             <Button

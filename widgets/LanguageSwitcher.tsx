@@ -34,7 +34,7 @@ const LanguageSwitcher: FC = () => {
           </Button>
         }
       />
-      <ComboboxContent className="min-w-40 p-1 py-2">
+      <ComboboxContent className="min-w-40 p-1 py-2" side="right" align='end'>
         <ComboboxList className="scrollbar p-0 px-1">
           {([locale, { name }]) => {
             const formattedName = name[0].toUpperCase() + name.slice(1);

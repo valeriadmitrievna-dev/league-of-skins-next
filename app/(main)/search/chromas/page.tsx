@@ -59,7 +59,7 @@ const SearchChromas: FC = () => {
   );
 
   return (
-    <div className="w-full md:grid grid-cols-[280px_1fr] gap-6">
+    <div className="w-full md:grid grid-cols-[300px_1fr] gap-6">
       <SearchChromasFilters
         getValue={get}
         setValue={update}

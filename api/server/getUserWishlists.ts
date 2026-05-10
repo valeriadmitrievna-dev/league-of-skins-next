@@ -24,7 +24,6 @@ export const getUserWishlists = async () => {
 
     return [];
   } catch (error) {
-    console.log("[DEV]", "IN ERROR");
     return [];
   }
 };

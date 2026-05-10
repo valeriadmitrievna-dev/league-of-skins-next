@@ -1,4 +1,4 @@
-import { uniqBy } from 'lodash';
+import { uniqBy } from "lodash";
 import { NextRequest } from "next/server";
 
 import { errorHandler } from "@/errors";
@@ -19,8 +19,11 @@ export const GET = async (req: NextRequest) => {
     if (inventory === "true") {
       const skins = appData?.skins ?? [];
       const user = await getServerUser();
-      const ownedSkinlines = skins.filter((skin) => user.owned_skins.includes(skin.contentId)).map(s => s.skinlines).flat();
-      const result = uniqBy(ownedSkinlines, 'id')
+      const ownedSkinlines = skins
+        .filter((skin) => user.owned_skins.includes(skin.contentId))
+        .map((s) => s.skinlines)
+        .flat();
+      const result = uniqBy(ownedSkinlines, "id");
 
       return Response.json({
         count: result.length,

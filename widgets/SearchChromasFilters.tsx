@@ -18,7 +18,6 @@ import { Field } from "@/components/ui/field";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/shared/cn";
 import { useAuth } from "@/shared/providers/AuthProvider";
-import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 
 import FilterPanelTitle from "./Filters/FilterPanelTitle";
 import FilterToggleGroup from "./Filters/FilterToggleGroup";
@@ -47,9 +46,7 @@ const SearchChromasFilters: FC<SearchFiltersProps> = ({
   const { t, i18n } = useT();
   const { isAuth } = useAuth();
 
-  const langCode = getLanguageCode(i18n.language);
-
-  const { data: champions = [], isLoading: isChampionsLoading } = useChampions(langCode);
+  const { data: champions = [], isLoading: isChampionsLoading } = useChampions();
   const { data: skins = [], isLoading: isSkinsLoading } = useSkins(getValue("championId"), i18n.language);
 
   const ownedOptions = [

@@ -1,6 +1,7 @@
-import { ArrowBigUpIcon } from "lucide-react";
+"use client";
+import { ArrowUpIcon } from "lucide-react";
 import { useEffect, useState, type FC } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 
 import { Button } from "./ui/button";
 
@@ -37,12 +38,10 @@ const ScrollTopButton: FC<ScrollTopButtonProps> = () => {
   }
 
   return (
-    <div className="my-container absolute-center h-screen fixed! z-10 pointer-events-none flex items-end justify-end pb-5">
-      <Button className="pointer-events-auto" onClick={scrollToTopHandler} size="lg">
-        <ArrowBigUpIcon />
-        {t('shared.scroll_to_top')}
-      </Button>
-    </div>
+    <Button className="fixed z-10 bottom-5 right-5" onClick={scrollToTopHandler} size="lg">
+      <ArrowUpIcon />
+      {t("shared.scroll_to_top")}
+    </Button>
   );
 };
 

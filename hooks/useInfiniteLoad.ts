@@ -1,6 +1,5 @@
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { RefObject, useEffect, useRef } from "react";
-import { useIntersection } from "react-use";
+import { useQueryClient, useInfiniteQuery } from "@tanstack/react-query";
+import { useEffect, useRef } from "react";
 
 import { fetchClient } from "@/lib/fetchClient";
 
@@ -13,23 +12,15 @@ interface InfiniteLoad {
   skip?: boolean;
 }
 
-const useInfiniteLoad = <T extends Record<string, unknown>>({
-  url,
-  queryKey,
-  params = {},
-  headers = {},
-  size = 20,
-  skip,
-}: InfiniteLoad) => {
+const useInfiniteLoad = <T extends Record<string, unknown>>({ url, queryKey, params = {}, headers = {}, size = 20, skip }: InfiniteLoad) => {
   const ref = useRef<HTMLDivElement | null>(null);
-  const intersection = useIntersection(ref as RefObject<HTMLDivElement>, {
-    root: null,
-    rootMargin: "200px",
-    threshold: 0,
-  });
+  const queryClient = useQueryClient();
+
+  const fullQueryKey = [...queryKey, params, headers];
+  const queryKeyString = JSON.stringify(fullQueryKey);
 
   const query = useInfiniteQuery({
-    queryKey: [...queryKey, params, headers],
+    queryKey: fullQueryKey,
     queryFn: ({ pageParam }) =>
       fetchClient<{ count: number; data: T[] }>(url, {
         query: { ...params, page: pageParam as number, size },
@@ -44,11 +35,30 @@ const useInfiniteLoad = <T extends Record<string, unknown>>({
     enabled: !skip,
   });
 
+  const { hasNextPage, fetchNextPage, isFetching } = query;
+
   useEffect(() => {
-    if (intersection?.isIntersecting && query.hasNextPage && !query.isFetchingNextPage) {
-      query.fetchNextPage();
+    const el = ref.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && hasNextPage && !isFetching) {
+          fetchNextPage();
+        }
+      },
+      { root: null, rootMargin: "200px", threshold: 0 },
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetching, fetchNextPage]);
+
+  useEffect(() => {
+    if (skip) {
+      queryClient.resetQueries({ queryKey: fullQueryKey });
     }
-  }, [intersection?.isIntersecting, query.hasNextPage, query.isFetchingNextPage]);
+  }, [skip, queryKeyString]);
 
   return {
     data: query.data?.pages.flatMap((p) => p.data) ?? [],

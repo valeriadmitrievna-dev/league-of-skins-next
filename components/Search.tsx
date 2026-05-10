@@ -9,14 +9,15 @@ import { cn } from "@/shared/cn";
 
 type SearchSize = "default" | "sm" | "lg";
 
-interface SearchProps extends Omit<ComponentProps<"input">, "size"> {
+interface SearchProps extends Omit<ComponentProps<"input">, "size" | 'suffix' | 'prefix'> {
   size?: SearchSize;
   onSearch?: (value: string) => void;
   onClear?: () => void;
-  addon?: ReactNode;
+  prefix?: ReactNode;
+  suffix?: ReactNode;
 }
 
-const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, addon, ...inputProps }) => {
+const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, prefix, suffix, ...inputProps }) => {
   const { t } = useT();
 
   const [searchInput, setSearchInput] = useState(String(value ?? ""));
@@ -33,7 +34,7 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ad
 
   const getGroupClassName = (size?: SearchSize) => {
     if (size === "lg") return "h-12 px-1";
-    if (size === "sm") return "h-8";
+    if (size === "sm") return "h-9";
     else return "h-11 px-1 gap-x-1";
   };
 
@@ -53,19 +54,19 @@ const Search: FC<SearchProps> = ({ size, onSearch, onClear, className, value, ad
   return (
     <InputGroup className={cn(getGroupClassName(size), "group border-0", className)}>
       <InputGroupInput placeholder={t("shared.search")} {...inputProps} value={searchInput} onChange={changeHandler} />
-      <InputGroupAddon>
-        <SearchIcon />
+      <InputGroupAddon className={cn({ 'pl-1.5': !!prefix })}>
+        {prefix ?? <SearchIcon />}
       </InputGroupAddon>
-      {value && !addon && (
+      {searchInput && !suffix && (
         <InputGroupAddon align="inline-end">
           <InputGroupButton size="icon-xs" onClick={clearHandler}>
             <XIcon />
           </InputGroupButton>
         </InputGroupAddon>
       )}
-      {!!addon && (
+      {!!suffix && (
         <InputGroupAddon align="inline-end" className='pr-1.5'>
-          {addon}
+          {suffix}
         </InputGroupAddon>
       )}
     </InputGroup>

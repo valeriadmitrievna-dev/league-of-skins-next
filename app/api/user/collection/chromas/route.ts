@@ -33,9 +33,8 @@ export const GET = async (req: NextRequest) => {
     const predicate = createChromaPredicate({ ...params, skin: "all", owned: "all" }, user);
     const result = chromas.filter((skin) => user.owned_chromas.includes(skin.contentId)).filter(predicate);
 
-    const sorted = result.sort((a, b) => {
-      return user.owned_chromas.indexOf(a.contentId) - user.owned_chromas.indexOf(b.contentId);
-    });
+    const indexMap = new Map(user.owned_chromas.map((id: string, i: number) => [id, i]));
+    const sorted = result.sort((a, b) => (indexMap.get(a.contentId) ?? 0) - (indexMap.get(b.contentId) ?? 0));
 
     return Response.json({ count: result.length, data: getPaginatedSlice(sorted, page, size) });
   } catch (error) {

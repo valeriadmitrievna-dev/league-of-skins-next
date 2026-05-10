@@ -69,9 +69,9 @@ function ToggleGroupItem({
       data-spacing={context.spacing}
       className={cn(
         "shrink-0 group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-end]:pr-1.5 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-start]:pl-1.5 group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-lg group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-lg group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-lg group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-lg group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-horizontal/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-vertical/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
-        "data-[variant=default]:rounded-md data-[variant=default]:bg-transparent! data-[variant=default]:hover:bg-muted/50!",
+        "data-[variant=default]:rounded-md data-[variant=default]:bg-transparent! data-[variant=default]:text-muted-foreground data-[variant=default]:hover:text-foreground",
         "data-[variant=default]:data-state-on:bg-primary! data-[variant=default]:data-state-on:text-primary-foreground! data-[variant=default]:data-state-on:z-5",
-        "data-[variant=default]:data-state-on:not-last:-mr-1 data-[variant=default]:data-state-on:not-first:-ml-1",
+        // "data-[variant=default]:data-state-on:not-last:-mr-1 data-[variant=default]:data-state-on:not-first:-ml-1",
         toggleVariants({
           variant: context.variant || variant,
           size: context.size || size,
