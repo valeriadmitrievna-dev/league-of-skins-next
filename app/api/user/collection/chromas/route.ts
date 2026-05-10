@@ -21,8 +21,8 @@ export const GET = async (req: NextRequest) => {
     const user = await getServerUser();
 
     const [{ data: userChromasRows, error: chromasError }, { data: userSkinsRows, error: skinsError }] = await Promise.all([
-      supabase.from("user_chromas").select("contentId, purchased_date").eq("userId", user.id).order("purchased_date", { ascending: false }),
-      supabase.from("user_skins").select("contentId").eq("userId", user.id),
+      supabase.from("user_chromas").select("contentId, purchased_date").eq("user_id", user.id).order("purchased_date", { ascending: false }),
+      supabase.from("user_skins").select("contentId").eq("user_id", user.id),
     ]);
 
     if (chromasError) throw chromasError;

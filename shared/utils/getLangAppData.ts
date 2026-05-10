@@ -2,12 +2,14 @@ import { RequestError } from "@/errors";
 import { AppDataLang } from "@/types/appdata";
 
 import { readJsonFile } from "./getFileData";
+import { getLanguageCode } from './getLanguageCode';
 import { baseFolder } from "../constants/riot";
 
 const cache = new Map<string, unknown>();
 const inflight = new Map<string, Promise<AppDataLang>>();
 
-export const getLangAppData = async (lang: string = "en_US"): Promise<AppDataLang> => {
+export const getLangAppData = async (lng: string = "en_US"): Promise<AppDataLang> => {
+  const lang = getLanguageCode(lng);
   if (cache.has(lang)) return cache.get(lang) as AppDataLang;
 
   if (inflight.has(lang)) return inflight.get(lang)!;

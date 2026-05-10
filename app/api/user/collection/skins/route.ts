@@ -23,7 +23,7 @@ export const GET = async (req: NextRequest) => {
     const { data: userSkinsRows, error } = await supabase
       .from("user_skins")
       .select("contentId, purchased_date")
-      .eq("userId", user.id)
+      .eq("user_id", user.id)
       .order("purchased_date", { ascending: false });
 
     if (error) throw error;

@@ -44,17 +44,17 @@ export type Database = {
         Row: {
           contentId: string;
           purchased_date: string | null;
-          userId: string;
+          user_id: string;
         };
         Insert: {
           contentId: string;
           purchased_date?: string | null;
-          userId: string;
+          user_id: string;
         };
         Update: {
           contentId?: string;
           purchased_date?: string | null;
-          userId?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -62,17 +62,17 @@ export type Database = {
         Row: {
           contentId: string;
           purchased_date: string;
-          userId: string;
+          user_id: string;
         };
         Insert: {
           contentId: string;
           purchased_date: string;
-          userId: string;
+          user_id: string;
         };
         Update: {
           contentId?: string;
           purchased_date?: string;
-          userId?: string;
+          user_id?: string;
         };
         Relationships: [];
       };
@@ -194,6 +194,8 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      bulk_upsert_chromas: { Args: { rows: Json }; Returns: undefined };
+      bulk_upsert_skins: { Args: { rows: Json }; Returns: undefined };
       consume_refresh_token: {
         Args: { p_token: string };
         Returns: {
@@ -204,10 +206,6 @@ export type Database = {
       get_skin_social_stats: {
         Args: { p_owned_skin_ids: string[]; p_user_id: string };
         Returns: Json;
-      };
-      sync_user_inventory: {
-        Args: { p_chromas: Json; p_skins: Json; p_user_id: string };
-        Returns: undefined;
       };
     };
     Enums: {
