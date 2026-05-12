@@ -1,15 +1,18 @@
-import { getT } from 'next-i18next/server';
+"use client";
 
-import { getLangAppData } from '@/shared/utils/getLangAppData';
-import AdminTags from '@/widgets/Admin/AdminTags';
+import { useQuery } from '@tanstack/react-query';
 
-const AdministrationTest = async () => {
-  const { i18n } = await getT();
+import { fetchClient } from '@/lib/fetchClient';
 
-  const data = await getLangAppData(i18n.language);
-  const skinlines = data?.skinlines ?? [];
+const AdministrationTest = () => {
+  const { data: dashboardActivity } = useQuery({
+    queryKey: ["test"],
+    queryFn: () => fetchClient("/api/user/collection/dashboard/social"),
+  });
 
-  return <AdminTags skinlines={skinlines} />
+  console.log("[DEV]", dashboardActivity);
+
+  return <div>test</div>;
 };
 
 export default AdministrationTest;

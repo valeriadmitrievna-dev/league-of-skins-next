@@ -52,9 +52,7 @@ export const GET = async (_req: NextRequest) => {
 
         if (skin) {
           rarestSkin = {
-            contentId: skin.contentId,
-            name: skin.name,
-            championName: skin.championName,
+            data: skin,
             ownershipPercent: Math.round((rarestCount / totalUsers) * 10000) / 100,
           };
         }

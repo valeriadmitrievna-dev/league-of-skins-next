@@ -4,11 +4,12 @@ import { NextRequest } from "next/server";
 import { errorHandler } from "@/errors";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
+import { getRandomFromArray } from '@/shared/utils/getRandomFromArray';
 import { getServerUserOwned } from "@/shared/utils/getServerUserOwned";
 import { ChampionProgress, SkinChromaProgress, SkinlineProgress, StatsCollectionsResponse } from "@/types/dashboard";
 
 const MIN_SKINLINE_SIZE = 2;
-const TARGET_ENTRIES = 3;
+const TARGET_ENTRIES = 5;
 
 const pickTopN = <T extends { completed: boolean; owned: number; total: number }>(entries: T[], n: number): T[] => {
   const completed = entries.filter((e) => e.completed);
@@ -24,10 +25,7 @@ export const GET = async (_req: NextRequest) => {
     const cookieStore = await cookies();
     const lng = cookieStore.get("i18next")?.value ?? "en";
 
-    const [appData, { ownedSkinIds, ownedChromaIds }] = await Promise.all([
-      getLangAppData(getLanguageCode(lng)),
-      getServerUserOwned(),
-    ]);
+    const [appData, { ownedSkinIds, ownedChromaIds }] = await Promise.all([getLangAppData(getLanguageCode(lng)), getServerUserOwned()]);
 
     const allSkins = (appData?.skins ?? []).filter((s) => !s.pbe);
     const allChromas = (appData?.chromas ?? []).filter((c) => !c.pbe);
@@ -48,13 +46,17 @@ export const GET = async (_req: NextRequest) => {
 
     const skinlineProgress: SkinlineProgress[] = [...skinlineMap.entries()]
       .filter(([, v]) => v.total.size >= MIN_SKINLINE_SIZE)
-      .map(([id, v]) => ({
-        id,
-        name: v.name,
-        owned: v.owned.size,
-        total: v.total.size,
-        completed: v.owned.size === v.total.size,
-      }));
+      .map(([id, v]) => {
+        const skin = getRandomFromArray(allSkins.filter(s => !!s.skinlines.find(sl => sl.id === id)))
+        return {
+          id,
+          name: v.name,
+          owned: v.owned.size,
+          total: v.total.size,
+          completed: v.owned.size === v.total.size,
+          image: skin.image,
+        };
+      });
 
     const skinlines = pickTopN(skinlineProgress, TARGET_ENTRIES);
 
@@ -80,6 +82,7 @@ export const GET = async (_req: NextRequest) => {
           owned: v.owned.size,
           total: v.total.size,
           completed: v.owned.size === v.total.size,
+          image: champion?.image,
         };
       });
 
@@ -96,6 +99,7 @@ export const GET = async (_req: NextRequest) => {
           owned: v.owned.size,
           total: v.total.size,
           completed: false,
+          image: champion?.image,
         };
       })
       .sort((a, b) => a.owned / a.total - b.owned / b.total)
@@ -121,15 +125,19 @@ export const GET = async (_req: NextRequest) => {
 
     const skinChromaProgress: SkinChromaProgress[] = [...chromaBySkin.entries()]
       .filter(([, v]) => v.owned.size > 0)
-      .map(([skinId, v]) => ({
-        skinId,
-        skinName: v.skinName,
-        championId: v.championId,
-        championName: v.championName,
-        owned: v.owned.size,
-        total: v.total.size,
-        completed: v.owned.size === v.total.size,
-      }));
+      .map(([skinId, v]) => {
+        const skin = allSkins.find((s) => s.contentId === skinId)!;
+        return {
+          skinId,
+          skinName: v.skinName,
+          championId: v.championId,
+          championName: v.championName,
+          owned: v.owned.size,
+          total: v.total.size,
+          completed: v.owned.size === v.total.size,
+          image: skin?.image,
+        };
+      });
 
     const skinChromas = pickTopN(skinChromaProgress, TARGET_ENTRIES);
 
