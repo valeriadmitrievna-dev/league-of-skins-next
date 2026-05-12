@@ -69,7 +69,7 @@ export const GET = async (_req: NextRequest) => {
       const champion = allChampions.find((c) => c.id === topId);
       if (champion) {
         mostExpensiveChampion = {
-          champion: { id: champion.id, key: champion.key, name: champion.name },
+          champion: champion,
           totalRp: topRp,
         };
       }

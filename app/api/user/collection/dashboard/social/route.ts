@@ -11,12 +11,13 @@ import { CollectionRank, CollectionRankData, StatsSocialResponse } from "@/types
 
 // Веса редкостей для rarity score
 const RARITY_WEIGHTS: Record<string, number> = {
+  kTranscendent: 20,
+  kExalted: 15,
   kUltimate: 10,
   kMythic: 7,
   kLegendary: 5,
   kEpic: 3,
   kRare: 2,
-  kUncommon: 1,
   kNoRarity: 0,
 };
 

@@ -39,7 +39,7 @@ export interface StatsOverviewResponse {
   topChampions: {
     place: number;
     count: number;
-    champions: { id: string; key: string; name: string; image: AppDataChampion['image'] }[];
+    champions: { id: string; key: string; name: string; image: AppDataChampion["image"] }[];
   }[];
   /** п.3 — имеющихся скинов из общего количества */
   skinsTotal: { owned: number; total: number };
@@ -79,7 +79,7 @@ export interface StatsSpendingResponse {
   rarity: RarityEntry[];
   /** п.17 — самый дорогой чемпион */
   mostExpensiveChampion: {
-    champion: { id: string; key: string; name: string };
+    champion: AppDataChampion;
     totalRp: number;
   } | null;
 }
