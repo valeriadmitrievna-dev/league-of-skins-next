@@ -107,6 +107,18 @@ export interface StatsActivityResponse {
 
 // ─── GET /stats/social ──────────────────────────────────────────────────────
 
+export type CollectionRank = "Iron" | "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond" | "Master";
+
+export interface CollectionRankData {
+  score: number; // 0–100
+  rank: CollectionRank;
+  breakdown: {
+    completeness: number; // вклад полноты (0–40)
+    rarity: number; // вклад редкости (0–35)
+    completionist: number; // вклад завершённости (0–25)
+  };
+}
+
 export interface StatsSocialResponse {
   /** п.8 — самый редкий owned скин */
   rarestSkin: {
@@ -118,6 +130,8 @@ export interface StatsSocialResponse {
     percentile: number;
     totalPlayers: number;
   };
+  /** ранг коллекции */
+  collectionRank: CollectionRankData;
 }
 
 // ─── GET /stats/chromas ─────────────────────────────────────────────────────

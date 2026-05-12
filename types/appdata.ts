@@ -34,14 +34,6 @@ export interface AppDataSkin {
   contentId: string;
   name: string;
   pbe?: boolean;
-  release?: number;
-  price?: number;
-  sale?: {
-    price: number;
-    discount: number;
-    startDate: string;
-    endDate: string;
-  };
   image: {
     uncentered: CDragonAsset;
     centered: CDragonAsset;
@@ -100,4 +92,16 @@ export interface AppDataChromaItem {
   championId: string;
   colors: string[];
   pbe: boolean;
+}
+
+export interface AppDataPrice {
+  contentId: string;
+  price: number;
+}
+
+export interface AppDataSale {
+  itemId: number;
+  startDate: Date;
+  endDate: Date;
+  price: number;
 }

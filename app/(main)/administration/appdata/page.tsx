@@ -1,8 +1,11 @@
 "use client";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import { isAfter } from "date-fns";
 import { uniqBy } from "lodash";
+import { BadgePercentIcon, HandCoinsIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 
+import InputFile from "@/components/InputFile";
 import LogLine from "@/components/LogLine";
 import Skeleton from "@/components/Skeleton";
 import { Button } from "@/components/ui/button";
@@ -13,9 +16,35 @@ import { Log } from "@/lib/logger";
 import { cDragonUrl, dDragonUrl } from "@/shared/constants/riot";
 import { LangProgress } from "@/shared/riot/types";
 import { getCDragonPath } from "@/shared/utils/getCDragonPath";
-import { AppDataChampion, AppDataChroma, AppDataLang, AppDataSkin, AppDataSkinline } from "@/types/appdata";
+import { parseRiotDate } from "@/shared/utils/parseRiotDate";
+import { AppDataChampion, AppDataChroma, AppDataLang, AppDataPrice, AppDataSale, AppDataSkin, AppDataSkinline } from "@/types/appdata";
 import { RiotChampion, RiotChampionItem, RiotSkinline } from "@/types/riot";
 import AdminAppDataLanguage from "@/widgets/Admin/AdminAppDataLanguage";
+
+interface CatalogPriceLCU {
+  active: boolean;
+  itemInstanceId: string;
+  prices: { cost: number }[];
+  subInventoryType: "RECOLOR" | "";
+}
+
+interface SaleLCU {
+  active: boolean;
+  item: {
+    itemId: number;
+  };
+  sale: {
+    endDate: string;
+    prices: [
+      {
+        cost: number;
+        currency: "RP";
+        discount: number;
+      },
+    ];
+    startDate: string;
+  };
+}
 
 const toLocalUrl = (url: string | null): string | null => {
   if (!url) return null;
@@ -29,9 +58,21 @@ const AdministrationAppData = () => {
   const [languages, setLanguages] = useState<Record<string, LangProgress>>({});
   const [globalLoading, setGlobalLoading] = useState(false);
 
-  const { data, isLoading: loading } = useQuery({
+  const { data: appData, isLoading: loading } = useQuery<Record<string, LangProgress>>({
     queryKey: ["admin-appdata"],
-    queryFn: () => fetchClient<Record<string, LangProgress>>("/api/admin/appdata"),
+    queryFn: () => fetchClient("/api/admin/appdata"),
+    staleTime: 0,
+  });
+
+  const { data: appPrices } = useQuery<AppDataPrice[]>({
+    queryKey: ["admin-prices"],
+    queryFn: () => fetchClient("/api/admin/prices"),
+    staleTime: 0,
+  });
+
+  const { data: appSales } = useQuery<AppDataSale[]>({
+    queryKey: ["admin-sales"],
+    queryFn: () => fetchClient("/api/admin/sales"),
     staleTime: 0,
   });
 
@@ -44,6 +85,26 @@ const AdministrationAppData = () => {
     onError: (error, { lang }) => {
       logger.error(error.message);
       updateLanguageState(lang, { status: "done" });
+    },
+  });
+
+  const { mutate: saveAppPrices } = useMutation({
+    mutationFn: (body: AppDataPrice[]) => fetchClient("/api/admin/prices", { method: "POST", body: JSON.stringify(body) }),
+    onSuccess: async (_) => {
+      logger.success(`Prices successfully updated!`);
+    },
+    onError: (error) => {
+      logger.error(error.message);
+    },
+  });
+
+  const { mutate: saveAppSales } = useMutation({
+    mutationFn: (body: AppDataSale[]) => fetchClient("/api/admin/sales", { method: "POST", body: JSON.stringify(body) }),
+    onSuccess: async (_) => {
+      logger.success(`Prices successfully updated!`);
+    },
+    onError: (error) => {
+      logger.error(error.message);
     },
   });
 
@@ -80,6 +141,8 @@ const AdministrationAppData = () => {
   };
 
   const updateHandler = async (langs: string | string[]) => {
+    if (globalLoading) return;
+
     setLogs([]);
     setGlobalLoading(true);
 
@@ -130,7 +193,7 @@ const AdministrationAppData = () => {
       try {
         logger.log(`[${lang}] Get skinlines...`);
         updateLanguageState(lang, { categories: { skinlines: "loading" } });
-        const skinlinesLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/skinlines.json`;
+        const skinlinesLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/skinlines.json`;
         const skinlinesLtsRes = await fetch(skinlinesLtsUrl);
         const riot_skinlinesLts: RiotSkinline[] = ((await skinlinesLtsRes.json()) ?? []).filter((s: RiotSkinline) => s.name);
         skinlinesLts.push(...riot_skinlinesLts);
@@ -147,7 +210,7 @@ const AdministrationAppData = () => {
       // Get pbe skinlines
       try {
         logger.log(`[${lang}] Get skinlines PBE...`);
-        const skinlinesPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/skinlines.json`;
+        const skinlinesPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/skinlines.json`;
         const skinlinesPbeRes = await fetch(skinlinesPbeUrl);
         const riot_skinlinesPbe: RiotSkinline[] = ((await skinlinesPbeRes.json()) ?? []).filter((s: RiotSkinline) => s.name);
         skinlinesPbe.push(...riot_skinlinesPbe);
@@ -171,9 +234,9 @@ const AdministrationAppData = () => {
       try {
         logger.log(`[${lang}] Get champions...`);
         updateLanguageState(lang, { categories: { champions: "loading" } });
-        const championsRes = await fetch(`${dDragonUrl}/cdn/${versions[0]}/data/${lang}/champion.json`);
+        const championsRes = await fetch(`${dDragonUrl}/cdn/${versions[0]}/appData/${lang}/champion.json`);
         const championsObject = await championsRes.json();
-        const riot_champions: RiotChampionItem[] = Object.values(championsObject.data);
+        const riot_champions: RiotChampionItem[] = Object.values(championsObject.appData);
         champions.push(
           ...riot_champions.map((c) => ({
             id: String(c.id),
@@ -182,13 +245,13 @@ const AdministrationAppData = () => {
             image: {
               full: `${dDragonUrl}/cdn/img/champion/splash/${c.id}_0.jpg`,
               loading: `${dDragonUrl}/cdn/img/champion/loading/${c.id}_0.jpg`,
-              icon: toLocalUrl(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`)!,
+              icon: toLocalUrl(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/default/v1/champion-icons/${c.key}.png`)!,
             },
           })),
         );
 
         for (const c of riot_champions) {
-          allMediaUrls.add(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`);
+          allMediaUrls.add(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/default/v1/champion-icons/${c.key}.png`);
         }
 
         logger.success(
@@ -223,8 +286,8 @@ const AdministrationAppData = () => {
       try {
         for await (const champion of champions) {
           logger.log(`[${lang}] ${champion.name}`);
-          const championLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/champions/${champion.key}.json`;
-          const championPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/champions/${champion.key}.json`;
+          const championLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/champions/${champion.key}.json`;
+          const championPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/champions/${champion.key}.json`;
 
           const [championLtsRes, championPbeRes] = await Promise.all([fetch(championLtsUrl), fetch(championPbeUrl)]);
           const [championLts, championPbe]: [RiotChampion, RiotChampion] = await Promise.all([championLtsRes.json(), championPbeRes.json()]);
@@ -398,26 +461,78 @@ const AdministrationAppData = () => {
     setGlobalLoading(false);
   };
 
+  const uploadPricesHandler = async (file?: File) => {
+    if (!file) return;
+
+    try {
+      const data = (await new Response(file).json()) as CatalogPriceLCU[];
+      const prices = data
+        .filter((i) => !!i.prices.length && i.subInventoryType !== "RECOLOR")
+        .map((item) => ({ contentId: item.itemInstanceId, price: item.prices[0].cost }));
+      await saveAppPrices(prices);
+    } catch (error) {
+      logger.error(`[uploadPricesHandler] ${(error as Error).message}`);
+    }
+  };
+
+  const uploadSalesHandler = async (file?: File) => {
+    if (!file) return;
+
+    try {
+      const data = (await new Response(file).json()) as SaleLCU[];
+      const sales = data
+        .filter((i) => i.active)
+        .map((i) => ({
+          itemId: i.item.itemId,
+          startDate: parseRiotDate(i.sale.startDate),
+          endDate: parseRiotDate(i.sale.endDate),
+          price: i.sale.prices[0].cost,
+        }))
+        .filter((i) => isAfter(new Date(i.endDate), new Date()));
+      await saveAppSales(sales);
+    } catch (error) {
+      logger.error(`[uploadSalesHandler] ${(error as Error).message}`);
+    }
+  };
+
   useEffect(() => {
-    if (data) setLanguages(data);
-  }, [data]);
+    if (appData) setLanguages(appData);
+  }, [appData]);
 
   return (
     <div className="grid grid-rows-[1fr_360px] gap-2 h-full overflow-hidden grow">
-      <ScrollArea className="size-full overflow-hidden rounded-md">
-        <div className="grid grid-cols-4 gap-2">
-          {loading && <Skeleton count={4} asChild />}
-          {!loading &&
-            languages &&
-            Object.entries(languages).map(([lang, data]) => (
-              <AdminAppDataLanguage key={lang} language={lang} data={data} onUpdate={() => updateHandler(lang)} />
-            ))}
+      <div className="size-full grid grid-cols-[1fr_300px] gap-2">
+        <ScrollArea className="size-full overflow-hidden rounded-md">
+          <div className="grid grid-cols-2 2xl:grid-cols-4 gap-2">
+            {loading && <Skeleton count={4} asChild />}
+            {!loading &&
+              languages &&
+              Object.entries(languages).map(([lang, appData]) => (
+                <AdminAppDataLanguage key={lang} language={lang} data={appData} onUpdate={() => updateHandler(lang)} />
+              ))}
+          </div>
+        </ScrollArea>
+        <div className="size-full bg-muted/50 rounded-md p-2 flex flex-col gap-y-1">
+          <InputFile id="prices" onChange={uploadPricesHandler} className="w-full grow-0" placeholder="Upload prices" fileIcon={HandCoinsIcon} />
+          <InputFile id="sales" onChange={uploadSalesHandler} className="w-full grow-0" placeholder="Upload sales" fileIcon={BadgePercentIcon} />
+          {appPrices && (
+            <div className="font-mono font-medium text-sm px-1 flex items-center justify-between my-2">
+              <p>Prices</p>
+              <p>{appPrices.length}</p>
+            </div>
+          )}
+          {appSales && (
+            <div className="font-mono font-medium text-sm px-1 flex items-center justify-between my-2">
+              <p>Sales</p>
+              <p>{appSales.length}</p>
+            </div>
+          )}
         </div>
-      </ScrollArea>
+      </div>
       <ScrollArea className="size-full bg-muted/50 overflow-hidden rounded-md p-2 relative">
-        <Button onClick={() => updateHandler(["en_US", "ru_RU"])} disabled={globalLoading} className='absolute top-2 right-2 z-1'>
+        <Button onClick={() => updateHandler(["en_US", "ru_RU"])} disabled={globalLoading} className="absolute top-2 right-2 z-1">
           {globalLoading && <Spinner />}
-          Update all data
+          Update all languages
         </Button>
         {logs.map((log, i) => (
           <LogLine key={i} {...log} className="text-xs" />

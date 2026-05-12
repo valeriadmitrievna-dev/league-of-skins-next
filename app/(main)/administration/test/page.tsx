@@ -5,12 +5,12 @@ import { useQuery } from '@tanstack/react-query';
 import { fetchClient } from '@/lib/fetchClient';
 
 const AdministrationTest = () => {
-  const { data: dashboardActivity } = useQuery({
+  const { data } = useQuery({
     queryKey: ["test"],
-    queryFn: () => fetchClient("/api/user/collection/dashboard/social"),
+    queryFn: () => fetchClient("/api/user/collection/dashboard/spending"),
   });
 
-  console.log("[DEV]", dashboardActivity);
+  console.log("[DEV]", data);
 
   return <div>test</div>;
 };

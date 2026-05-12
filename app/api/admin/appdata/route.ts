@@ -4,11 +4,12 @@ import { errorHandler } from "@/errors";
 import { baseFolder } from "@/shared/constants/riot";
 import { LangProgress } from "@/shared/riot/types";
 import { readDirectory } from "@/shared/utils/getFileData";
-import { AppDataLang } from '@/types/appdata';
+import { AppDataLang } from "@/types/appdata";
 
 export const GET = async (_: NextRequest) => {
   try {
-    const languagesDataRaw = await readDirectory(`${baseFolder}`);
+    const dataRaw = await readDirectory(`${baseFolder}`);
+    const languagesDataRaw = Object.fromEntries(Object.entries(dataRaw).filter(([fileName]) => !fileName.startsWith("_")));
     const languagesData: AppDataLang[] = Object.values(languagesDataRaw).map((raw) => JSON.parse(raw));
 
     const result: Record<string, LangProgress> = Object.fromEntries(
@@ -23,9 +24,9 @@ export const GET = async (_: NextRequest) => {
               skinlines: data.skinlines.length,
               champions: data.champions.length,
               skins: data.skins.length,
-              skins_pbe: data.skins.filter(s => s.pbe).length,
+              skins_pbe: data.skins.filter((s) => s.pbe).length,
               chromas: data.chromas.length,
-              chromas_pbe: data.chromas.filter(c => c.pbe).length,
+              chromas_pbe: data.chromas.filter((c) => c.pbe).length,
             },
           },
         ];
