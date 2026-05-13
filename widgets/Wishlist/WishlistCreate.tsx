@@ -14,6 +14,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { fetchClient } from "@/lib/fetchClient";
 import { cn } from "@/shared/cn";
+import { DbWishlist } from '@/types/db';
 
 interface WishlistCreateProps {
   buttonClassName?: string;
@@ -33,9 +34,12 @@ const WishlistCreate: FC<WishlistCreateProps> = ({ buttonClassName, skinContentI
   const { mutate: createWishlist, isPending: isWishlistCreating } = useMutation({
     mutationFn: (body: { name: string; private: boolean; skins?: string[]; chromas?: string[] }) =>
       fetchClient("/api/wishlists", { method: "POST", body: JSON.stringify(body) }),
-    onSuccess: async (_data, _body, _, { client: _client }) => {
-      setModalOpen(false);
+    onSuccess: async (data, _body, _, { client }) => {
+      client.setQueryData(["userWishlists"], (prev: DbWishlist[]) => {
+        return [...prev, data]
+      });
       toast.success("Wishlist successfully created");
+      setModalOpen(false);
     },
     onError: (...error) => {
       console.log("[DEV]", error);

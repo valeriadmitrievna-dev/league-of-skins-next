@@ -1,5 +1,6 @@
+"use client"
 import { HeartOffIcon } from "lucide-react";
-import { getT } from "next-i18next/server";
+import { useT } from 'next-i18next/client';
 
 import {
   Empty,
@@ -11,8 +12,8 @@ import {
 } from "@/components/ui/empty";
 import WishlistCreate from '@/widgets/Wishlist/WishlistCreate';
 
-const EmptyWishlists = async () => {
-  const { t } = await getT("emptystate");
+const EmptyWishlists = () => {
+  const { t } = useT("emptystate");
 
   return (
     <Empty className='h-full grow min-h-0'>

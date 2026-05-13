@@ -1,15 +1,17 @@
+"use client"
 import { EyeIcon, LockIcon, LockOpenIcon, UserRoundIcon } from "lucide-react";
 import Link from "next/link";
-import { getT } from "next-i18next/server";
+import { useT } from 'next-i18next/client';
 import { FC } from "react";
 
 import { ImageStack } from "@/components/ImageStack";
 import { Typography } from "@/components/Typography";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { getLangCookie } from "@/lib/cookies";
 import { CDragonAsset } from "@/shared/types";
 import { DbWishlist } from "@/types/db";
+
+import WishlistDelete from "./WishlistDelete";
 
 interface WishlistCardProps extends DbWishlist {
   preview: CDragonAsset[];
@@ -17,15 +19,11 @@ interface WishlistCardProps extends DbWishlist {
   guest?: boolean;
 }
 
-const WishlistCard: FC<WishlistCardProps> = async ({ guest, userName, ...data }) => {
-  const lng = await getLangCookie();
-  const { t } = await getT("common", { lng });
+const WishlistCard: FC<WishlistCardProps> = ({ guest, userName, ...data }) => {
+  const { t } = useT();
 
   return (
-    <Link
-      href={`/wishlists/${guest ? data.link : data.id}`}
-      className="relative flex flex-col justify-between bg-card rounded-md overflow-hidden group transition-shadow hover:shadow-lg/50"
-    >
+    <div className="relative flex flex-col justify-between bg-card rounded-md overflow-hidden group transition-shadow hover:shadow-lg/50">
       {!guest && (
         <Badge variant={data.private ? "destructive" : "default"} className="absolute z-5 top-2 left-2">
           {data.private ? <LockIcon /> : <LockOpenIcon />}
@@ -33,7 +31,9 @@ const WishlistCard: FC<WishlistCardProps> = async ({ guest, userName, ...data })
         </Badge>
       )}
 
-      <ImageStack images={(data.preview ?? []).map((i) => i ?? "")} className="bg-accent" />
+      <Link href={`/wishlists/${guest ? data.link : data.id}`} className="bg-accent">
+        <ImageStack images={(data.preview ?? []).map((i) => i ?? "")} />
+      </Link>
 
       <div className="px-4 py-3 min-h-24 flex flex-col gap-y-2">
         <Typography.Large className="line-clamp-3">{data.name}</Typography.Large>
@@ -69,24 +69,25 @@ const WishlistCard: FC<WishlistCardProps> = async ({ guest, userName, ...data })
               <Share2Icon />
             </Button>
           )} */}
-          {/* {!guest && (
-            <WishlistDeleteModal
-              wishlistId={data._id}
-              trigger={({ onOpen }) => (
-                <Button
-                  size="icon"
-                  variant="outline"
-                  onClick={onOpen}
-                  className="not-dark:hover:text-background hover:bg-destructive hover:border-destructive dark:hover:border-destructive dark:hover:text-destructive"
-                >
-                  <TrashIcon />
-                </Button>
-              )}
-            />
-          )} */}
+          {!guest && (
+            <WishlistDelete id={data.id} />
+            // <WishlistDeleteModal
+            //   wishlistId={data._id}
+            //   trigger={({ onOpen }) => (
+            //     <Button
+            //       size="icon"
+            //       variant="outline"
+            //       onClick={onOpen}
+            //       className="not-dark:hover:text-background hover:bg-destructive hover:border-destructive dark:hover:border-destructive dark:hover:text-destructive"
+            //     >
+            //       <TrashIcon />
+            //     </Button>
+            //   )}
+            // />
+          )}
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 
