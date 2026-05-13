@@ -41,16 +41,20 @@ export const GET = async (_req: NextRequest) => {
       return Response.json(response);
     }
 
-    const monthCountMap = new Map<string, number>();
+    const dayCountMap = new Map<string, number>();
     for (const row of skinsWithDate) {
       const date = new Date(row.purchased_date);
-      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-      monthCountMap.set(key, (monthCountMap.get(key) ?? 0) + 1);
+      const key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+      dayCountMap.set(key, (dayCountMap.get(key) ?? 0) + 1);
     }
 
-    const timeline: MonthlyActivity[] = [...monthCountMap.entries()]
+    let cumulative = 0;
+    const timeline: MonthlyActivity[] = [...dayCountMap.entries()]
       .sort(([a], [b]) => a.localeCompare(b))
-      .map(([month, count]) => ({ month, count }));
+      .map(([date, count]) => {
+        cumulative += count;
+        return { month: date, count: cumulative };
+      });
 
     const recentSkins = skinsWithDate
       .slice(-5)
