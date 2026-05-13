@@ -1,11 +1,14 @@
 // ─── Shared ────────────────────────────────────────────────────────────────
 
+import { AppDataChampion, AppDataSkin } from "./appdata";
+
 export interface SkinlineProgress {
   id: string;
   name: string;
   owned: number;
   total: number;
   completed: boolean;
+  image: AppDataSkin["image"];
 }
 
 export interface ChampionProgress {
@@ -15,6 +18,7 @@ export interface ChampionProgress {
   owned: number;
   total: number;
   completed: boolean;
+  image: AppDataChampion["image"];
 }
 
 export interface SkinChromaProgress {
@@ -25,6 +29,7 @@ export interface SkinChromaProgress {
   owned: number;
   total: number;
   completed: boolean;
+  image: AppDataSkin["image"];
 }
 
 // ─── GET /stats/overview ────────────────────────────────────────────────────
@@ -32,8 +37,9 @@ export interface SkinChromaProgress {
 export interface StatsOverviewResponse {
   /** п.1 — топ чемпион(ы) по количеству скинов */
   topChampions: {
-    champion: { id: string; key: string; name: string };
+    place: number;
     count: number;
+    champions: { id: string; key: string; name: string; image: AppDataChampion["image"] }[];
   }[];
   /** п.3 — имеющихся скинов из общего количества */
   skinsTotal: { owned: number; total: number };
@@ -73,7 +79,7 @@ export interface StatsSpendingResponse {
   rarity: RarityEntry[];
   /** п.17 — самый дорогой чемпион */
   mostExpensiveChampion: {
-    champion: { id: string; key: string; name: string };
+    champion: AppDataChampion;
     totalRp: number;
   } | null;
 }
@@ -90,12 +96,7 @@ export interface StatsActivityResponse {
   /** п.10 — данные для графика (по месяцам) */
   timeline: MonthlyActivity[];
   /** п.11 — последние приобретённые скины (до 3) */
-  recentSkins: {
-    contentId: string;
-    name: string;
-    championName: string;
-    purchasedDate: string;
-  }[];
+  recentSkins: AppDataSkin[];
   /** п.12 — год с наибольшим количеством скинов */
   biggestYear: { year: number; count: number } | null;
   /** п.13 — самая длинная серия без новых скинов (в днях) */
@@ -106,12 +107,22 @@ export interface StatsActivityResponse {
 
 // ─── GET /stats/social ──────────────────────────────────────────────────────
 
+export type CollectionRank = "Iron" | "Bronze" | "Silver" | "Gold" | "Platinum" | "Diamond" | "Master";
+
+export interface CollectionRankData {
+  score: number; // 0–100
+  rank: CollectionRank;
+  breakdown: {
+    completeness: number; // вклад полноты (0–40)
+    rarity: number; // вклад редкости (0–35)
+    completionist: number; // вклад завершённости (0–25)
+  };
+}
+
 export interface StatsSocialResponse {
   /** п.8 — самый редкий owned скин */
   rarestSkin: {
-    contentId: string;
-    name: string;
-    championName: string;
+    data: AppDataSkin;
     ownershipPercent: number;
   } | null;
   /** п.16 — процент игроков, у которых меньше скинов */
@@ -119,6 +130,8 @@ export interface StatsSocialResponse {
     percentile: number;
     totalPlayers: number;
   };
+  /** ранг коллекции */
+  collectionRank: CollectionRankData;
 }
 
 // ─── GET /stats/chromas ─────────────────────────────────────────────────────

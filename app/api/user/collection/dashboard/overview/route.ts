@@ -7,15 +7,14 @@ import { getLanguageCode } from "@/shared/utils/getLanguageCode";
 import { getServerUserOwned } from "@/shared/utils/getServerUserOwned";
 import { StatsOverviewResponse } from "@/types/dashboard";
 
+const TOP_CHAMPION_PLACES = 5;
+
 export const GET = async (_req: NextRequest) => {
   try {
     const cookieStore = await cookies();
     const lng = cookieStore.get("i18next")?.value ?? "en";
 
-    const [appData, { ownedSkinIds, ownedChromaIds }] = await Promise.all([
-      getLangAppData(getLanguageCode(lng)),
-      getServerUserOwned(),
-    ]);
+    const [appData, { ownedSkinIds, ownedChromaIds }] = await Promise.all([getLangAppData(getLanguageCode(lng)), getServerUserOwned()]);
 
     const allSkins = (appData?.skins ?? []).filter((s) => !s.pbe);
     const allChromas = (appData?.chromas ?? []).filter((c) => !c.pbe);
@@ -28,23 +27,28 @@ export const GET = async (_req: NextRequest) => {
       }
     }
 
-    const maxSkinCount = Math.max(0, ...skinCountByChampion.values());
-    const topChampionIds = maxSkinCount > 0
-      ? [...skinCountByChampion.entries()]
-          .filter(([, count]) => count === maxSkinCount)
-          .map(([id]) => id)
-      : [];
+    // Группируем чемпионов по количеству скинов, берём топ-5 мест
+    const countToChampions = new Map<number, string[]>();
+    for (const [id, count] of skinCountByChampion.entries()) {
+      if (!countToChampions.has(count)) countToChampions.set(count, []);
+      countToChampions.get(count)!.push(id);
+    }
 
-    const topChampions = topChampionIds.map((id) => {
-      const champion = allChampions.find((c) => c.id === id)!;
-      return { champion: { id: champion.id, key: champion.key, name: champion.name }, count: maxSkinCount };
-    });
+    const topChampions = [...countToChampions.entries()]
+      .sort(([a], [b]) => b - a)
+      .slice(0, TOP_CHAMPION_PLACES)
+      .map(([count, ids], index) => ({
+        place: index + 1,
+        count,
+        champions: ids.map((id) => {
+          const champion = allChampions.find((c) => c.id === id)!;
+          return { id: champion.id, key: champion.key, name: champion.name, image: champion.image };
+        }),
+      }));
 
     const ownedSkinsCount = allSkins.filter((s) => ownedSkinIds.has(s.contentId)).length;
 
-    const championsWithOwnedSkins = new Set(
-      allSkins.filter((s) => ownedSkinIds.has(s.contentId)).map((s) => s.championId)
-    );
+    const championsWithOwnedSkins = new Set(allSkins.filter((s) => ownedSkinIds.has(s.contentId)).map((s) => s.championId));
 
     const legacySkins = allSkins.filter((s) => s.isLegacy);
     const ownedLegacyCount = legacySkins.filter((s) => ownedSkinIds.has(s.contentId)).length;

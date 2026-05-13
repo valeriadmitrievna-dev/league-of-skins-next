@@ -4,6 +4,7 @@ import { NextRequest } from "next/server";
 import { errorHandler } from "@/errors";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getLanguageCode } from "@/shared/utils/getLanguageCode";
+import { getPrices } from '@/shared/utils/getPrices';
 import { getServerUserOwned } from "@/shared/utils/getServerUserOwned";
 import { RarityEntry, StatsSpendingResponse } from "@/types/dashboard";
 
@@ -17,12 +18,19 @@ export const GET = async (_req: NextRequest) => {
       getServerUserOwned(),
     ]);
 
+    const appPrices = await getPrices();
+
     const allSkins = (appData?.skins ?? []).filter((s) => !s.pbe);
     const allChampions = appData?.champions ?? [];
 
     const ownedSkins = allSkins.filter((s) => ownedSkinIds.has(s.contentId));
 
-    const totalRp = ownedSkins.reduce((sum, s) => sum + (s.price ?? 0), 0);
+    const totalRp = ownedSkins.reduce((sum, s) => {
+      const price = appPrices.find(p => p.contentId === s.contentId)?.price ?? 0
+
+      if (s.rarity === 'kExalted') return sum + 32000;
+      return sum + (price ?? 0);
+    }, 0);
 
     const rarityOwnedMap = new Map<string, number>();
     const rarityTotalMap = new Map<string, number>();
@@ -42,9 +50,17 @@ export const GET = async (_req: NextRequest) => {
 
     const rpByChampion = new Map<string, number>();
     for (const skin of ownedSkins) {
-      if (skin.price !== undefined) {
-        rpByChampion.set(skin.championId, (rpByChampion.get(skin.championId) ?? 0) + skin.price);
+      let price = 0;
+      
+      if (skin.rarity = 'kExalted') {
+        price = 32000;
       }
+
+      if (appPrices.find(p => p.contentId === skin.contentId)) {
+        price = appPrices.find(p => p.contentId === skin.contentId)!.price;
+      }
+
+      rpByChampion.set(skin.championId, (rpByChampion.get(skin.championId) ?? 0) + price);
     }
 
     let mostExpensiveChampion: StatsSpendingResponse["mostExpensiveChampion"] = null;
@@ -53,7 +69,7 @@ export const GET = async (_req: NextRequest) => {
       const champion = allChampions.find((c) => c.id === topId);
       if (champion) {
         mostExpensiveChampion = {
-          champion: { id: champion.id, key: champion.key, name: champion.name },
+          champion: champion,
           totalRp: topRp,
         };
       }

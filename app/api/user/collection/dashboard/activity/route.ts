@@ -28,10 +28,7 @@ export const GET = async (_req: NextRequest) => {
 
     if (error) throw error;
 
-    const skinsWithDate = (userSkins ?? []).filter(
-      (row): row is { contentId: string; purchased_date: string } =>
-        row.purchased_date !== null
-    );
+    const skinsWithDate = (userSkins ?? []).filter((row): row is { contentId: string; purchased_date: string } => row.purchased_date !== null);
 
     if (skinsWithDate.length === 0) {
       const response: StatsActivityResponse = {
@@ -56,17 +53,13 @@ export const GET = async (_req: NextRequest) => {
       .map(([month, count]) => ({ month, count }));
 
     const recentSkins = skinsWithDate
-      .slice(-3)
+      .slice(-5)
       .reverse()
       .map((row) => {
         const skin = skinByContentId.get(row.contentId);
-        return {
-          contentId: row.contentId,
-          name: skin?.name ?? row.contentId,
-          championName: skin?.championName ?? "",
-          purchasedDate: new Date(row.purchased_date).toISOString(),
-        };
-      });
+        return skin;
+      })
+      .filter((s) => !!s);
 
     const yearCountMap = new Map<number, number>();
     for (const row of skinsWithDate) {
@@ -75,9 +68,7 @@ export const GET = async (_req: NextRequest) => {
     }
 
     const biggestYearEntry = [...yearCountMap.entries()].sort((a, b) => b[1] - a[1])[0];
-    const biggestYear = biggestYearEntry
-      ? { year: biggestYearEntry[0], count: biggestYearEntry[1] }
-      : null;
+    const biggestYear = biggestYearEntry ? { year: biggestYearEntry[0], count: biggestYearEntry[1] } : null;
 
     let longestStreak: StatsActivityResponse["longestStreak"] = null;
 
@@ -103,10 +94,7 @@ export const GET = async (_req: NextRequest) => {
       }
     }
 
-    const averagePerMonth =
-      timeline.length > 0
-        ? Math.round((skinsWithDate.length / timeline.length) * 100) / 100
-        : 0;
+    const averagePerMonth = timeline.length > 0 ? Math.round((skinsWithDate.length / timeline.length) * 100) / 100 : 0;
 
     const response: StatsActivityResponse = {
       timeline,
