@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 import { verifyAccessToken } from './lib/auth';
+import { isUUID } from './shared/utils/isUUID';
 
 const PROTECTED_ROUTES = ["/collection", "/wishlists"];
 const AUTH_ROUTES = ["/auth/signin", "/auth/signup"];
@@ -12,8 +13,9 @@ export const proxy = async (request: NextRequest) => {
 
   const isProtected = PROTECTED_ROUTES.some((path) => pathname.startsWith(path));
   const isAuthRoute = AUTH_ROUTES.some((path) => pathname.startsWith(path));
+  const isGuestWishlist = pathname.startsWith('/wishlists') && !!pathname.split('/')[2] && !isUUID(pathname.split('/')[2]);
 
-  if (isProtected && !isAuth) {
+  if ((isProtected && !isGuestWishlist) && !isAuth) {
     return NextResponse.redirect(new URL("/auth/signin?redirect=" + pathname, request.url));
   }
 
