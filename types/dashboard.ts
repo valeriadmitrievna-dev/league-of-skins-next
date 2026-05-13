@@ -96,7 +96,7 @@ export interface StatsActivityResponse {
   /** п.10 — данные для графика (по месяцам) */
   timeline: MonthlyActivity[];
   /** п.11 — последние приобретённые скины (до 3) */
-  recentSkins: AppDataSkin[];
+  recentSkins: { data: AppDataSkin, date: string }[];
   /** п.12 — год с наибольшим количеством скинов */
   biggestYear: { year: number; count: number } | null;
   /** п.13 — самая длинная серия без новых скинов (в днях) */
