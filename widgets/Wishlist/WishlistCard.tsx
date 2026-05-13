@@ -1,13 +1,15 @@
-"use client"
-import { EyeIcon, LockIcon, LockOpenIcon, UserRoundIcon } from "lucide-react";
+"use client";
+import { LockIcon, LockOpenIcon, Share2Icon, TrashIcon, UserRoundIcon } from "lucide-react";
 import Link from "next/link";
-import { useT } from 'next-i18next/client';
-import { FC } from "react";
+import { useT } from "next-i18next/client";
+import { FC, MouseEvent } from "react";
 
 import { ImageStack } from "@/components/ImageStack";
 import { Typography } from "@/components/Typography";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import useShare from "@/hooks/useShare";
 import { CDragonAsset } from "@/shared/types";
 import { DbWishlist } from "@/types/db";
 
@@ -21,6 +23,19 @@ interface WishlistCardProps extends DbWishlist {
 
 const WishlistCard: FC<WishlistCardProps> = ({ guest, userName, ...data }) => {
   const { t } = useT();
+  const { share } = useShare();
+
+  const shareHandler = (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    share(
+      { title: data.name, url: `${window.location.origin}/wishlists/${data.link}` },
+      {
+        error: "Ошибка при попытке поделиться",
+      },
+    );
+  };
 
   return (
     <div className="relative flex flex-col justify-between bg-card rounded-md overflow-hidden group transition-shadow hover:shadow-lg/50">
@@ -46,12 +61,6 @@ const WishlistCard: FC<WishlistCardProps> = ({ guest, userName, ...data }) => {
                 {userName}
               </Badge>
             )}
-            {!data.private && (
-              <Badge variant="ghost" className="bg-foreground/20">
-                <EyeIcon />
-                {data.views > 999 ? "999+" : data.views}
-              </Badge>
-            )}
             <div className="flex items-center gap-2 mr-auto">
               <Typography.Muted>
                 {data?.skins?.length > 999 ? "999+" : data?.skins?.length}{" "}
@@ -64,26 +73,20 @@ const WishlistCard: FC<WishlistCardProps> = ({ guest, userName, ...data }) => {
               </Typography.Muted>
             </div>
           </div>
-          {/* {!data.private && !guest && (
+          {!data.private && !guest && (
             <Button size="icon" variant="outline" onClick={shareHandler}>
               <Share2Icon />
             </Button>
-          )} */}
+          )}
           {!guest && (
-            <WishlistDelete id={data.id} />
-            // <WishlistDeleteModal
-            //   wishlistId={data._id}
-            //   trigger={({ onOpen }) => (
-            //     <Button
-            //       size="icon"
-            //       variant="outline"
-            //       onClick={onOpen}
-            //       className="not-dark:hover:text-background hover:bg-destructive hover:border-destructive dark:hover:border-destructive dark:hover:text-destructive"
-            //     >
-            //       <TrashIcon />
-            //     </Button>
-            //   )}
-            // />
+            <WishlistDelete
+              id={data.id}
+              trigger={
+                <Button size="icon" variant="outline" className="border-destructive/30! text-destructive! hover:bg-destructive/10!">
+                  <TrashIcon />
+                </Button>
+              }
+            />
           )}
         </div>
       </div>

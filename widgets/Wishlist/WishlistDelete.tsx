@@ -1,6 +1,6 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
-import { FC, MouseEvent, useState } from "react";
+import { FC, MouseEvent, ReactNode, useState } from "react";
 import { toast } from "sonner";
 
 import {
@@ -21,9 +21,10 @@ import { DbWishlist } from "@/types/db";
 
 interface WishlistDeleteProps {
   id: string;
+  trigger: ReactNode;
 }
 
-const WishlistDelete: FC<WishlistDeleteProps> = ({ id }) => {
+const WishlistDelete: FC<WishlistDeleteProps> = ({ id, trigger }) => {
   const [open, setOpen] = useState(false);
 
   const { mutate: deleteWishlist, isPending } = useMutation({
@@ -52,7 +53,7 @@ const WishlistDelete: FC<WishlistDeleteProps> = ({ id }) => {
 
   return (
     <AlertDialog open={open} onOpenChange={setOpen}>
-      <AlertDialogTrigger onClick={triggerClickHandler}>Delete</AlertDialogTrigger>
+      <AlertDialogTrigger onClick={triggerClickHandler} asChild>{trigger}</AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>Delete wishlist</AlertDialogTitle>
