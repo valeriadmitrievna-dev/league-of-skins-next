@@ -8,10 +8,11 @@ interface UserOwned {
   ownedChromaIds: string[];
 }
 
-const useUserOwned = () => {
+const useUserOwned = (enabled?: boolean) => {
   return useQuery({
     queryKey: ["userOwned"],
     queryFn: () => fetchClient<UserOwned>("/api/user/owned"),
+    enabled,
   });
 };
 

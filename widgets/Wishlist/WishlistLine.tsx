@@ -1,10 +1,11 @@
 import { CircleMinusIcon, CirclePlusIcon } from "lucide-react";
-import Link from "next/link";
 import { FC, MouseEvent } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
+import { cn } from '@/shared/cn';
+import { WithClassName } from '@/shared/types';
 import { DbWishlist } from "@/types/db";
 
 interface WishlistLineProps {
@@ -13,7 +14,7 @@ interface WishlistLineProps {
   chromaContentIds?: string[];
 }
 
-const WishlistLine: FC<WishlistLineProps> = ({ wishlist, skinContentIds = [], chromaContentIds = [] }) => {
+const WishlistLine: FC<WithClassName<WishlistLineProps>> = ({ wishlist, skinContentIds = [], chromaContentIds = [], className }) => {
   const addToExistingWishlist = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
@@ -68,13 +69,12 @@ const WishlistLine: FC<WishlistLineProps> = ({ wishlist, skinContentIds = [], ch
   const isWishlistUpdating = false;
 
   return (
-    <Link
-      href={`/wishlists/${wishlist.id}`}
+    <div
       role="list-item"
-      className="group min-h-10 flex items-center justify-between px-2.5 pr-1 py-1 not-last:border-b hover:bg-input/10 rounded-md"
+      className={cn("group min-h-10 flex items-center justify-between px-2.5 pr-1 py-1 hover:bg-input/10 rounded-md", className)}
       key={wishlist.id}
     >
-      <span className="text-sm font-medium truncate group-hover:underline">{wishlist.name}</span>
+      <span className="text-sm font-medium truncate">{wishlist.name}</span>
       {isWishlistUpdating && (
         <div className="p-2">
           <Spinner />
@@ -82,7 +82,7 @@ const WishlistLine: FC<WishlistLineProps> = ({ wishlist, skinContentIds = [], ch
       )}
 
       {!isWishlistUpdating && isInWishlist && (
-        <Button size="icon-sm" variant="ghost" onClick={removeFromExistingWishlist} className="text-destructive">
+        <Button size="icon-sm" variant="ghost" onClick={removeFromExistingWishlist} className="text-destructive!">
           <CircleMinusIcon />
         </Button>
       )}
@@ -92,7 +92,7 @@ const WishlistLine: FC<WishlistLineProps> = ({ wishlist, skinContentIds = [], ch
           <CirclePlusIcon />
         </Button>
       )}
-    </Link>
+    </div>
   );
 };
 

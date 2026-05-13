@@ -149,7 +149,6 @@ export type Database = {
           private: boolean;
           skins: string[];
           subscribers: number;
-          updated_at: string;
           user_id: string;
           views: number;
         };
@@ -162,7 +161,6 @@ export type Database = {
           private?: boolean;
           skins?: string[];
           subscribers?: number;
-          updated_at: string;
           user_id: string;
           views?: number;
         };
@@ -175,7 +173,6 @@ export type Database = {
           private?: boolean;
           skins?: string[];
           subscribers?: number;
-          updated_at?: string;
           user_id?: string;
           views?: number;
         };

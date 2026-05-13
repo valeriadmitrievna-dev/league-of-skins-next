@@ -3,13 +3,14 @@ import { useRouter } from "next/navigation";
 import { useT } from "next-i18next/client";
 import { useEffect, useState, type FC, type ReactNode } from "react";
 
+import useUser from '@/api/useUser';
+import useUserWishlists from "@/api/useUserWishlists";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import usePendingWishlist from "@/hooks/usePendingWishlist";
 import { setPendingWishlist } from "@/lib/pendingWishlist";
 import { cn } from "@/shared/cn";
 import { useAuth } from "@/shared/providers/AuthProvider";
-import { DbWishlist } from "@/types/db";
 
 import WishlistCreate from "./WishlistCreate";
 import WishlistLine from "./WishlistLine";
@@ -40,11 +41,11 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
   const router = useRouter();
 
   const { isAuth } = useAuth();
+  const { data: user } = useUser(isAuth);
+  const { data: wishlists = [] } = useUserWishlists(isAuth);
+  
   const pending = usePendingWishlist();
-
   const [open, setOpen] = useState(false);
-
-  const wishlists: DbWishlist[] = [];
 
   const allSkins = wishlists.flatMap((w) => w.skins);
   const allChromas = wishlists.flatMap((w) => w.chromas);
@@ -108,13 +109,14 @@ const WishlistDialog: FC<WishlistDialogProps> = ({
                 wishlist={wishlist}
                 skinContentIds={skinContentIds}
                 chromaContentIds={chromaContentIds}
+                className='not-last:border-b not-last:rounded-b-none not-first:rounded-t-none'
               />
             ))}
           </div>
 
-          {wishlists.length < 3 && (
+          {(wishlists.length < 3 || user?.role === 'admin') && (
             <WishlistCreate skinContentIds={skinContentIds} chromaContentIds={chromaContentIds}>
-              <Button variant="ghost" size="sm" className="justify-start">
+              <Button variant="ghost" className="justify-start px-2.5">
                 <PlusIcon />
                 {t("wishlist.createAndAdd")}
               </Button>

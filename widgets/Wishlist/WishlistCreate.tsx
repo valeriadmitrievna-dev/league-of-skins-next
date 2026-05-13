@@ -1,7 +1,9 @@
 "use client";
+import { useMutation } from "@tanstack/react-query";
 import { PlusIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
 import { useState, type ChangeEvent, type FC, type ReactNode } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -10,6 +12,7 @@ import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/in
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
+import { fetchClient } from "@/lib/fetchClient";
 import { cn } from "@/shared/cn";
 
 interface WishlistCreateProps {
@@ -20,20 +23,25 @@ interface WishlistCreateProps {
   disabled?: boolean;
 }
 
-const WishlistCreate: FC<WishlistCreateProps> = ({
-  buttonClassName,
-  // skinContentIds = [],
-  // chromaContentIds = [],
-  children,
-  disabled,
-}) => {
+const WishlistCreate: FC<WishlistCreateProps> = ({ buttonClassName, skinContentIds = [], chromaContentIds = [], children, disabled }) => {
   const { t } = useT();
 
   const [name, setName] = useState("");
   const [isPrivate, setPrivate] = useState(true);
   const [isModalOpen, setModalOpen] = useState(false);
 
-  const isWishlistCreating = false;
+  const { mutate: createWishlist, isPending: isWishlistCreating } = useMutation({
+    mutationFn: (body: { name: string; private: boolean; skins?: string[]; chromas?: string[] }) =>
+      fetchClient("/api/wishlists", { method: "POST", body: JSON.stringify(body) }),
+    onSuccess: async (_data, _body, _, { client: _client }) => {
+      setModalOpen(false);
+      toast.success("Wishlist successfully created");
+    },
+    onError: (...error) => {
+      console.log("[DEV]", error);
+      toast.error("Error on creating wishlist");
+    },
+  });
 
   const changeNameHandler = (event: ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value.slice(0, 100));
@@ -41,11 +49,11 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
 
   const createWishlistHandler = async () => {
     try {
-      // await createWishlist(wishlistName?.trim(), skinContentIds, chromaContentIds);
+      await createWishlist({ name: name.trim(), private: isPrivate, skins: skinContentIds, chromas: chromaContentIds });
     } catch (error) {
       console.error(error);
     } finally {
-      setModalOpen(false);
+      // setModalOpen(false);
     }
   };
 

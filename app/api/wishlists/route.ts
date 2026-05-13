@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
+import { NextRequest } from "next/server";
 
 import { errorHandler, RequestError } from "@/errors";
-import { verifyAccessToken } from "@/lib/auth";
+import { getServerUserPayload, verifyAccessToken } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 import { buildWishlistPreview } from "@/shared/utils/buildWishlistPreview";
+import { generateWishlistLink } from "@/shared/utils/generateWishlistLink";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 
 export const GET = async () => {
@@ -30,6 +32,41 @@ export const GET = async () => {
     }));
 
     return Response.json(result);
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
+export const POST = async (req: NextRequest) => {
+  try {
+    const payload = await getServerUserPayload();
+    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401, message: "No access token" });
+
+    const supabase = await createClient();
+    const { userId } = payload;
+    const {
+      name,
+      private: isPrivate,
+      skins,
+      chromas,
+    } = (await req.json()) as { name: string; private: boolean; skins?: string[]; chromas?: string[] };
+
+    const { data: wishlist, error } = await supabase
+      .from("wishlists")
+      .insert({
+        user_id: userId,
+        name,
+        private: isPrivate,
+        link: generateWishlistLink(),
+        skins,
+        chromas,
+      })
+      .select()
+      .single();
+
+    if (error) throw new RequestError({ code: "ERR_0000", status: 500, message: error.message });
+
+    return Response.json(wishlist);
   } catch (error) {
     return errorHandler(error);
   }

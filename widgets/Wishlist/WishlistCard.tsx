@@ -24,7 +24,7 @@ const WishlistCard: FC<WishlistCardProps> = async ({ guest, userName, ...data })
   return (
     <Link
       href={`/wishlists/${guest ? data.link : data.id}`}
-      className="relative flex flex-col justify-between bg-card border border-border rounded-md overflow-hidden group"
+      className="relative flex flex-col justify-between bg-card rounded-md overflow-hidden group transition-shadow hover:shadow-lg/50"
     >
       {!guest && (
         <Badge variant={data.private ? "destructive" : "default"} className="absolute z-5 top-2 left-2">
