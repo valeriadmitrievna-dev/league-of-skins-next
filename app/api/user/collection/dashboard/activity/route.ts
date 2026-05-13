@@ -57,7 +57,11 @@ export const GET = async (_req: NextRequest) => {
       .reverse()
       .map((row) => {
         const skin = skinByContentId.get(row.contentId);
-        return skin;
+        if (skin)
+          return {
+            data: skin,
+            date: new Date(row.purchased_date).toISOString(),
+          };
       })
       .filter((s) => !!s);
 
