@@ -53,7 +53,7 @@ const DashboardPage = () => {
               return (
                 <div key={skinline.id} className="flex gap-3 items-center">
                   <Typography.Small className="text-xs font-normal">0{index + 1}</Typography.Small>
-                  <Image className="w-62 h-10 bg-black" />
+                  <Image src={skinline.image.centered || ""} className="w-62 h-10 bg-black object-cover rounded-sm" />
                   <div className="w-full">
                     <div className="flex gap-3 items-center justify-between">
                       <Typography.Small className="text-xs font-normal">{skinline.name}</Typography.Small>
@@ -72,7 +72,7 @@ const DashboardPage = () => {
           <Typography.P className="text-sm">Топ чемпионов по количеству скинов</Typography.P>
 
           <div className="flex items-center gap-4 mt-7">
-            {dashboardCollections?.champions?.map((champion, index) => (
+            {dashboardCollections?.champions?.slice(0, 3)?.map((champion, index) => (
               <div key={champion.id} className="relative flex flex-col items-center w-full">
                 <div
                   className={cn(
@@ -92,7 +92,7 @@ const DashboardPage = () => {
                     index === 2 && "outline-[#C7865E]!",
                   )}
                 >
-                  <Image className="w-full h-full bg-black" />
+                  <Image src={champion.image.icon || ""} className="w-full h-full bg-black" />
                 </div>
 
                 <Typography.Small className="mt-3 font-normal">{champion.name}</Typography.Small>
@@ -137,13 +137,13 @@ const DashboardPage = () => {
         <DashboardCard>
           <Typography.P className="text-sm">Недавние пополнения</Typography.P>
 
-          <div className="grid grid-cols-4 gap-3 mt-3">
+          <div className="grid grid-cols-5 gap-3 mt-3">
             {dashboardActivity?.recentSkins?.map((skin) => {
-              const daysAgo = formatDistanceToNow(parseISO(skin.purchasedDate), { addSuffix: true });
+              const daysAgo = formatDistanceToNow(parseISO(skin.date), { addSuffix: true });
               return (
-                <div key={skin.contentId}>
-                  <Image className="w-full aspect-square rounded-xl" />
-                  <Typography.P className="mt-2 text-xs font-medium">{skin.name}</Typography.P>
+                <div key={skin.data.contentId}>
+                  <Image src={skin.data.image.centered || ""} className="w-full aspect-square rounded-xl object-cover" />
+                  <Typography.P className="mt-2 text-xs font-medium">{skin.data.name}</Typography.P>
                   <Typography.P className="mt-1 font-normal text-xs text-white/80">{daysAgo}</Typography.P>
                 </div>
               );
