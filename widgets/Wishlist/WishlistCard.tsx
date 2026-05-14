@@ -3,7 +3,7 @@ import { formatDistanceToNow } from "date-fns";
 import { EllipsisIcon, Share2Icon, SquarePenIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useT } from "next-i18next/client";
-import { CSSProperties, FC, MouseEvent } from "react";
+import { FC, MouseEvent } from "react";
 
 import Image from "@/components/Image";
 import { Typography } from "@/components/Typography";
@@ -39,16 +39,26 @@ const WishlistCard: FC<WishlistCardProps> = ({ guest, ...data }) => {
     );
   };
 
+  console.log("[DEV]", `repeat(auto-fill, ${[...data.preview.skins, ...data.preview.chromas].slice(0, 3).length})`);
+
   return (
     <div className="relative flex flex-col justify-between bg-card rounded-md border overflow-hidden group transition-shadow hover:shadow-lg/50">
       <Link
         href={`/wishlists/${guest ? data.link : data.id}`}
-        className="bg-accent/20 max-h-40 grid overflow-hidden grid-cols-3"
-        style={{ "--columns": [...data.preview.skins, ...data.preview.chromas].slice(0, 3).length } as CSSProperties}
+        className="bg-accent/20 h-30 grid overflow-hidden relative"
+        style={{
+          gridTemplateColumns: `repeat(${[...data.preview.skins, ...data.preview.chromas].slice(0, 3).length}, 1fr)`,
+        }}
       >
         {[...data.preview.skins, ...data.preview.chromas].slice(0, 3).map((url) => (
-          <Image key={url} src={url ?? ""} className="aspect-5/6 object-cover size-full not-last:border-r border-card" />
+          <Image key={url} src={url ?? ""} className="aspect-auto object-cover size-full not-last:border-r border-card" />
         ))}
+
+        {[...data.skins, ...data.chromas].length > 3 && (
+          <div className="absolute z-2 bottom-2 right-2 text-sm font-medium px-1.5 py-1.5 rounded-md leading-none bg-muted/80">
+            + {[...data.skins, ...data.chromas].length - 3}
+          </div>
+        )}
       </Link>
 
       <div className="px-4 py-3 border-t w-full overflow-hidden">

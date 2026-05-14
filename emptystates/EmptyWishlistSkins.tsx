@@ -1,3 +1,4 @@
+"use client"
 import { SearchIcon, ShoppingBagIcon } from "lucide-react";
 import Link from "next/link";
 import { useT } from "next-i18next/client";
