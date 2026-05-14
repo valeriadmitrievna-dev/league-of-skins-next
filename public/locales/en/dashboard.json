@@ -1,0 +1,40 @@
+{
+  "overview": {
+    "skins": "Skins",
+    "from-entire-collection": "from entire collection",
+    "chromas": "Chromas",
+    "champions-with-skins": "Champions with skins",
+    "rp-spent": "RP spent",
+    "champions-percent": "{{amount}}% of champions",
+    "legacy-skins": "Legacy skins",
+    "legacy-skins-percent": "{{amount}}% of legacy skins"
+  },
+  "collection": {
+    "favorite-skinlines": "Favorite skinlines",
+    "completed-champions": "Completed champions",
+    "most-chromas-skins": "Completed chromas"
+  },
+  "spendings": {
+    "most-expensive-champion": "Most expensive champion",
+    "rp-spent": "RP spent"
+  },
+  "social": {
+    "skin-rarity": "Skin rarity",
+    "most-rare-skin": "Most rare skin"
+  },
+  "activity": {
+    "collection-progress": "Collection progress",
+    "recent-additions": "Recent additions",
+    "longest-no-new-skin-streak": "Longest streak without new skins",
+    "biggest-collection-year": "Biggest collection year",
+    "skins-added_one": "skin added",
+    "skins-added_few": "skins added",
+    "skins-added_many": "skins added",
+    "days_one": "day",
+    "days_few": "days",
+    "days_many": "days",
+    "date-range": "From {{fromDate}} to {{toDate}}"
+  },
+  "most-common-colors-in-collection": "Most common colors in collection",
+  "top-champions-by-number-of-skins": "Top champions by number of skins"
+}
