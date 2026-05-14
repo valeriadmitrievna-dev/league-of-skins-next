@@ -1,0 +1,40 @@
+{
+  "overview": {
+    "skins": "Скины",
+    "from-entire-collection": "от всей коллекции",
+    "chromas": "Цветовые схемы",
+    "champions-with-skins": "Чемпионов со скинами",
+    "rp-spent": "Потрачено RP",
+    "champions-percent": "{{amount}}% чемпионов",
+    "legacy-skins": "Архивные скины",
+    "legacy-skins-percent": "{{amount}}% архивных скинов"
+  },
+  "collection": {
+    "favorite-skinlines": "Любимые линейки",
+    "completed-champions": "Завершенные чемпионы",
+    "most-chromas-skins": "Завершенные хромы"
+  },
+  "spendings": {
+    "most-expensive-champion": "Самый дорогой чемпион",
+    "rp-spent": "RP потрачено"
+  },
+  "social": {
+    "skin-rarity": "Редкость скинов",
+    "most-rare-skin": "Самый редкий скин"
+  },
+  "activity": {
+    "collection-progress": "Прогресс коллекции",
+    "recent-additions": "Недавние пополнения",
+    "longest-no-new-skin-streak": "Наибольшый стрик без новых скинов",
+    "biggest-collection-year": "Наилучший год",
+    "skins-added_one": "скин добавлен",
+    "skins-added_few": "скина добавлено",
+    "skins-added_many": "скинов добавлено",
+    "days_one": "день",
+    "days_few": "дня",
+    "days_many": "дней",
+    "date-range": "С {{fromDate}} по {{toDate}}"
+  },
+  "most-common-colors-in-collection": "Самые частые цвета коллекции",
+  "top-champions-by-number-of-skins": "Топ чемпионов по количеству скинов"
+}

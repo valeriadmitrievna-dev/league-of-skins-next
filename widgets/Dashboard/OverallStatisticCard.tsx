@@ -20,13 +20,13 @@ const OverallStatisticCard: FC<CardProps> = ({ icon, color, title, description, 
   return (
     <DashboardCardWrapper className={className}>
       <div className="flex gap-4">
-        <div className="shrink-0 size-9 lg:size-11 rounded-full bg-[#454094]" style={{ backgroundColor: color }}>
+        <div className="shrink-0 size-9 rounded-full bg-[#454094]" style={{ backgroundColor: color }}>
           {icon}
         </div>
 
         <div>
           <Typography.Small className="text-xs font-normal">{title}</Typography.Small>
-          <Typography.Large className="text-xl">
+          <Typography.Large className="text-xl mt-2">
             {minValue} {!!maxValue && <span className="text-base font-normal text-white/80">/ {maxValue}</span>}
           </Typography.Large>
           <Typography.P className="text-sm">{description}</Typography.P>

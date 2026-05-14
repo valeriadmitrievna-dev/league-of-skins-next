@@ -29,13 +29,13 @@ const SkinsRarity: FC<SkinsRarityProps> = ({ className, rarityData }) => {
 
   return (
     <DashboardCardWrapper className={className}>
-      <Typography.P className="text-sm">Редкость скинов</Typography.P>
+      <Typography.P className="text-sm">{t("dashboard:social.skin-rarity")}</Typography.P>
 
       <div className="flex items-center gap-6">
-        <div className="w-65 h-65 relative">
+        <div className="w-60 h-60 relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={rarityData} dataKey="owned" nameKey="rarity" innerRadius={70} outerRadius={105} paddingAngle={2} stroke="none">
+              <Pie data={rarityData} dataKey="owned" nameKey="rarity" innerRadius={70} outerRadius={110} paddingAngle={2} stroke="none">
                 {rarityData?.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[entry.rarity as keyof typeof COLORS]} />
                 ))}
