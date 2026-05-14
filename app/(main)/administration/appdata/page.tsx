@@ -193,7 +193,7 @@ const AdministrationAppData = () => {
       try {
         logger.log(`[${lang}] Get skinlines...`);
         updateLanguageState(lang, { categories: { skinlines: "loading" } });
-        const skinlinesLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/skinlines.json`;
+        const skinlinesLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/skinlines.json`;
         const skinlinesLtsRes = await fetch(skinlinesLtsUrl);
         const riot_skinlinesLts: RiotSkinline[] = ((await skinlinesLtsRes.json()) ?? []).filter((s: RiotSkinline) => s.name);
         skinlinesLts.push(...riot_skinlinesLts);
@@ -210,7 +210,7 @@ const AdministrationAppData = () => {
       // Get pbe skinlines
       try {
         logger.log(`[${lang}] Get skinlines PBE...`);
-        const skinlinesPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/skinlines.json`;
+        const skinlinesPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/skinlines.json`;
         const skinlinesPbeRes = await fetch(skinlinesPbeUrl);
         const riot_skinlinesPbe: RiotSkinline[] = ((await skinlinesPbeRes.json()) ?? []).filter((s: RiotSkinline) => s.name);
         skinlinesPbe.push(...riot_skinlinesPbe);
@@ -245,13 +245,13 @@ const AdministrationAppData = () => {
             image: {
               full: `${dDragonUrl}/cdn/img/champion/splash/${c.id}_0.jpg`,
               loading: `${dDragonUrl}/cdn/img/champion/loading/${c.id}_0.jpg`,
-              icon: toLocalUrl(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/default/v1/champion-icons/${c.key}.png`)!,
+              icon: toLocalUrl(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`)!,
             },
           })),
         );
 
         for (const c of riot_champions) {
-          allMediaUrls.add(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/default/v1/champion-icons/${c.key}.png`);
+          allMediaUrls.add(`${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/default/v1/champion-icons/${c.key}.png`);
         }
 
         logger.success(
@@ -286,8 +286,8 @@ const AdministrationAppData = () => {
       try {
         for await (const champion of champions) {
           logger.log(`[${lang}] ${champion.name}`);
-          const championLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/champions/${champion.key}.json`;
-          const championPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-appData/global/${cDragonLang}/v1/champions/${champion.key}.json`;
+          const championLtsUrl = `${cDragonUrl}/latest/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/champions/${champion.key}.json`;
+          const championPbeUrl = `${cDragonUrl}/pbe/plugins/rcp-be-lol-game-data/global/${cDragonLang}/v1/champions/${champion.key}.json`;
 
           const [championLtsRes, championPbeRes] = await Promise.all([fetch(championLtsUrl), fetch(championPbeUrl)]);
           const [championLts, championPbe]: [RiotChampion, RiotChampion] = await Promise.all([championLtsRes.json(), championPbeRes.json()]);

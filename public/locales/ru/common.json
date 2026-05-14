@@ -27,6 +27,10 @@
     "yes": "Да",
     "no": "Нет",
     "or": "или",
+    "item_one": "элемент",
+    "item_few": "элемента",
+    "item_many": "элементов",
+    "item_other": "элементов",
     "skin_one": "образ",
     "skin_few": "образа",
     "skin_many": "образов",
@@ -143,7 +147,8 @@
     "create_visibilityPrivateLabel": "Приватный",
     "create_visibilityPrivateDescription": "Только вы видите этот вишлист",
     "create_cancel": "Отмена",
-    "create_submit": "Создать"
+    "create_submit": "Создать",
+    "updated": "Обновлен"
   },
   "auth": {
     "signin_title": "Вход",

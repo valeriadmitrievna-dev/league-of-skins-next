@@ -10,19 +10,25 @@ interface UserOwned {
   ownedSkinContentIds: string[];
 }
 
-export const getServerUserOwned = async (): Promise<UserOwned> => {
+export const getServerUserOwned = async (anotherUserId?: string): Promise<UserOwned> => {
   const supabase = await createClient();
-  const cookieStore = await cookies();
+  let userId = anotherUserId;
 
-  const accessToken = cookieStore.get("accessToken")?.value;
-  if (!accessToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+  if (!anotherUserId) {
+    const cookieStore = await cookies();
 
-  const payload = verifyAccessToken(accessToken);
-  if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
+    const accessToken = cookieStore.get("accessToken")?.value;
+    if (!accessToken) throw new RequestError({ code: "ERR_0001", status: 401 });
+
+    const payload = verifyAccessToken(accessToken);
+    if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
+
+    userId = payload.userId;
+  }
 
   const [{ data: skinRows, error: skinError }, { data: chromaRows, error: chromaError }] = await Promise.all([
-    supabase.from("user_skins").select("contentId").eq("user_id", payload.userId),
-    supabase.from("user_chromas").select("contentId").eq("user_id", payload.userId),
+    supabase.from("user_skins").select("contentId").eq("user_id", userId!),
+    supabase.from("user_chromas").select("contentId").eq("user_id", userId!),
   ]);
 
   if (skinError) throw skinError;

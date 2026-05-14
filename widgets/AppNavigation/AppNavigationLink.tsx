@@ -17,12 +17,13 @@ interface AppNavigationLinkProps {
 
 const AppNavigationLink: FC<AppNavigationLinkProps> = ({ icon, title, href, group = [] }) => {
   const pathname = usePathname();
+  const linkButtonCN = (active: boolean, className?: string) => cn(className, { "text-primary! bg-primary/10! hover:bg-primary/20!": active });
 
   if (href && !group.length) {
     return (
       <Tooltip disableHoverableContent>
         <TooltipTrigger asChild>
-          <Button size="icon-xl" variant={pathname?.startsWith(href) ? "default" : "ghost"} asChild>
+          <Button size="icon-xl" variant="ghost" className={linkButtonCN(pathname?.startsWith(href))} asChild>
             <Link href={href}>{icon}</Link>
           </Button>
         </TooltipTrigger>
@@ -36,7 +37,7 @@ const AppNavigationLink: FC<AppNavigationLinkProps> = ({ icon, title, href, grou
   return (
     <HoverCard openDelay={100} closeDelay={0}>
       <HoverCardTrigger asChild>
-        <Button size="icon-xl" variant="ghost" className={cn({ "text-primary!": group.some((link) => pathname.startsWith(link.href)) })}>
+        <Button size="icon-xl" variant="ghost" className={linkButtonCN(group.some((link) => pathname.startsWith(link.href)))}>
           {icon}
         </Button>
       </HoverCardTrigger>

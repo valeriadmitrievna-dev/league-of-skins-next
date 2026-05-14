@@ -3,7 +3,8 @@ import { NextRequest } from "next/server";
 import { errorHandler, RequestError } from "@/errors";
 import { getServerUserPayload } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { buildWishlistPreview } from "@/shared/utils/buildWishlistPreview";
+import { buildWishlistChromasPreview } from "@/shared/utils/buildWishlistChromasPreview";
+import { buildWishlistSkinsPreview } from "@/shared/utils/buildWishlistSkinsPreview";
 import { generateWishlistLink } from "@/shared/utils/generateWishlistLink";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 
@@ -14,15 +15,32 @@ export const GET = async () => {
     if (!payload) throw new RequestError({ code: "ERR_0001", status: 401, message: "Invalid access token" });
 
     const { userId } = payload;
-    const { data: wishlists, error } = await supabase.from("wishlists").select("*").eq("user_id", userId).order("created_at", { ascending: true });
+
+    const [{ data: wishlists, error }, { data: ownedSkins }, { data: ownedChromas }, appData] = await Promise.all([
+      supabase.from("wishlists").select("*, user:user_id(*)").eq("user_id", userId).order("created_at", { ascending: true }),
+      supabase.from("user_skins").select("contentId").eq("user_id", userId),
+      supabase.from("user_chromas").select("contentId").eq("user_id", userId),
+      getLangAppData(),
+    ]);
+
     if (!wishlists || error) throw new RequestError({ code: "ERR_0000", status: 500, message: error.message });
 
-    const appData = await getLangAppData();
     const skins = appData?.skins ?? [];
+    const chromas = appData?.chromas ?? [];
+
+    const ownedSkinIds = new Set((ownedSkins ?? []).map((r) => r.contentId));
+    const ownedChromaIds = new Set((ownedChromas ?? []).map((r) => r.contentId));
 
     const result = wishlists.map((wishlist) => ({
       ...wishlist,
-      preview: buildWishlistPreview(wishlist, skins),
+      preview: {
+        skins: buildWishlistSkinsPreview(wishlist, skins),
+        chromas: buildWishlistChromasPreview(wishlist, chromas),
+      },
+      owned: {
+        skins: wishlist.skins.filter((id: string) => ownedSkinIds.has(id)).length,
+        chromas: wishlist.chromas.filter((id: string) => ownedChromaIds.has(id)).length,
+      },
     }));
 
     return Response.json(result);

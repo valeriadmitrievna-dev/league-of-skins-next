@@ -27,6 +27,10 @@
     "yes": "Yes",
     "no": "No",
     "or": "or",
+    "item_one": "element",
+    "item_few": "elements",
+    "item_many": "elements",
+    "item_other": "elements",
     "skin_one": "skin",
     "skin_few": "skins",
     "skin_many": "skins",
@@ -143,7 +147,8 @@
     "create_visibilityPrivateLabel": "Private",
     "create_visibilityPrivateDescription": "Only you can see this wishlist",
     "create_cancel": "Cancel",
-    "create_submit": "Create"
+    "create_submit": "Create",
+    "updated": "Updated"
   },
   "auth": {
     "signin_title": "Sign In",

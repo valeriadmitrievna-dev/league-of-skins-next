@@ -1,9 +1,10 @@
-import { SearchIcon, CircleQuestionMarkIcon, HeartIcon, PanelRightCloseIcon, Package2Icon, InfoIcon, UserRoundIcon, BoltIcon } from "lucide-react";
+import { SearchIcon, HeartIcon, PanelRightCloseIcon, Package2Icon, InfoIcon, UserRoundIcon, BoltIcon } from "lucide-react";
 import { cookies, headers } from "next/headers";
 import Link from "next/link";
 import { getT } from "next-i18next/server";
 import { FC } from "react";
 
+import LogoIcon from '@/assets/logo.svg';
 import { Button } from "@/components/ui/button";
 import { verifyAccessToken } from "@/lib/auth";
 
@@ -26,9 +27,9 @@ const AppNavigation: FC = async () => {
   };
 
   return (
-    <aside className="fixed top-0 bottom-0 w-(--navigation-size) bg-background border-r flex flex-col items-center gap-8 py-5 overflow-hidden">
+    <aside className="fixed top-0 bottom-0 w-(--navigation-size) bg-background border-r flex flex-col items-center gap-6 py-5 overflow-hidden">
       <Link href="/">
-        <CircleQuestionMarkIcon className="size-8 text-primary" />
+        <LogoIcon className="size-10 text-primary" />
       </Link>
       <div className="flex flex-col items-center gap-2">
         <AppNavigationLink

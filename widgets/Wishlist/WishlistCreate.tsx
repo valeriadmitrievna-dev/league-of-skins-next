@@ -1,11 +1,12 @@
 "use client";
 import { useMutation } from "@tanstack/react-query";
+import { VariantProps } from "class-variance-authority";
 import { PlusIcon } from "lucide-react";
 import { useT } from "next-i18next/client";
 import { useState, type ChangeEvent, type FC, type ReactNode } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
 import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -14,9 +15,9 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Spinner } from "@/components/ui/spinner";
 import { fetchClient } from "@/lib/fetchClient";
 import { cn } from "@/shared/cn";
-import { DbWishlist } from '@/types/db';
+import { DbWishlist } from "@/types/db";
 
-interface WishlistCreateProps {
+interface WishlistCreateProps extends VariantProps<typeof buttonVariants> {
   buttonClassName?: string;
   skinContentIds?: string[];
   chromaContentIds?: string[];
@@ -24,7 +25,15 @@ interface WishlistCreateProps {
   disabled?: boolean;
 }
 
-const WishlistCreate: FC<WishlistCreateProps> = ({ buttonClassName, skinContentIds = [], chromaContentIds = [], children, disabled }) => {
+const WishlistCreate: FC<WishlistCreateProps> = ({
+  buttonClassName,
+  skinContentIds = [],
+  chromaContentIds = [],
+  children,
+  disabled,
+  variant,
+  size,
+}) => {
   const { t } = useT();
 
   const [name, setName] = useState("");
@@ -36,7 +45,7 @@ const WishlistCreate: FC<WishlistCreateProps> = ({ buttonClassName, skinContentI
       fetchClient("/api/wishlists", { method: "POST", body: JSON.stringify(body) }),
     onSuccess: async (data, _body, _, { client }) => {
       client.setQueryData(["userWishlists"], (prev: DbWishlist[]) => {
-        return [...prev, data]
+        return [...prev, data];
       });
       toast.success("Wishlist successfully created");
       setModalOpen(false);
@@ -65,7 +74,7 @@ const WishlistCreate: FC<WishlistCreateProps> = ({ buttonClassName, skinContentI
     <Dialog open={isModalOpen} onOpenChange={setModalOpen}>
       <DialogTrigger asChild>
         {children ?? (
-          <Button className={cn("", buttonClassName)} disabled={disabled}>
+          <Button className={cn("", buttonClassName)} variant={variant} size={size} disabled={disabled}>
             <PlusIcon />
             {t("wishlist.create")}
           </Button>
