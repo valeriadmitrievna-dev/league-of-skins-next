@@ -3,6 +3,8 @@ import { NextRequest } from "next/server";
 import { errorHandler, RequestError } from "@/errors";
 import { getServerUserPayload } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { getLangAppData } from "@/shared/utils/getLangAppData";
+import { getPrices } from "@/shared/utils/getPrices";
 
 export const GET = async (_: NextRequest, { params }: { params: Promise<{ wishlistId: string }> }) => {
   try {
@@ -12,10 +14,40 @@ export const GET = async (_: NextRequest, { params }: { params: Promise<{ wishli
     const payload = await getServerUserPayload();
     if (!payload) throw new RequestError({ code: "ERR_0001", status: 401 });
 
-    const { data: wishlist, error } = await supabase.from("wishlists").select("*").eq("id", wishlistId).eq("user_id", payload.userId).single();
+    const [{ data: wishlist, error }, { data: ownedSkins }, { data: ownedChromas }, appData, appPrices] = await Promise.all([
+      supabase.from("wishlists").select("*, user:user_id(*)").eq("id", wishlistId).eq("user_id", payload.userId).single(),
+      supabase.from("user_skins").select("contentId").eq("user_id", payload.userId),
+      supabase.from("user_chromas").select("contentId").eq("user_id", payload.userId),
+      getLangAppData(),
+      getPrices(),
+    ]);
+
     if (!wishlist || error) throw new RequestError({ code: "ERR_0000", status: 500, message: error.message });
 
-    return Response.json(wishlist);
+    const ownedSkinIds = new Set((ownedSkins ?? []).map((r) => r.contentId));
+    const ownedChromaIds = new Set((ownedChromas ?? []).map((r) => r.contentId));
+    const ownedWishlistSkins = wishlist.skins.filter((id: string) => ownedSkinIds.has(id));
+    const ownedWishlistChromas = wishlist.chromas.filter((id: string) => ownedChromaIds.has(id));
+
+    const isSkinExalted = (skinContentId: string) => {
+      return (appData?.skins ?? []).find((s) => s.contentId === skinContentId)?.rarity === "kExalted";
+    };
+
+    return Response.json({
+      ...wishlist,
+      owned: {
+        skins: ownedWishlistSkins.length,
+        chromas: ownedWishlistChromas.length,
+      },
+      price: {
+        total: [...wishlist.skins, ...wishlist.chromas].reduce((acc, curr) => {
+          return (acc += isSkinExalted(curr) ? 32000 : appPrices.find((p) => p.contentId === curr)?.price ?? 0);
+        }, 0),
+        owned: [...ownedWishlistSkins, ...ownedWishlistChromas].reduce((acc, curr) => {
+          return (acc += isSkinExalted(curr) ? 32000 : appPrices.find((p) => p.contentId === curr)?.price ?? 0);
+        }, 0),
+      },
+    });
   } catch (error) {
     return errorHandler(error);
   }

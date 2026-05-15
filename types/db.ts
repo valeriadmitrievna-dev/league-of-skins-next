@@ -15,3 +15,15 @@ export type DbWishlistPreview = {
   };
   user: DbUser;
 };
+
+export type DbWishlistData = {
+  user: DbUser;
+  owned: {
+    skins: number;
+    chromas: number;
+  };
+  price: {
+    total: number;
+    owned: number;
+  };
+};
