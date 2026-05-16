@@ -1,16 +1,42 @@
 import { NextRequest } from "next/server";
 
 import { errorHandler, RequestError } from "@/errors";
+import { getServerUserPayload } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
 
-export const GET = async (_: NextRequest, { params }: { params: Promise<{ link: string }> }) => {
+export const GET = async (
+  _req: NextRequest,
+  { params }: { params: Promise<{ link: string }> },
+) => {
   try {
-    const supabase = await createClient();
     const { link } = await params;
 
-    const { data: wishlist, error } = await supabase.from("wishlists").select("*").eq("link", link).single();
-    if (!wishlist || error) throw new RequestError({ code: "ERR_0000", status: 500, message: error.message });
-    if (wishlist.private) throw new RequestError({ code: "ERR_0000", status: 403 })
+    const [supabase, payload] = await Promise.all([
+      createClient(),
+      getServerUserPayload(),
+    ]);
+
+    const { data: wishlist, error } = await supabase
+      .from("wishlists")
+      .select("*")
+      .eq("link", link)
+      .single();
+
+    if (!wishlist || error) {
+      throw new RequestError({
+        code: "ERR_0404",
+        status: 404,
+        message: error?.message ?? "Wishlist not found",
+      });
+    }
+
+    if (wishlist.private) {
+      throw new RequestError({ code: "ERR_0403", status: 403 });
+    }
+
+    if (payload?.userId === wishlist.user_id) {
+      return Response.json({ __redirect: wishlist.id });
+    }
 
     return Response.json(wishlist);
   } catch (error) {

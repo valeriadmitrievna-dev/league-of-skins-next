@@ -3,6 +3,8 @@ import { NextRequest } from "next/server";
 import { errorHandler, RequestError } from "@/errors";
 import { getServerUserPayload } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
+import { buildWishlistChromasPreview } from '@/shared/utils/buildWishlistChromasPreview';
+import { buildWishlistSkinsPreview } from '@/shared/utils/buildWishlistSkinsPreview';
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getPrices } from "@/shared/utils/getPrices";
 
@@ -35,16 +37,20 @@ export const GET = async (_: NextRequest, { params }: { params: Promise<{ wishli
 
     return Response.json({
       ...wishlist,
+      preview: {
+        skins: buildWishlistSkinsPreview(wishlist, appData?.skins ?? [], 4),
+        chromas: buildWishlistChromasPreview(wishlist, appData?.chromas ?? [], 4),
+      },
       owned: {
         skins: ownedWishlistSkins.length,
         chromas: ownedWishlistChromas.length,
       },
       price: {
         total: [...wishlist.skins, ...wishlist.chromas].reduce((acc, curr) => {
-          return (acc += isSkinExalted(curr) ? 32000 : appPrices.find((p) => p.contentId === curr)?.price ?? 0);
+          return (acc += isSkinExalted(curr) ? 32000 : (appPrices.find((p) => p.contentId === curr)?.price ?? 0));
         }, 0),
         owned: [...ownedWishlistSkins, ...ownedWishlistChromas].reduce((acc, curr) => {
-          return (acc += isSkinExalted(curr) ? 32000 : appPrices.find((p) => p.contentId === curr)?.price ?? 0);
+          return (acc += isSkinExalted(curr) ? 32000 : (appPrices.find((p) => p.contentId === curr)?.price ?? 0));
         }, 0),
       },
     });

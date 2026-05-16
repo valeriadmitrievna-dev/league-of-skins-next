@@ -39,13 +39,11 @@ const WishlistCard: FC<WishlistCardProps> = ({ guest, ...data }) => {
     );
   };
 
-  console.log("[DEV]", `repeat(auto-fill, ${[...data.preview.skins, ...data.preview.chromas].slice(0, 3).length})`);
-
   return (
     <div className="relative flex flex-col justify-between bg-card rounded-md border overflow-hidden group transition-shadow hover:shadow-lg/50">
       <Link
         href={`/wishlists/${guest ? data.link : data.id}`}
-        className="bg-accent/20 h-30 grid overflow-hidden relative"
+        className="bg-accent/20 h-40 grid overflow-hidden relative"
         style={{
           gridTemplateColumns: `repeat(${[...data.preview.skins, ...data.preview.chromas].slice(0, 3).length}, 1fr)`,
         }}

@@ -1,12 +1,13 @@
+"use client";
 import { PaletteIcon, SearchIcon } from "lucide-react";
 import Link from "next/link";
-import { getT } from "next-i18next/server";
+import { useT } from "next-i18next/client";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
-const EmptyWishlistChromas = async () => {
-  const { t } = await getT("emptystate");
+const EmptyWishlistChromas = () => {
+  const { t } = useT("emptystate");
 
   return (
     <Empty>

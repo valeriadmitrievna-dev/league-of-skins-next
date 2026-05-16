@@ -1,41 +1,37 @@
 "use client";
 import { format, formatDistanceToNow } from "date-fns";
-import { CopyIcon, DotIcon, PencilIcon, Share2Icon, SquarePenIcon, TrashIcon } from "lucide-react";
-import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { PencilIcon, TrashIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useT } from "next-i18next/client";
-import { FC, useCallback, useEffect } from "react";
+import { FC, useCallback, useState } from "react";
 
 import useWishlistSkins from "@/api/useWishlistSkins";
+import BlendedGrid from "@/components/BlendedGrid";
+import Search from '@/components/Search';
 import { Typography } from "@/components/Typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import EmptyWishlistChromas from "@/emptystates/EmptyWishlistChromas";
 import EmptyWishlistSkins from "@/emptystates/EmptyWishlistSkins";
 import useWishlist from "@/hooks/useWishlist";
 import { DATE_LOCALE } from "@/shared/constants/date_locales";
 import { BREAKPOINTS } from "@/shared/constants/styles";
-import { useAuth } from "@/shared/providers/AuthProvider";
+import { convertRP, getCurrencySymbol } from "@/shared/utils/convertRP";
 import { formatNumber } from "@/shared/utils/formatNumber";
 import { AppDataSkin } from "@/types/appdata";
 import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
+import WishlistStatCard from "@/widgets/Wishlist/WishlistStatCard";
 
 const WishlistPage: FC = () => {
   const { t, i18n } = useT();
-  const router = useRouter();
 
-  const { userId } = useAuth();
   const { wishlistIdOrLink } = useParams<{ wishlistIdOrLink: string }>();
   const { data, isLoading, isGuest } = useWishlist(wishlistIdOrLink);
 
+  const [tab, setTab] = useState<string>("skins");
   const { data: skinsData, isLoading: isSkinsLoading } = useWishlistSkins(data?.id ?? "", i18n.language, !!data);
-
-  useEffect(() => {
-    if (data && data.user_id === userId && isGuest) {
-      router.replace(`/wishlists/${data.id}`);
-    }
-  }, [data, userId, isGuest]);
 
   const renderSkin = useCallback((item: unknown, _index: number) => {
     const skin = item as AppDataSkin;
@@ -52,103 +48,93 @@ const WishlistPage: FC = () => {
 
   return (
     <>
-      <section className="grid grid-cols-5 gap-4">
-        <div className="flex flex-col col-span-3">
-          <div className="flex items-center gap-x-2 mb-4">
+      <section className="grid grid-cols-5 grid-rows-[1fr_auto_auto] gap-4 mt-4 mb-8">
+        <BlendedGrid images={[...data.preview.skins, ...data.preview.chromas]} className="row-span-2" />
+        <div className="flex flex-col gap-y-1 col-start-2 -col-end-1">
+          <Badge variant={data.private ? "muted" : "primary-muted"}>{t(`wishlist.private_${data.private}`)}</Badge>
+          <div className="flex items-center gap-x-2 mb-auto">
             <Typography.H2>{data.name}</Typography.H2>
-            <Button variant="ghost" size="icon-lg">
+            {/* <Button variant="ghost" size="icon-lg">
               <PencilIcon />
-            </Button>
+            </Button> */}
           </div>
-          <Badge size="lg" variant={data.private ? "muted" : "primary-muted"} className="mb-auto">
-            {t(`wishlist.private_${data.private}`)}
-          </Badge>
-          <Typography.Muted className="mt-3">Author: {data.user.name}</Typography.Muted>
-          <div className="mt-1 flex items-center gap-x-1">
-            <Typography.Muted>Created {format(new Date(data.created_at), "PPP", { locale: DATE_LOCALE[i18n.language] })}</Typography.Muted>
+          {isGuest && <Typography.Muted className="mt-3">Author: {data.user.name}</Typography.Muted>}
+          <Typography.Muted>Created {format(new Date(data.created_at), "PPP", { locale: DATE_LOCALE[i18n.language] })}</Typography.Muted>
+          <Typography.Muted>Updated {formatDistanceToNow(new Date(data.updated_at), { locale: DATE_LOCALE[i18n.language] })} ago</Typography.Muted>
+          {/* <div className="mt-1 flex items-center gap-x-1">
             <DotIcon className="text-muted-foreground" />
-            <Typography.Muted>Updated {formatDistanceToNow(new Date(data.updated_at), { locale: DATE_LOCALE[i18n.language] })} ago</Typography.Muted>
-          </div>
+          </div> */}
         </div>
-        <div className="col-span-2 flex flex-col gap-y-4">
-          <div className="flex items-stretch gap-4">
-            <Button className="px-5 grow" variant="outline-primary" size="lg">
-              <SquarePenIcon />
-              Edit
-            </Button>
-            <Button className="px-5 grow" variant="outline" size="lg">
-              <Share2Icon />
-              Share
-            </Button>
-            <Button className="px-5 grow" variant="outline-destructive" size="lg">
-              <TrashIcon />
-              Delete
-            </Button>
-          </div>
-          {!isGuest && (
-            <div className="px-5 py-4 bg-card rounded-md w-full overflow-hidden">
-              <Typography.Muted>Wishlist link</Typography.Muted>
-              <div className="flex items-end gap-2 mb-2">
-                <Link href={data.link} target="_blank" className="text-primary text-sm truncate">
-                  {window.location.host}/wishlists/{data.link}
-                </Link>
-                <Button size="xs" variant="outline">
-                  <CopyIcon />
-                  Copy
-                </Button>
-              </div>
-              <Typography.Muted className="">Anyone with link can view this wishlist.</Typography.Muted>
-            </div>
-          )}
+        <div className="col-start-2 flex items-stretch gap-x-2">
+          <Button variant="outline" className="grow">
+            Share
+          </Button>
+          <Button variant="outline" size="icon-lg">
+            <PencilIcon />
+          </Button>
+          <Button variant="outline" size="icon-lg">
+            <TrashIcon />
+          </Button>
         </div>
+        <WishlistStatCard
+          label="total items"
+          value={String(data.skins.length + data.chromas.length)}
+          sub={`${data.skins.length} skins\u00A0\u00A0•\u00A0\u00A0${data.chromas.length} chromas`}
+          accent="chart-2"
+          className="-grid-row-1 col-1"
+        />
+        <WishlistStatCard
+          label="total cost rp"
+          value={String(formatNumber(data.price.total))}
+          sub={`~ ${formatNumber(convertRP(data.price.total, i18n.language))} ${getCurrencySymbol(i18n.language)}`}
+          accent="chart-5"
+          className="-grid-row-1"
+        />
+        <WishlistStatCard
+          label="completion"
+          value={`${Math.round(((data.owned.skins + data.owned.chromas) / (data.skins.length + data.chromas.length)) * 100)}%`}
+          sub={`${data.owned.skins + data.owned.chromas} / ${data.skins.length + data.chromas.length} owned`}
+          accent="chart-4"
+          className="-grid-row-1"
+        />
+        <WishlistStatCard
+          label="wishlist value"
+          value={String(formatNumber(data.price.owned))}
+          sub="RP Owned"
+          accent="chart-3"
+          className="-grid-row-1"
+        />
+        <WishlistStatCard
+          label="priority items"
+          value={String(data.skins.length + data.chromas.length)}
+          sub="Marked as Priority"
+          accent="chart-1"
+          className="-grid-row-1"
+        />
       </section>
 
-      <section className="grid grid-cols-5 gap-4 mt-5 mb-8">
-        <div className="bg-card border rounded-md px-5 py-4">
-          <Typography.Muted>TOTAL ITEMS</Typography.Muted>
-          <Typography.Large className="text-4xl my-1 text-chart-2">{data.skins.length + data.chromas.length}</Typography.Large>
-          <Typography.Muted className="flex items-center gap-x-0">
-            <span>{data.skins.length} skins</span>
-            <DotIcon />
-            <span>{data.chromas.length} chromas</span>
-          </Typography.Muted>
-        </div>
-        <div className="bg-card border rounded-md px-5 py-4">
-          <Typography.Muted>TOTAL COST RP</Typography.Muted>
-          <Typography.Large className="text-4xl my-1 text-chart-5">{formatNumber(data.price.total)}</Typography.Large>
-          <Typography.Muted className="flex items-center gap-x-0">~ $1000 USD</Typography.Muted>
-        </div>
-        <div className="bg-card border rounded-md px-5 py-4">
-          <Typography.Muted>COMPLETION</Typography.Muted>
-          <Typography.Large className="text-4xl my-1 text-chart-4">
-            {Math.round(((data.owned.skins + data.owned.chromas) / (data.skins.length + data.chromas.length)) * 100)}%
-          </Typography.Large>
-          <Typography.Muted className="flex items-center gap-x-0">
-            {data.owned.skins + data.owned.chromas} / {data.skins.length + data.chromas.length} owned
-          </Typography.Muted>
-        </div>
-        <div className="bg-card border rounded-md px-5 py-4">
-          <Typography.Muted>WISHLIST VALUE</Typography.Muted>
-          <Typography.Large className="text-4xl my-1 text-chart-3">{formatNumber(data.price.owned)}</Typography.Large>
-          <Typography.Muted className="flex items-center gap-x-0">RP Owned</Typography.Muted>
-        </div>
-        <div className="bg-card border rounded-md px-5 py-4">
-          <Typography.Muted>PRIORITY ITEMS</Typography.Muted>
-          <Typography.Large className="text-4xl my-1 text-chart-1">{0}</Typography.Large>
-          <Typography.Muted className="flex items-center gap-x-0">Marked as Priority</Typography.Muted>
-        </div>
-      </section>
-
-      <Tabs defaultValue="skins" className='gap-y-4'>
+      <Tabs value={tab} onValueChange={setTab} className="gap-y-4">
         <TabsList variant="line" className="w-full px-5 justify-start gap-x-5">
           <TabsTrigger value="skins" className="grow-0 uppercase px-0 text-base">
-            Skins
+            Skins{" "}
+            <Badge variant={tab === "skins" ? "accent" : "muted"} className="px-1.5">
+              {data.skins.length}
+            </Badge>
           </TabsTrigger>
           <TabsTrigger value="chromas" className="grow-0 uppercase px-0 text-base">
-            Chromas
+            Chromas{" "}
+            <Badge variant={tab === "chromas" ? "accent" : "muted"} className="px-1.5">
+              {data.chromas.length}
+            </Badge>
           </TabsTrigger>
         </TabsList>
         <TabsContent value="skins">
+          {!skinsData?.data.length && !isLoading && <EmptyWishlistSkins />}
+          {!!skinsData?.data.length && (
+            <div className="mb-4 flex items-center gap-x-4">
+              <Search className='max-w-120_' />
+            </div>
+          )}
           <VirtualizedGrid
             items={skinsData?.data ?? []}
             overscan={4}
@@ -167,7 +153,9 @@ const WishlistPage: FC = () => {
             ]}
           />
         </TabsContent>
-        <TabsContent value="chromas">chromas</TabsContent>
+        <TabsContent value="chromas">
+          <EmptyWishlistChromas />
+        </TabsContent>
       </Tabs>
     </>
   );

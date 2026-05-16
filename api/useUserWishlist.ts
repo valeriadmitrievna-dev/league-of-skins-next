@@ -1,12 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 
 import { fetchClient } from "@/lib/fetchClient";
-import { DbWishlist, DbWishlistData } from '@/types/db';
+import { DbWishlist, DbWishlistPreview } from '@/types/db';
 
 const useUserWishlist = (id: string, enabled?: boolean) => {
   return useQuery({
     queryKey: ["userWishlist", id],
-    queryFn: () => fetchClient<DbWishlist & DbWishlistData>("/api/wishlists/" + id),
+    queryFn: () => fetchClient<DbWishlist & DbWishlistPreview>("/api/wishlists/" + id),
     enabled: enabled && !!id,
   });
 };
