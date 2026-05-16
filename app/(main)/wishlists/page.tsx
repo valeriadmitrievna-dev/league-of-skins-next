@@ -35,11 +35,11 @@ const WishlistsPage = () => {
         {isLoading && <Skeleton asChild count={3} className="h-64" />}
         {wishlists.map((wishlist) =>
           user?.is_verified ? (
-            <WishlistCard key={wishlist.id} {...wishlist} userName={user?.name} />
+            <WishlistCard key={wishlist.id} {...wishlist} />
           ) : (
             <div key={wishlist.id} className="pointer-events-none relative">
               <div className="absolute flex items-center justify-center size-full inset-0 bg-muted/50 z-10" />
-              <WishlistCard {...wishlist} userName={user?.name} />
+              <WishlistCard {...wishlist} />
             </div>
           ),
         )}

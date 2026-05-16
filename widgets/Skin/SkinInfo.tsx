@@ -1,12 +1,10 @@
 "use client";
 
-import { format } from "date-fns";
 import { PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { useT } from "next-i18next/client";
 import { FC } from "react";
 
-import RPIcon from "@/assets/riot-points-icon.svg";
 import ChromaColor from "@/components/ChromaColor";
 import Image from "@/components/Image";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +69,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
             </Badge>
           }
         />
-        {!!data?.release && (
+        {/* {!!data?.release && (
           <SkinInfoLine title={t("skin.release")} info={format(new Date(data.release * 1000), "dd.MM.yyyy")} />
         )}
         {!!data?.price && (
@@ -84,7 +82,7 @@ const SkinInfo: FC<SkinInfoProps> = ({ data, className }) => {
               </div>
             }
           />
-        )}
+        )} */}
         <SkinInfoLine
           title={t("rarity.legacy")}
           info={<span className="pr-2 font-medium">{t(`shared.${data.isLegacy ? "yes" : "no"}`)}</span>}

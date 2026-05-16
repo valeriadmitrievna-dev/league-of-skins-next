@@ -25,7 +25,7 @@ const CollectionSkinsPage: FC = () => {
 
   const renderItem = useCallback((item: unknown, _index: number) => {
     const skin = item as AppDataSkin;
-    return <SkinCard key={skin.id} data={skin} owned="hidden" />;
+    return <SkinCard key={skin.id} data={skin} />;
   }, []);
 
   return (
