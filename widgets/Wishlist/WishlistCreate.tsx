@@ -98,7 +98,8 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
             <RadioGroup value={String(isPrivate)} onValueChange={(v) => setPrivate(v === "true")} className="flex flex-col gap-2">
               <Label
                 htmlFor="visibility-public"
-                className="flex items-center gap-3 rounded-lg border px-3 py-3 cursor-pointer transition-colors has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5"
+                role="button"
+                className="flex items-center gap-3 rounded-lg border px-3 py-3 transition-colors has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5"
               >
                 <RadioGroupItem value="false" id="visibility-public" hidden />
                 <div className="flex flex-col gap-1">
@@ -109,7 +110,8 @@ const WishlistCreate: FC<WishlistCreateProps> = ({
 
               <Label
                 htmlFor="visibility-private"
-                className="flex items-center gap-3 rounded-lg border px-3 py-3 cursor-pointer transition-colors has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5"
+                role="button"
+                className="flex items-center gap-3 rounded-lg border px-3 py-3 transition-colors has-data-[state=checked]:border-primary has-data-[state=checked]:bg-primary/5"
               >
                 <RadioGroupItem value="true" id="visibility-private" hidden />
                 <div className="flex flex-col gap-1">

@@ -1,13 +1,14 @@
 "use client";
 import { format, formatDistanceToNow } from "date-fns";
-import { PencilIcon, TrashIcon } from "lucide-react";
+import { DotIcon, PencilIcon, Share2Icon, TrashIcon } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useT } from "next-i18next/client";
 import { FC, useCallback, useState } from "react";
 
+import useWishlistChromas from "@/api/useWishlistChromas";
 import useWishlistSkins from "@/api/useWishlistSkins";
-import BlendedGrid from "@/components/BlendedGrid";
-import Search from '@/components/Search';
+import ScrollTopButton from '@/components/ScrollTopButton';
+import Search from "@/components/Search";
 import { Typography } from "@/components/Typography";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,8 @@ import { DATE_LOCALE } from "@/shared/constants/date_locales";
 import { BREAKPOINTS } from "@/shared/constants/styles";
 import { convertRP, getCurrencySymbol } from "@/shared/utils/convertRP";
 import { formatNumber } from "@/shared/utils/formatNumber";
-import { AppDataSkin } from "@/types/appdata";
+import { AppDataChroma, AppDataSkin } from "@/types/appdata";
+import ChromaCard from '@/widgets/ChromaCard';
 import SkinCard from "@/widgets/Skin/SkinCard";
 import VirtualizedGrid from "@/widgets/VirtualizedGrid";
 import WishlistStatCard from "@/widgets/Wishlist/WishlistStatCard";
@@ -32,10 +34,16 @@ const WishlistPage: FC = () => {
 
   const [tab, setTab] = useState<string>("skins");
   const { data: skinsData, isLoading: isSkinsLoading } = useWishlistSkins(data?.id ?? "", i18n.language, !!data);
+  const { data: chromasData, isLoading: isChromasLoading } = useWishlistChromas(data?.id ?? "", i18n.language, !!data);
 
   const renderSkin = useCallback((item: unknown, _index: number) => {
     const skin = item as AppDataSkin;
     return <SkinCard key={skin.id} data={skin} />;
+  }, []);
+
+  const renderChroma = useCallback((item: unknown, _index: number) => {
+    const chroma = item as AppDataChroma;
+    return <ChromaCard key={chroma.id} data={chroma} />;
   }, []);
 
   if (isLoading) {
@@ -48,33 +56,38 @@ const WishlistPage: FC = () => {
 
   return (
     <>
-      <section className="grid grid-cols-5 grid-rows-[1fr_auto_auto] gap-4 mt-4 mb-8">
-        <BlendedGrid images={[...data.preview.skins, ...data.preview.chromas]} className="row-span-2" />
-        <div className="flex flex-col gap-y-1 col-start-2 -col-end-1">
-          <Badge variant={data.private ? "muted" : "primary-muted"}>{t(`wishlist.private_${data.private}`)}</Badge>
-          <div className="flex items-center gap-x-2 mb-auto">
-            <Typography.H2>{data.name}</Typography.H2>
-            {/* <Button variant="ghost" size="icon-lg">
-              <PencilIcon />
-            </Button> */}
+      <section className="grid grid-cols-5 grid-rows-[1fr_auto_auto] gap-4 mb-8">
+        <div className="flex justify-between gap-x-8 gap-y-1 col-start-1 -col-end-1 w-full pb-4">
+          <div>
+            <Typography.H1 className="mb-4">{data.name}</Typography.H1>
+            <div className="flex items-center gap-x-4">
+              <Badge variant={data.private ? "muted" : "primary-muted"} size="lg">
+                {t(`wishlist.private_${data.private}`)}
+              </Badge>
+              {isGuest && (
+                <>
+                  <Typography.Muted>by {data.user.name}</Typography.Muted>
+                  <DotIcon className="text-muted-foreground -mx-3" />
+                </>
+              )}
+              <Typography.Muted>Created {format(new Date(data.created_at), "PPP", { locale: DATE_LOCALE[i18n.language] })}</Typography.Muted>
+              <DotIcon className="text-muted-foreground -mx-3" />
+              <Typography.Muted>
+                Updated {formatDistanceToNow(new Date(data.updated_at), { locale: DATE_LOCALE[i18n.language] })} ago
+              </Typography.Muted>
+            </div>
           </div>
-          {isGuest && <Typography.Muted className="mt-3">Author: {data.user.name}</Typography.Muted>}
-          <Typography.Muted>Created {format(new Date(data.created_at), "PPP", { locale: DATE_LOCALE[i18n.language] })}</Typography.Muted>
-          <Typography.Muted>Updated {formatDistanceToNow(new Date(data.updated_at), { locale: DATE_LOCALE[i18n.language] })} ago</Typography.Muted>
-          {/* <div className="mt-1 flex items-center gap-x-1">
-            <DotIcon className="text-muted-foreground" />
-          </div> */}
-        </div>
-        <div className="col-start-2 flex items-stretch gap-x-2">
-          <Button variant="outline" className="grow">
-            Share
-          </Button>
-          <Button variant="outline" size="icon-lg">
-            <PencilIcon />
-          </Button>
-          <Button variant="outline" size="icon-lg">
-            <TrashIcon />
-          </Button>
+          <div className="flex items-stretch gap-x-2">
+            <Button variant="outline">
+              <PencilIcon /> Edit
+            </Button>
+            <Button variant="outline">
+              <Share2Icon /> Share
+            </Button>
+            <Button variant="outline-destructive">
+              <TrashIcon /> Delete
+            </Button>
+          </div>
         </div>
         <WishlistStatCard
           label="total items"
@@ -132,7 +145,7 @@ const WishlistPage: FC = () => {
           {!skinsData?.data.length && !isLoading && <EmptyWishlistSkins />}
           {!!skinsData?.data.length && (
             <div className="mb-4 flex items-center gap-x-4">
-              <Search className='max-w-120_' />
+              <Search className="max-w-120_" />
             </div>
           )}
           <VirtualizedGrid
@@ -154,9 +167,33 @@ const WishlistPage: FC = () => {
           />
         </TabsContent>
         <TabsContent value="chromas">
-          <EmptyWishlistChromas />
+          {!chromasData?.data.length && !isLoading && <EmptyWishlistChromas />}
+          {!!chromasData?.data.length && (
+            <div className="mb-4 flex items-center gap-x-4">
+              <Search className="max-w-120_" />
+            </div>
+          )}
+          <VirtualizedGrid
+            items={chromasData?.data ?? []}
+            overscan={4}
+            loading={isChromasLoading}
+            render={renderChroma}
+            columnGap={16}
+            rowGap={24}
+            responsiveColumns={[
+              { minWidth: BREAKPOINTS["4xl"], columns: 7 },
+              { minWidth: BREAKPOINTS["3xl"], columns: 6 },
+              { minWidth: BREAKPOINTS["2xl"], columns: 5 },
+              { minWidth: BREAKPOINTS.xl, columns: 4 },
+              { minWidth: BREAKPOINTS.lg, columns: 3 },
+              { minWidth: BREAKPOINTS.md, columns: 2 },
+              { minWidth: 0, columns: 2 },
+            ]}
+          />
         </TabsContent>
       </Tabs>
+
+      <ScrollTopButton />
     </>
   );
 };

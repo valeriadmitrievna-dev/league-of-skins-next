@@ -69,7 +69,7 @@ const InputFile: FC<InputFileProps> = ({
       <Button
         asChild
         variant={variant}
-        className={cn("cursor-pointer grow justify-start pl-3! pr-0! overflow-hidden shrink", className)}
+        className={cn("grow justify-start pl-3! pr-0! overflow-hidden shrink", className)}
         disabled={disabled}
       >
         <Label htmlFor={id} aria-disabled={disabled}>

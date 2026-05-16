@@ -89,7 +89,8 @@ const ChromaCard: FC<ChromaCardProps> = ({
           ) : (
             <BookmarkIcon
               onClick={toggleOwnedHandler}
-              className={cn("size-7 p-1 pr-0 cursor-pointer text-primary shrink-0", {
+              role="button"
+              className={cn("size-7 p-1 pr-0 text-primary shrink-0", {
                 "hover:fill-primary/50": !owned,
                 "fill-primary": owned,
               })}
@@ -102,7 +103,8 @@ const ChromaCard: FC<ChromaCardProps> = ({
             trigger={({ onOpen, isChromaInWishlist }) => (
               <HeartIcon
                 onClick={onOpen}
-                className={cn("size-7 p-1 pr-0 text-destructive cursor-pointer shrink-0", {
+                role="button"
+                className={cn("size-7 p-1 pr-0 text-destructive shrink-0", {
                   "fill-destructive": isChromaInWishlist,
                   "hover:fill-destructive/50": !isChromaInWishlist,
                 })}
@@ -116,7 +118,8 @@ const ChromaCard: FC<ChromaCardProps> = ({
           ) : (
             <HeartIcon
               onClick={removeFromWishlistHandler}
-              className="size-7 p-1 pr-0 text-destructive cursor-pointer fill-destructive shrink-0"
+              role="button"
+              className="size-7 p-1 pr-0 text-destructive fill-destructive shrink-0"
             />
           ))} */}
       </div>

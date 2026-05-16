@@ -83,8 +83,9 @@ const SearchSkins: FC = () => {
                 skinContentIds={[skin.contentId]}
                 trigger={({ onOpen }) => (
                   <HeartIcon
+                    role="button"
                     onClick={onOpen}
-                    className={cn("size-7 p-1 pr-0 text-destructive cursor-pointer shrink-0 select-none", {
+                    className={cn("size-7 p-1 pr-0 text-destructive shrink-0 select-none", {
                       "fill-destructive": isSkinInWishlist,
                       "hover:fill-destructive/50": !isSkinInWishlist,
                       "pointer-events-none opacity-50": !user?.is_verified,

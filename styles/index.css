@@ -58,6 +58,10 @@ input::placeholder {
   html {
     @apply font-sans;
   }
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @custom-variant data-state-on (&[data-state="on"]);

@@ -100,7 +100,7 @@ const SignUpPage = () => {
         <AuthFormTextInput
           id="password"
           leftIcon={<LockIcon />}
-          rightIcon={<PasswordIcon className="cursor-pointer" onClick={togglePasswordVisibilityHandler} />}
+          rightIcon={<PasswordIcon role="button" onClick={togglePasswordVisibilityHandler} />}
           placeholder={t("auth.password_placeholder")}
           type={isPasswordVisible ? "text" : "password"}
           aria-invalid={formState.errors.password ? "true" : "false"}
