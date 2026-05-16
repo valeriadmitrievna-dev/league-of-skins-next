@@ -17,7 +17,7 @@ interface AppNavigationLinkProps {
 
 const AppNavigationLink: FC<AppNavigationLinkProps> = ({ icon, title, href, group = [] }) => {
   const pathname = usePathname();
-  const linkButtonCN = (active: boolean, className?: string) => cn(className, { "text-primary! bg-primary/10! hover:bg-primary/20!": active });
+  const linkButtonCN = (active: boolean, className?: string) => cn(className, { "text-primary!": active });
 
   if (href && !group.length) {
     return (

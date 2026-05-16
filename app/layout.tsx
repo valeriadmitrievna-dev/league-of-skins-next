@@ -5,7 +5,7 @@ import localFont from "next/font/local";
 import { I18nProvider } from "next-i18next/client";
 import { initServerI18next, getT, getResources, generateI18nStaticParams } from "next-i18next/server";
 
-import Background from "@/components/Background";
+// import Background from "@/components/Background";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { getServerUserPayload } from "@/lib/auth";
 import { getLangCookie } from "@/lib/cookies";
@@ -60,7 +60,7 @@ const RootLayout = async ({ children }: { children: React.ReactNode }) => {
       suppressHydrationWarning
     >
       <body className="min-h-screen flex flex-col" suppressHydrationWarning>
-        <Background />
+        {/* <Background /> */}
 
         <I18nProvider language={lng} resources={resources}>
           <QueryProvider>

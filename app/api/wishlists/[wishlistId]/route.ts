@@ -1,10 +1,11 @@
 import { NextRequest } from "next/server";
 
+import { WishlistElementsPatch } from "@/api/types";
 import { errorHandler, RequestError } from "@/errors";
 import { getServerUserPayload } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/server";
-import { buildWishlistChromasPreview } from '@/shared/utils/buildWishlistChromasPreview';
-import { buildWishlistSkinsPreview } from '@/shared/utils/buildWishlistSkinsPreview';
+import { buildWishlistChromasPreview } from "@/shared/utils/buildWishlistChromasPreview";
+import { buildWishlistSkinsPreview } from "@/shared/utils/buildWishlistSkinsPreview";
 import { getLangAppData } from "@/shared/utils/getLangAppData";
 import { getPrices } from "@/shared/utils/getPrices";
 
@@ -54,6 +55,65 @@ export const GET = async (_: NextRequest, { params }: { params: Promise<{ wishli
         }, 0),
       },
     });
+  } catch (error) {
+    return errorHandler(error);
+  }
+};
+
+export const PATCH = async (req: NextRequest, { params }: { params: Promise<{ wishlistId: string }> }) => {
+  try {
+    const supabase = await createClient();
+
+    const { wishlistId } = await params;
+
+    const { addSkins = [], addChromas = [], removeSkins = [], removeChromas = [] } = (await req.json()) as WishlistElementsPatch;
+
+    const payload = await getServerUserPayload();
+
+    if (!payload) {
+      throw new RequestError({ code: "ERR_0001", status: 401 });
+    }
+
+    const { data: wishlist, error: wishlistError } = await supabase.from("wishlists").select("*").eq("id", wishlistId).single();
+
+    if (wishlistError || !wishlist) {
+      throw new RequestError({
+        code: "ERR_000",
+        status: 404,
+      });
+    }
+
+    if (wishlist.user_id !== payload.userId) {
+      throw new RequestError({
+        code: "ERR_0003",
+        status: 403,
+      });
+    }
+
+    const updatedSkins = wishlist.skins
+      .filter((skinId: string) => !removeSkins.includes(skinId))
+      .concat(addSkins.filter((skinId) => !wishlist.skins.includes(skinId)));
+
+    const updatedChromas = wishlist.chromas
+      .filter((chromaId: string) => !removeChromas.includes(chromaId))
+      .concat(addChromas.filter((chromaId) => !wishlist.chromas.includes(chromaId)));
+
+    const { data: updatedWishlist, error: updateError } = await supabase
+      .from("wishlists")
+      .update({
+        skins: updatedSkins,
+        chromas: updatedChromas,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", wishlistId)
+      .select()
+      .single();
+
+    if (updateError) {
+      throw updateError;
+    }
+
+    return Response.json(updatedWishlist);
   } catch (error) {
     return errorHandler(error);
   }

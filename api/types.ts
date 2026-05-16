@@ -20,3 +20,10 @@ export type SearchChromasRequest = PaginatedRequest<{
   skin?: "all" | "on" | "off";
   server?: "all" | "latest" | "pbe";
 }>;
+
+export type WishlistElementsPatch = {
+  addSkins?: string[];
+  addChromas?: string[];
+  removeSkins?: string[];
+  removeChromas?: string[];
+}
